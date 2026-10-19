@@ -2139,8 +2139,55 @@ entries.forEach(b=>b.onclick=()=>{if(gallery.hidden)openGallery();else closeGall
 <script>(()=>{
   const mode='hosted';
   const status=document.getElementById('loading'),copy=document.getElementById('loadCopy'),progress=document.getElementById('loadProgress');
-  let phase='loading';
-  const assetTimeoutMs=45000,pendingAssets=new Set();
+  let phase='loading',stage='waiting',received=0,watchdog=0,timeoutMs=45000;
+  const pendingAssets=new Set();
+  const packedBytes=3663247,decodeModel=(function createChanganModelDecoder() {
+  return async function decode(packet, yieldTask = () => Promise.resolve()) {
+    if (packet?.format !== 'changan-delta-v1' || typeof packet.payload !== 'string' || !packet.data?.meshes)
+      throw Error('Invalid city transport');
+    const data = packet.data, types = Object.keys(data.types), counts = Object.entries(data.meshes);
+    const groundCount = data.ground;
+    if (!Number.isInteger(groundCount) || groundCount < 0 || groundCount > 200000 ||
+        counts.some(([, n]) => !Number.isInteger(n) || n < 0 || n > 1000000) ||
+        counts.reduce((n, [, c]) => n + c, 0) !== data.quadCount || packet.payload.length > 16000000)
+      throw Error('Invalid city counts');
+    const raw = atob(packet.payload); packet.payload = ''; let offset = 0, records = 0;
+    function number() {
+      let value = 0, shift = 0, b;
+      do {
+        if (offset >= raw.length || shift > 21) throw Error('Incomplete city transport');
+        b = raw.charCodeAt(offset++); value |= (b & 127) << shift; shift += 7;
+      } while (b & 128);
+      return value & 1 ? -(value + 1) / 2 : value / 2;
+    }
+    for (const [type, count] of counts) {
+      const previous = [0, 0, 0, 0, 0, 0], quads = new Array(count);
+      for (let i = 0; i < count; i++) {
+        const q = new Array(6);
+        for (let j = 0; j < 6; j++) q[j] = previous[j] += number();
+        if (q.some(n => n < -32768 || n > 32767) || q[3] < 1 || q[4] < 1 || q[5] < 0 || q[5] > 5)
+          throw Error('Invalid city face');
+        quads[i] = q;
+        if (++records % 8192 === 0) await yieldTask();
+      }
+      data.meshes[type] = quads;
+    }
+    data.ground = new Array(groundCount); const previous = [0, 0, 0, 0, 0];
+    for (let i = 0; i < groundCount; i++) {
+      const q = new Array(5);
+      for (let j = 0; j < 5; j++) q[j] = previous[j] += number();
+      if (!types[q[4]] || q[0] > q[2] || q[1] > q[3]) throw Error('Invalid city ground');
+      q[4] = types[q[4]]; data.ground[i] = q;
+      if (++records % 8192 === 0) await yieldTask();
+    }
+    if (offset !== raw.length) throw Error('Unexpected city transport bytes');
+    return data;
+  };
+})();
+  function heartbeat(budget=timeoutMs){
+    timeoutMs=budget;clearTimeout(watchdog);
+    if(phase==='loading'&&!document.hidden)watchdog=setTimeout(()=>fail('stalled'),budget);
+  }
   const frame=()=>new Promise(resolve=>requestAnimationFrame(resolve));
   window.changanQualityConfig=(mode='auto')=>{
     const phone=innerWidth<=800||matchMedia('(pointer:coarse)').matches;
@@ -2149,48 +2196,73 @@ entries.forEach(b=>b.onclick=()=>{if(gallery.hidden)openGallery();else closeGall
     return {mode,light,pixelRatio:Math.min(devicePixelRatio||1,light?1:1.5),shadowSize:light?1024:mode==='full'&&!phone?4096:2048,bloom:!light,frameMs:light?66:50};
   };
   window.changanSelectedQuality='auto';
-  window.setCityLoadProgress=(value,text)=>{if(phase==='failed')return;progress.value=value;copy.textContent=text;};
-  window.changanLoadState=()=>({phase,mode});
+  window.setCityLoadProgress=(value,text)=>{if(phase==='failed')return;progress.value=value;copy.textContent=text;heartbeat();};
+  window.changanLoadState=()=>({phase,mode,stage,received,expected:packedBytes});
   function script(src){return new Promise((resolve,reject)=>{
     const element=document.createElement('script');let settled=false;
     const cancel=()=>finish(Error('Scene asset cancelled'));
-    const timer=setTimeout(()=>finish(Error('Scene asset timed out')),assetTimeoutMs);
-    function finish(error){if(settled)return;settled=true;clearTimeout(timer);pendingAssets.delete(cancel);element.onload=element.onerror=null;if(error){element.remove();reject(error);}else resolve();}
+    function finish(error){if(settled)return;settled=true;pendingAssets.delete(cancel);element.onload=element.onerror=null;if(error){element.remove();reject(error);}else{heartbeat();resolve();}}
     pendingAssets.add(cancel);element.src=src;element.onload=()=>finish();element.onerror=()=>finish(Error('Scene asset unavailable'));document.head.append(element);
   });}
   function model(){return new Promise((resolve,reject)=>{
     const controller=new AbortController();let settled=false;
     const cancel=()=>finish(Error('Scene data cancelled'));
-    const timer=setTimeout(()=>finish(Error('Scene data timed out')),assetTimeoutMs);
-    function finish(error,data){if(settled)return;settled=true;clearTimeout(timer);pendingAssets.delete(cancel);if(error){controller.abort();reject(error);}else{window.CHANGAN_MODEL=data;resolve();}}
+    function finish(error,data){if(settled)return;settled=true;pendingAssets.delete(cancel);if(error){controller.abort();reject(error);}else{window.CHANGAN_MODEL=data;resolve();}}
     pendingAssets.add(cancel);
-    (async()=>{const response=await fetch('assets/changan-model.json',{signal:controller.signal});if(!response.ok)throw Error('Scene unavailable');return response.json();})().then(data=>finish(null,data),error=>finish(error));
+    (async()=>{
+      stage='download';heartbeat();
+      const response=await fetch('assets/changan-model.compact.json?v=3ae0875aef47101d',{signal:controller.signal});
+      if(!response.ok)throw Error('Scene unavailable');
+      let packet;
+      if(response.body?.getReader){
+        const reader=response.body.getReader(),decoder=new TextDecoder(),pieces=[];let lastNotice=-Infinity;
+        for(;;){
+          const {value,done}=await reader.read();if(done)break;
+          if(settled)throw Error('Scene cancelled');
+          received+=value.byteLength;if(received>16000000)throw Error('Scene transport too large');
+          pieces.push(decoder.decode(value,{stream:true}));heartbeat();
+          if(performance.now()-lastNotice>200){
+            lastNotice=performance.now();
+            const amount=(received/1048576).toFixed(1),total=(packedBytes/1048576).toFixed(1);
+            window.setCityLoadProgress(.03+.09*Math.min(1,received/Math.max(1,packedBytes)),'下载城景 · '+amount+' / '+total+' MB');
+          }
+        }
+        pieces.push(decoder.decode());packet=JSON.parse(pieces.join(''));
+      }else packet=await response.json();
+      if(settled)throw Error('Scene cancelled');
+      stage='decode';window.setCityLoadProgress(.13,'展开城坊与山河…');await frame();
+      return decodeModel(packet,async()=>{if(settled)throw Error('Scene cancelled');heartbeat();await frame();});
+    })().then(data=>finish(null,data),error=>finish(error));
   });}
   async function start(){
     try{
       await frame();await frame();await new Promise(resolve=>setTimeout(resolve,30));
-      window.setCityLoadProgress(.08,'铺开山河…');
+      window.setCityLoadProgress(.03,'正在连接长安城景…');
       if(mode==='hosted'){
         await Promise.all([
           model(),
           script('assets/changan-browser.js')
         ]);
-        await frame();await script('assets/changan-engine.js?v=65b10f6926a54cc6');
+        stage='build';window.setCityLoadProgress(.16,'准备点亮城景…');heartbeat(120000);
+        await frame();await script('assets/changan-engine.js?v=e9d03d2ea9725837');
       }else{
         (0,eval)(document.getElementById('changanBundle').textContent);
         await frame();(0,eval)(document.getElementById('changanEngine').textContent);
       }
-    }catch(error){fail();}
+    }catch(error){fail('asset');}
   }
-  function fail(){if(phase==='ready')return;phase='failed';for(const cancel of [...pendingAssets])cancel();copy.textContent='三维夜景暂时未能展开，可重新试一次。人物图卷与游玩小笺仍可阅读。';progress.hidden=true;document.getElementById('retryScene').hidden=false;}
+  function fail(reason){if(phase!=='loading')return;phase='failed';clearTimeout(watchdog);for(const cancel of [...pendingAssets])cancel();
+    copy.textContent=reason==='stalled'?'这一程暂时停住了，可换网络后重新展开。人物图卷与游玩小笺仍可阅读。':'城景暂时未能展开，请重新试一次，或换浏览器打开。人物图卷与游玩小笺仍可阅读。';
+    progress.hidden=true;document.getElementById('retryScene').hidden=false;
+  }
   window.addEventListener('changan-ready',async()=>{
     if(phase==='failed')return;
-    phase='ready';window.setCityLoadProgress(1,'长安已入夜');await frame();await frame();document.body.classList.add('city-ready');status.hidden=true;
+    phase='ready';stage='ready';clearTimeout(watchdog);window.setCityLoadProgress(1,'长安已入夜');await frame();await frame();document.body.classList.add('city-ready');status.hidden=true;
     document.querySelectorAll('[data-scene-ready]').forEach(b=>b.disabled=false);
   });
-  window.addEventListener('changan-failed',fail);
+  window.addEventListener('changan-failed',()=>fail('render'));
   document.getElementById('retryScene').onclick=()=>location.reload();
-  document.addEventListener('visibilitychange',()=>document.body.classList.toggle('page-resting',document.hidden));
+  document.addEventListener('visibilitychange',()=>{document.body.classList.toggle('page-resting',document.hidden);heartbeat();});
   start();
 })();
 </script>

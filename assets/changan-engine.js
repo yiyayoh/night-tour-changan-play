@@ -1,6 +1,7 @@
 
 (async()=>{
 'use strict';
+window.setCityLoadProgress?.(.17,"整理城坊与桥路…");await new Promise(resolve=>requestAnimationFrame(resolve));
 const {THREE,EffectComposer,RenderPass,UnrealBloomPass,OutputPass}=CHANGAN;
 const data=window.CHANGAN_MODEL;delete window.CHANGAN_MODEL;const focusedCrowdApi=(function createChanganCrowdFilter() {
   const sourceSHA256 = 'd41441f627e7d6f4ec9aeace7322382fee3890a314671f12613c33a08ef66eae';
@@ -4869,5 +4870,5 @@ if(!window.CHANGAN_TALE_SCENE){
 }
 
 window.dispatchEvent(new Event('changan-ready'));
-}catch(error){window.dispatchEvent(new Event('changan-failed'));console.error(error);message.textContent='3D 显示未能启动。请用支持 WebGL 的 Chrome、Edge 或 Safari 浏览器打开。';}
-})();
+}catch(error){window.dispatchEvent(new Event('changan-failed'));console.error(error);}
+})().catch(error=>{console.error(error);window.dispatchEvent(new Event("changan-failed"));});

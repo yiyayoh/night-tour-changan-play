@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+ <meta name="theme-color" content="#172323">
+ <meta name="description" content="据蒲松龄《聊斋志异·促织》改编。循图入草，辨虫读势，看一只虫怎样承受一家人的生计，也看人怎样重新被看见。">
+ <title>促织 · 一虫一命｜夜游长安</title>
+ <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='6' fill='%23172323'/%3E%3Cpath d='M14 11h36v42H14z' fill='%23dfd8c9' stroke='%238e4b4e' stroke-width='2'/%3E%3Cpath d='m36 12-8 19 9 9-9 12' fill='none' stroke='%23556969' stroke-width='3'/%3E%3C/svg%3E">
+ <link rel="stylesheet" href="/night-tour-changan-play/assets/tales/changan-zhiguai.css">
+ <link rel="stylesheet" href="/night-tour-changan-play/assets/tales/changan-cricket.css">
+ <script>
+ window.CHANGAN_TALE_CONFIG = {
+  "id": "cricket",
+  "storageKey": "changan:tale:cricket:v1",
+  "storyUrl": "/night-tour-changan-play/assets/tales/cricket.json",
+  "returnUrl": "/night-tour-changan-play/?tale-return=cricket",
+  "expectedCharacters": 3,
+  "finalStageId": "contest",
+  "puzzleTargetId": "cricket-match",
+  "puzzleMode": "cricket",
+  "puzzleSolution": [
+    "plum",
+    "yield",
+    "rise"
+  ],
+  "puzzleRounds": [
+    {
+      "id": "identify",
+      "title": "辨虫 · 看翅纹",
+      "prompt": "大虫已失，面前列着三张虫形观察牌。依「黑赤身、梅花翅」辨认原作后来出现的小促织；别只挑体型。",
+      "hint": "第三件线索写明：小、黑赤、梅花翅。",
+      "choices": [
+        {
+          "id": "plum",
+          "label": "黑赤小虫",
+          "detail": "身小，翅上有梅花般纹点。"
+        },
+        {
+          "id": "jade",
+          "label": "青项大虫",
+          "detail": "项青，金翅，长尾，曾按画图觅得。"
+        },
+        {
+          "id": "shell",
+          "label": "蟹壳青",
+          "detail": "青壳高背，村中的对手。"
+        }
+      ],
+      "answer": "plum",
+      "success": "你辨出小促织，放下虫罩，先看它如何应敌。"
+    },
+    {
+      "id": "first-bout",
+      "title": "一阵 · 读冲势",
+      "prompt": "蟹壳青昂首直冲；小虫伏低贴地。此刻怎样应势？",
+      "hint": "对手直冲、己方伏低，先让开锋头；本作读势设计并非原作斗虫口诀。",
+      "choices": [
+        {
+          "id": "yield",
+          "label": "侧身让过",
+          "detail": "避开这一冲，留住距离。"
+        },
+        {
+          "id": "rush",
+          "label": "正面急撞",
+          "detail": "不看强弱，直迎对方锋头。"
+        },
+        {
+          "id": "shake",
+          "label": "敲盆催斗",
+          "detail": "惊扰两虫，催它们硬碰。"
+        }
+      ],
+      "answer": "yield",
+      "success": "小虫侧让半步。对手冲空，身侧露出空隙。"
+    },
+    {
+      "id": "second-bout",
+      "title": "二阵 · 读空隙",
+      "prompt": "对手冲过头正回身，小虫后足已屈，翅上纹点张开。此刻怎样应势？",
+      "hint": "对手正在回身，己方已蓄后足，选择顺势轻跃。",
+      "choices": [
+        {
+          "id": "rise",
+          "label": "乘隙跃起",
+          "detail": "顺它蓄好的势，轻跃至对侧。"
+        },
+        {
+          "id": "retreat",
+          "label": "一直后撤",
+          "detail": "没有再看眼前已经出现的空隙。"
+        },
+        {
+          "id": "chase",
+          "label": "急追蛮撞",
+          "detail": "不顾对手正在转身，向前硬撞。"
+        }
+      ],
+      "answer": "rise",
+      "success": "小虫一跃越到对侧，对手退开。纸上胜负已分；把人命押在一虫上的制度，仍没有变。"
+    }
+  ],
+  "sound": "paper",
+  "portraits": {
+    "cheng-wife": "/night-tour-changan-play/assets/tales/cheng-wife.png",
+    "cheng-ming": "/night-tour-changan-play/assets/tales/cheng-ming.png",
+    "cheng-child": "/night-tour-changan-play/assets/tales/cheng-child.png"
+  },
+  "safeStagePoints": {
+    "petition": {
+      "x": 277,
+      "z": 35,
+      "yaw": 1.7681918866447774,
+      "pitch": 0.045
+    },
+    "search": {
+      "x": 297,
+      "z": 35,
+      "yaw": 1.7681918866447774,
+      "pitch": 0.045
+    },
+    "contest": {
+      "x": 321,
+      "z": 35,
+      "yaw": 1.7681918866447774,
+      "pitch": 0.045
+    }
+  },
+  "text": {
+    "audioOff": "收起草间风声",
+    "audioOn": "听草间风声",
+    "audioResume": "点此续听草间风声",
+    "audioOpening": "听一段草间风声",
+    "audioUnavailable": "风声暂未响起，所有辨虫与读势线索仍有文字，可静音完成故事。",
+    "saveCorrupt": "这页记录未能读全，可从村口重入梦境；其他异闻与城中原有记录保留。",
+    "saveUnavailable": "本机暂时不能保存，当前梦境仍可继续；离开或刷新后可能需要重走村路。",
+    "sceneWaiting": "松风村舍尚在展开，请稍候片刻。",
+    "guideUnavailable": "这段草白引路暂未接通，可沿村路靠近标记。",
+    "guideWalking": "循脚下草白引路亲自走近；电脑用 W A S D，手机推左下摇杆。",
+    "guideArrived": "已到近处，停步细看。",
+    "dialogueRecorded": "村中问话 · 已记下回应",
+    "dialogueKind": "村中问话",
+    "dialogueReply": "草间回音",
+    "encounterKind": "村中旁听",
+    "stageKind": "聊斋梦境 · 文学改编",
+    "advanceKind": "循草前行",
+    "nextPlace": "走向下一段村路",
+    "transition": "虫鸣尚未停，你沿着村舍外的干燥道路继续走。",
+    "puzzleEmptySlot": "尚未判断",
+    "puzzleUnit": "回",
+    "puzzleProgress": "已明{label}。再读下一回合。",
+    "puzzleAction": "辨虫读势",
+    "puzzleSolvedAction": "回应",
+    "puzzleInitial": "先辨虫，再读两阵势头；错选只重试本回合，不计时、不收费。",
+    "endingKind": "三回合已明 · 把目光移回人",
+    "endingDecision": "读原作回声，或先护住一家",
+    "endingNote": "「一虫入贡」保留原作后事；「先护人」是新增互助分支，不宣称一念消除征敛。两页最后孩子均健康归来。",
+    "endingReturnScene": "回到村路，看看一家人的归处",
+    "returnLabel": "返回村舍",
+    "endedHint": "梦境已收束。仍可在村路停留、翻看人物与线索，或另起一夜。",
+    "emptyClues": "册页还空着。先走近纸令、画图与翅纹观察牌，亲自查看，所见才会记在这里。",
+    "characterEyebrow": "促织 · 独立角色卡",
+    "hiddenCharacterLabel": "尚在草鸣之外",
+    "characterNote": "文学角色的艺术设计，非历史人物画像。成子为全衣健康儿童形貌，不表现遇险或伤势。",
+    "helpKind": "一虫一命 · 操作",
+    "helpTitle": "循图入草，辨虫读势",
+    "helpGuide": "点行动卡的「前往」，循地面草白引路走近。到人物或物件附近，按钮会变为「交谈」「查看」。三幕沿村舍北侧的干燥道路展开，无需进屋、翻墙或涉水。第三幕先辨梅花翅，再读两阵势头，文字提示随时可看。",
+    "helpAudio": "「听草间风声」默认关闭。风声不承担解题信息，静音同样可以辨虫、读势并走完故事。",
+    "helpReturn": "若在村外走远，可点下方「回到本幕村路」，回到当前梦境的安全落脚处；线索与对谈保留。",
+    "helpExit": "本篇有征敛、困顿及孩子遇险的含蓄叙述，不重演危险，不让错选伤人。无追逐、惊跳、赌注或限时。右上「返回村舍」可暂离；本机能保存时，回来可接着这一幕。",
+    "returnToStageLabel": "回到本幕村路",
+    "returnUnavailable": "村路的落脚处暂未接好，请稍候再试。",
+    "returnedToStage": "已回到本幕村路，线索与对谈仍在。",
+    "restartTitle": "重入村外草鸣的这一夜？",
+    "restartDescription": "本篇当前线索、问话与辨虫读势将重新开始。已读结尾和揭开的角色卡仍留在本机，其他四篇异闻及城中存档均保留。",
+    "restartAction": "重入梦境，从村口开始"
+  }
+};
+ </script>
+ <script defer src="/night-tour-changan-play/assets/tales/changan-zhiguai-page.js"></script>
+</head>
+<body class="cricket-tale">
+ <a class="skip-link" href="#actionDock">跳到当前行动</a>
+ <header class="tale-header">
+  <div class="tale-brand"><span class="seal" aria-hidden="true">聊<br>斋</span><div><p>一虫一命 · 异闻其五</p><h1>促织</h1></div></div>
+  <nav class="header-actions" aria-label="梦境工具"><button type="button" id="openClues">线索册 <span id="clueCount">0</span></button><button type="button" id="openPeople">人物册</button><a href="/night-tour-changan-play/?tale-return=cricket" id="returnCity">返回村舍 <span aria-hidden="true">↗</span></a></nav>
+ </header>
+ <main class="tale-experience" id="taleExperience">
+  <iframe id="taleScene" class="tale-scene" src="/night-tour-changan-play/?tale-scene=cricket" title="促织：长安梦境松风村舍外的三维村路" allow="fullscreen" tabindex="0"></iframe>
+  <div class="scene-shade" aria-hidden="true"></div>
+  <aside class="stage-hud" id="stageHud" hidden><p class="eyebrow" id="stageNumber"></p><h2 id="stageTitle"></h2><p id="stageObjective"></p><button type="button" id="openRecap" class="text-button">重听这一幕</button></aside>
+  <div class="scene-status" id="sceneStatus" role="status" aria-live="polite">正在展开草鸣中的村舍梦景……</div>
+  <button type="button" class="scene-focus" id="focusScene" hidden>回到行走</button>
+  <button type="button" class="scene-audio" id="toggleTaleAudio" aria-pressed="false" hidden>听草间风声</button>
+  <section class="action-dock" id="actionDock" tabindex="-1" aria-label="当前行动" hidden><div class="dock-heading"><div><p class="eyebrow">村中亲历</p><p id="actionHint">循图寻草，辨虫读势，先把人放回眼前。</p></div><div class="dock-tools"><button type="button" id="openSource" class="text-button">原作与改编</button><button type="button" id="openWalkHelp" class="text-button">怎样行走</button></div></div><div id="actionRows" class="action-rows"></div><div id="stageAdvance" class="stage-advance"></div></section>
+  <section class="opening" id="opening" aria-labelledby="openingTitle"><div class="opening-paper">
+   <div class="cricket-frontispiece" aria-hidden="true"><i class="cricket-rim"></i><i class="cricket-glyph"><b></b><b></b><b></b><b></b></i><span>微虫系命</span></div>
+   <p class="eyebrow">蒲松龄《聊斋志异·促织》改编</p>
+   <p class="opening-volume">长安梦境 <span>其五</span></p>
+   <h2 id="openingTitle">一只虫的分量，<br>为何重过一家人？</h2>
+   <p class="opening-copy">成妻问来一张图，成名伏草寻一线生路。你循图走到虫盆，先辨梅花翅，再读两阵势头；胜负之外，还有必须被看见的人。</p>
+   <ol class="opening-steps"><li><span>一</span>纸令压门，听清一家处境</li><li><span>二</span>循图入草，辨寺阁石影</li><li><span>三</span>辨虫读势，把目光移回人</li></ol>
+   <p class="opening-source">清代小说，故事设明宣德年间华阴。此处借长安村舍作文学梦境，非唐代史事；对白、读势玩法及护人分支为本作改编。</p>
+   <p class="opening-note"><strong>沉郁荒诞 · 三幕 · 两种收束</strong><br>约九至十二分钟。有孩子遇险的含蓄叙述，不重演危险、不让选错伤人。无惊跳、追逐、赌注或限时。声音默认关闭。本篇进度只记在本机。</p>
+   <div class="opening-actions"><button type="button" id="beginTale" class="primary" disabled>梦景尚在展开……</button><button type="button" id="restartTale" class="text-button" hidden>重入梦境</button><button type="button" id="openingWalkHelp" class="text-button" disabled>先读玩法</button><button type="button" id="openingTaleAudio" class="text-button" aria-pressed="false">听一段草间风声</button><button type="button" id="openingSource" class="text-button">原作与改编对照</button></div>
+   <p class="save-status" id="saveStatus" role="status"></p><a class="opening-return" href="/night-tour-changan-play/?tale-return=cricket">暂别梦境，返回村舍</a>
+  </div></section>
+ </main>
+ <dialog class="tale-dialog reading-dialog" id="readingDialog" aria-labelledby="readingTitle"><div class="dialog-top"><p class="eyebrow" id="readingKind"></p><button type="button" class="close-button" data-close="readingDialog" aria-label="合上书页">×</button></div><h2 id="readingTitle" tabindex="-1"></h2><div id="readingBody" class="reading-body"></div><div id="readingActions" class="reading-actions"></div></dialog>
+ <dialog class="tale-dialog drawer" id="cluesDialog" aria-labelledby="cluesTitle"><div class="dialog-top"><div><p class="eyebrow">村中三件物证</p><h2 id="cluesTitle" tabindex="-1">线索册</h2></div><button type="button" class="close-button" data-close="cluesDialog" aria-label="合上线索册">×</button></div><p class="drawer-intro">只记亲自看过的纸令、画图与翅纹。三回合的判断全有文字，静音也可完成。</p><div id="cluesList" class="clues-list"></div><div class="hint-sheet" id="puzzleHints" hidden><h3>辨虫读势提示</h3><div id="puzzleHintText"></div></div></dialog>
+ <dialog class="tale-dialog drawer" id="peopleDialog" aria-labelledby="peopleTitle"><div class="dialog-top"><div><p class="eyebrow">文学角色 · 独立艺术设计</p><h2 id="peopleTitle" tabindex="-1">成家三人</h2></div><button type="button" class="close-button" data-close="peopleDialog" aria-label="合上人物册">×</button></div><p class="drawer-intro">成妻、成名、成子各有一张独立角色卡。形貌为本作重新设计；成子画像健康全衣，人物背后的原作因缘随问话与读势逐渐揭开。</p><div id="peopleList" class="people-list"></div></dialog>
+ <dialog class="tale-dialog character-dialog" id="characterDialog" aria-labelledby="characterTitle"><button type="button" class="close-button portrait-close" data-close="characterDialog" aria-label="合上人物卡">×</button><div id="characterBody"></div></dialog>
+ <dialog class="tale-dialog reading-dialog puzzle-dialog" id="puzzleDialog" aria-labelledby="puzzleTitle"><div class="dialog-top"><p class="eyebrow">第三幕 · 一虫一命</p><button type="button" class="close-button" data-close="puzzleDialog" aria-label="稍后再读势">×</button></div><h2 id="puzzleTitle" tabindex="-1">先辨虫，再读势</h2><p id="puzzleInstruction"></p><div id="lampProgress" class="lamp-progress" aria-live="polite"></div><div id="lampChoices" class="lamp-choices"></div><p id="puzzleFeedback" class="puzzle-feedback" role="status"></p><details class="puzzle-help"><summary>再看物证与本回合提示</summary><div id="puzzleHelpText"></div></details><div class="reading-actions"><button type="button" id="resetLamps" class="text-button">从第一回合重看</button><button type="button" id="finishLamps" class="primary" hidden>三回合已明，回应这一夜</button></div></dialog>
+ <dialog class="tale-dialog reading-dialog source-dialog" id="sourceDialog" aria-labelledby="sourceTitle"><div class="dialog-top"><div><p class="eyebrow">文学来处 · 改编说明</p><h2 id="sourceTitle" tabindex="-1">原作与此夜</h2></div><button type="button" class="close-button" data-close="sourceDialog" aria-label="合上改编说明">×</button></div><div class="reading-body"><p>本篇据清代蒲松龄《聊斋志异·促织》改编。原作设明宣德年间华阴；本作借长安已有村舍安放文学梦境，不把它记作唐代长安史事，也不作原址复原。</p><p>成名、成妻与九岁成子来自原作。原文未为妻子和孩子记名，本作保留这一点，另为三人设计独立画像与角色卡。成妻持续参与问图、照料与求援，不只是递交任务的背景人物。</p><div class="adaptation-sheet"><h3>亲历时改了什么</h3><p>三件物证、村路问答与「辨虫—读冲势—读空隙」小游戏均为本作编写，不是原文的游戏或斗虫秘诀。错选可重试，不计时、不收费、不伤人。</p><p>原作孩子因惧责遇险、气息尚在，本篇只以淡出文字交代，不重演危险，也不把伤害变成神虫奖励。两页结尾的最后画面，孩子均健康归来。</p></div><details class="source-afterword"><summary>展开原作后记与结尾对照（含剧透）</summary><p>原作由宫中好斗促织，写到地方层层征取。成名不敢转敛而陷入困顿；成妻问巫得画图，成名依图寻到青项金翅大虫。后来孩子失手使虫死去，惊惧遇险，被救后久久未醒。</p><p>小虫黑赤、梅花翅，善斗，胜强虫又胜鸡，被献入宫中。成家因虫受赏免役，一年有余后孩子苏醒，自言曾化促织。本作「一虫入贡」保留这段主要脉络，不把富贵当作征敛合理的证明。</p><p>「先护人」是本作新增的互助分支：暂借粮米、轮班照料、整理文书求援。它只写眼前能共同承担的行动，不宣称一次选择消除制度，也不把孩子化虫换富贵当作新分支的前提。</p><p>故事的讽刺并不止于小虫战胜大虫。人命被上意与差役压在一只虫身上，才是本篇留下的问题。</p><p class="source-reference"><a href="https://zh.wikisource.org/zh-hant/聊齋志異/第04卷#促織" target="_blank" rel="noopener noreferrer">阅读《聊斋志异·促织》原文 ↗</a></p></details></div><div class="reading-actions"><button type="button" class="primary" data-close="sourceDialog">已知来处，回到此夜</button></div></dialog>
+ <noscript><div class="noscript-note">这段亲历故事需要开启浏览器脚本。<a href="/night-tour-changan-play/?tale-return=cricket">返回村舍</a></div></noscript>
+</body>
+</html>

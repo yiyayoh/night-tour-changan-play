@@ -1,0 +1,160 @@
+/* Shared controls stay identical; the second folio has its own paper-and-ash art. */
+:root{--ink:#201a18;--deep:#100f0f;--paper:#ded8cd;--paper-dim:#bdb6aa;--gold:#d7b9a3;--red:#a94c40;--line:rgba(190,159,139,.3)}
+body.paper-door-tale{background:#100f0f;color:var(--paper)}
+.paper-door-tale button{background:#302522;border-radius:2px;border-color:#9b7a684f}
+.paper-door-tale button:hover{background:#46302b;border-color:#bc8b70}
+.paper-door-tale button:focus-visible,.paper-door-tale a:focus-visible,.paper-door-tale summary:focus-visible,.paper-door-tale iframe:focus-visible{outline-color:#dba68e}
+.paper-door-tale button.primary{background:#a6483c;border-color:#bd6557;color:#fff0de}
+.paper-door-tale button.primary:hover{background:#bb5849}
+.paper-door-tale .text-button{background:transparent;color:#d9b5a0}
+.paper-door-tale .tale-header{background:linear-gradient(90deg,#241a17,#171514 72%);border-bottom-color:#96634f73}
+.paper-door-tale .tale-brand h1{letter-spacing:.22em}
+.paper-door-tale .tale-brand p{color:#b7a89c;letter-spacing:.17em}
+.paper-door-tale .seal{border-color:#a95143;background:#76392d29;color:#ce8b78;transform:rotate(-3deg)}
+.paper-door-tale .header-actions button{background:transparent}
+.paper-door-tale .tale-scene{background:#151515}
+.paper-door-tale .scene-shade{background:linear-gradient(90deg,#210d0c18,transparent 22%,transparent 80%,#210d0c22),linear-gradient(180deg,#100c0c3b,transparent 35%,transparent 65%,#0807076b)}
+.paper-door-tale .stage-hud{background:#201815e8;border-color:#8e6250a6;border-radius:2px;border-left:3px solid #a14d41}
+.paper-door-tale .stage-hud>p:last-of-type{color:#e1d4c5}
+.paper-door-tale .stage-hud .eyebrow{color:#bfa793}
+.paper-door-tale .scene-status{background:#1c1715eb;border-color:#9365517a;border-radius:2px;color:#dfd1c2}
+.paper-door-tale .scene-focus,.paper-door-tale .scene-audio{background:#241a17ed}
+.paper-door-tale .scene-audio[aria-pressed="true"]{color:#f1c6ad;border-color:#ca8970}
+.paper-door-tale .action-dock{background:#211a17f5;border-color:#936551a6;border-radius:2px;box-shadow:0 6px 30px #0007}
+.paper-door-tale .dock-heading .eyebrow{color:#c89c82}
+.paper-door-tale .action-row{background:#2d2420;border-radius:1px;border-color:#8b6d5c59}
+.paper-door-tale .action-row button{background:#4d342b;color:#f3e1cf}
+.paper-door-tale .action-name small{color:#c0b2a3}
+.paper-door-tale .action-row[data-done="true"]{border-color:#a07d5e77}
+.paper-door-tale .action-row[data-done="true"] .action-name small{color:#d2b399}
+.paper-door-tale .opening{background:#0c0909a6;backdrop-filter:blur(3px);padding:26px}
+.paper-door-tale .opening-paper{width:min(720px,100%);padding:34px 38px 23px;border:1px solid #8b6150a1;border-radius:1px;background:repeating-linear-gradient(93deg,#ffffff01 0 1px,transparent 1px 5px),linear-gradient(125deg,#2f2520fc,#1b1716fc 70%);box-shadow:0 18px 90px #000a;overflow:hidden}
+.paper-door-tale .opening-paper::before{content:"";position:absolute;inset:7px;border:1px solid #94725b35;pointer-events:none}
+.paper-door-tale .opening-paper>.eyebrow{font-size:10px;letter-spacing:.22em;color:#c4a388}
+.opening-volume{font:11px/1.5 var(--serif);letter-spacing:.18em;color:#a99a8a;margin-top:13px}
+.opening-volume span{display:inline-block;margin-left:10px;padding:2px 7px;border:1px solid #a35c49;color:#e0a28a;transform:rotate(-3deg)}
+.paper-door-tale .opening h2{font-weight:400;font-size:32px;line-height:1.48;letter-spacing:.07em;color:#e6dbcc;margin:18px 175px 15px 0}
+.paper-door-tale .opening-copy{max-width:355px;font-size:14px;line-height:1.9;color:#cdbdab;padding-right:10px}
+.opening-door{position:absolute;right:37px;top:67px;width:145px;height:239px;padding:12px 10px 0;background:linear-gradient(90deg,#110d0d,#1c1110 49%,#080606 50%,#1b1311);border:7px solid #40332b;box-shadow:inset 0 0 0 1px #7a5c414f,0 9px 20px #0007;pointer-events:none;transform:perspective(520px) rotateY(-7deg)}
+.opening-door::before{content:"";position:absolute;inset:15px 8px 0;background:repeating-linear-gradient(0deg,transparent 0 42px,#100c0cbb 42px 47px),repeating-linear-gradient(90deg,#2b2420 0 34px,#493b31 35px,#1a1512 36px,#26201b 39px);border:1px solid #6b514066}
+.opening-door::after{content:"";position:absolute;left:calc(50% - 2px);top:9px;bottom:0;width:4px;background:#020202;box-shadow:1px 0 10px #000}
+.opening-door i{position:absolute;z-index:1;top:88px;left:18px;width:95px;height:24px;background:linear-gradient(4deg,#893f32,#b4664b 70%,#7c3d30);border:1px solid #c2825b6b;box-shadow:0 1px 8px #0007;transform:rotate(35deg)}
+.opening-door i:nth-child(2){transform:rotate(-35deg);background:linear-gradient(0deg,#79382f,#a05a40 80%)}
+.opening-door span{position:absolute;z-index:2;top:85px;left:44px;font:25px/32px var(--serif);color:#291510;transform:rotate(-3deg)}
+.paper-door-tale .opening-steps{margin:23px 0 16px;padding-top:16px;border-top:1px solid #98705247;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.paper-door-tale .opening-steps li{font-size:12px;line-height:1.7;color:#d6c7b4}
+.paper-door-tale .opening-steps span{display:block;width:24px;height:24px;border-radius:0;border-color:#93634d94;margin-bottom:8px;color:#d8a989;font-size:12px}
+.paper-door-tale .opening-note{color:#bdb0a0;font-size:11px;line-height:1.85}
+.paper-door-tale .opening-note strong{font-weight:400;letter-spacing:.08em;color:#d4a897}
+.paper-door-tale .opening-actions{margin-top:18px;gap:7px}
+.paper-door-tale .opening-actions .primary{flex:1 0 150px;min-width:150px}
+.paper-door-tale .opening-actions .text-button{font-size:12px;padding:8px}
+.paper-door-tale .save-status{color:#c7ad96;font-size:11px}
+.paper-door-tale .opening-return{color:#b7a48f}
+.paper-door-tale .tale-dialog{background:repeating-linear-gradient(93deg,#32241303 0 1px,transparent 1px 5px),#d7d0c4;color:#302a25;border:1px solid #ab8b72;border-radius:2px;box-shadow:0 16px 100px #0009}
+.paper-door-tale .tale-dialog::backdrop{background:#0c0809bb}
+.paper-door-tale .tale-dialog .eyebrow{color:#8c4f3b}
+.paper-door-tale .tale-dialog button{background:#46342b;color:#f9ecdb;border-color:#8a624b7a}
+.paper-door-tale .tale-dialog button:hover{background:#624132}
+.paper-door-tale .tale-dialog .primary{background:#844438;border-color:#844438;color:#fff0df}
+.paper-door-tale .tale-dialog .primary:hover{background:#a65342}
+.paper-door-tale .tale-dialog .text-button,.paper-door-tale .tale-dialog .close-button{background:transparent;color:#824c37}
+.paper-door-tale .reading-body blockquote{border-color:#9b5141;background:#70503b0d;color:#594439}
+.paper-door-tale .reading-actions button{border-radius:1px}
+.paper-door-tale .dialog-note{color:#716252}
+.paper-door-tale .drawer-intro{color:#6e5b4c}
+.paper-door-tale .clue-paper{background:#e5ddd0a6;border-color:#896f5770;border-radius:0;border-left:3px solid #a45d48}
+.paper-door-tale .clue-paper h3{color:#594437}
+.paper-door-tale .clue-paper small{color:#79513c}
+.paper-door-tale .empty-note{color:#6c5a4b}
+.paper-door-tale .hint-sheet{border-color:#8d695280}
+.paper-door-tale .people-list{gap:15px}
+.paper-door-tale .person-cover{background:#251d18!important;border-color:#8a614a99!important;border-radius:0}
+.paper-door-tale .person-cover img{background:radial-gradient(ellipse at 50% 42%,#74695b,#29221e 80%);filter:none}
+.paper-door-tale .person-cover span{border-top:1px solid #956e516b;color:#ebd5be}
+.paper-door-tale .person-cover small{color:#c7ab92}
+.paper-door-tale .character-dialog{padding:0;background:#d7d0c4}
+.paper-door-tale .character-portrait{background:radial-gradient(ellipse at 50% 43%,#817364,#29201c 82%);object-fit:contain}
+.paper-door-tale .portrait-close{background:#241a17eb!important;border-color:#b8816377!important;color:#f5ddc3!important}
+.paper-door-tale .character-writing{background:linear-gradient(100deg,#c9c0b144,#ded7cb77);border-left:1px solid #93765d55}
+.paper-door-tale .character-writing h2{color:#3f2c23}
+.paper-door-tale .character-role{color:#675044}
+.paper-door-tale .character-writing dt{color:#8b4c39}
+.paper-door-tale .character-quote{border-color:#89604755;color:#6b4532}
+.paper-door-tale .identity-layer{border-left:3px solid #914736;background:#9e55321a}
+.paper-door-tale .identity-layer h3{color:#82432e}
+.paper-door-tale .identity-layer.locked{border-color:#8f7a6b;background:#5447330b;color:#796959}
+.paper-door-tale .character-note{color:#7d6d5c}
+.paper-door-tale .lamp-progress{gap:15px;margin:23px 0}
+.paper-door-tale .lamp-slot{width:82px;min-height:85px;border-radius:2px;border-color:#8a6c5566;color:#86715c;background:#d4c8b729}
+.paper-door-tale .lamp-slot.lit{background:linear-gradient(115deg,#a36d4c29,#7f4d3026);border-color:#9b5140;color:#7b3c2b;box-shadow:inset 3px 0 #9b514059}
+.paper-door-tale .lamp-choices button{font-size:14px;line-height:1.7;background:#48372b;border-color:#816249;border-radius:2px;min-height:65px}
+.paper-door-tale .lamp-choices button:disabled{opacity:.68;cursor:default}
+.paper-door-tale .puzzle-feedback{color:#85432f;line-height:1.85}
+.paper-door-tale .puzzle-help{border-color:#8d665380}
+.paper-door-tale .puzzle-help summary{color:#7b4c36}
+.paper-door-tale .noscript-note{background:#d7d0c4;color:#302a25}
+@media(max-width:700px){
+ .paper-door-tale .tale-brand h1{font-size:23px;letter-spacing:.1em}
+ .paper-door-tale .tale-brand p{letter-spacing:.08em;font-size:9px}
+ .paper-door-tale .opening{padding:13px}
+ .paper-door-tale .opening-paper{padding:27px 25px 17px}
+ .paper-door-tale .opening h2{font-size:28px;line-height:1.45;margin:15px 76px 14px 0}
+ .paper-door-tale .opening-copy{font-size:13px;line-height:1.85;max-width:100%;padding-right:0}
+ .paper-door-tale .opening-door{right:20px;top:76px;width:64px;height:123px;border-width:4px;padding:0;opacity:.75}
+ .paper-door-tale .opening-door::before{inset:5px 4px 0;background:repeating-linear-gradient(0deg,#30231c99 0 23px,#100c0c 23px 26px)}
+ .paper-door-tale .opening-door::after{top:5px;width:3px}
+ .paper-door-tale .opening-door i{width:47px;height:12px;left:4px;top:41px}
+ .paper-door-tale .opening-door span{font-size:15px;line-height:20px;top:37px;left:20px}
+ .paper-door-tale .opening-steps{gap:8px;margin:18px 0 13px;padding-top:13px}
+ .paper-door-tale .opening-steps li{font-size:11px;line-height:1.65}
+ .paper-door-tale .opening-steps span{margin-bottom:5px;width:22px;height:22px}
+ .paper-door-tale .opening-note{font-size:10px}
+ .paper-door-tale .opening-actions{gap:3px;margin-top:13px}
+ .paper-door-tale .opening-actions .primary{flex-basis:100%;font-size:15px}
+ .paper-door-tale .opening-actions .text-button{font-size:11px;flex:1}
+ .paper-door-tale .opening-return{font-size:11px}
+ .paper-door-tale .scene-focus,.paper-door-tale .scene-audio{max-width:88px}
+ .paper-door-tale .stage-hud{max-width:230px}
+ .paper-door-tale .lamp-choices{gap:7px}
+ .paper-door-tale .lamp-choices button{font-size:12px;min-height:65px;padding:9px 5px}
+ .paper-door-tale .lamp-slot{min-height:72px;width:75px;font-size:13px}
+}
+@media(max-width:350px){
+ .paper-door-tale .tale-brand h1{font-size:21px}
+ .paper-door-tale .tale-brand p{font-size:8px}
+ .paper-door-tale .opening-paper{padding:22px 20px 14px}
+ .paper-door-tale .opening h2{font-size:25px;margin-right:61px}
+ .paper-door-tale .opening-door{right:16px;width:55px;top:77px;height:114px}
+ .paper-door-tale .opening-door i{width:40px}
+ .paper-door-tale .opening-door span{left:15px}
+ .paper-door-tale .opening-copy{font-size:12px}
+ .paper-door-tale .opening-steps li{font-size:10px}
+ .paper-door-tale .stage-hud{max-width:205px}
+ .paper-door-tale .scene-focus,.paper-door-tale .scene-audio{max-width:74px}
+ .paper-door-tale .lamp-choices{gap:5px}
+ .paper-door-tale .lamp-choices button{font-size:11px}
+}
+@media(max-height:500px) and (min-width:600px){
+ .paper-door-tale .opening{padding:9px}
+ .paper-door-tale .opening-paper{width:min(780px,100%);padding:19px 27px 12px;display:grid;grid-template-columns:1fr 1fr;gap:0 28px}
+ .paper-door-tale .opening-door{display:none}
+ .paper-door-tale .opening-paper>.eyebrow{grid-column:1;font-size:9px}
+ .paper-door-tale .opening-volume{grid-column:1;grid-row:2;font-size:9px;margin-top:7px}
+ .paper-door-tale .opening h2{grid-column:1;grid-row:3;font-size:25px;line-height:1.4;margin:10px 0}
+ .paper-door-tale .door-line{display:none}
+ .paper-door-tale .opening-copy{grid-column:1;grid-row:4 / 7;font-size:12px;line-height:1.75;max-width:100%}
+ .paper-door-tale .opening-steps{grid-column:2;grid-row:1 / 4;display:flex;gap:5px;flex-direction:column;border:0;padding:0;margin:0 0 10px}
+ .paper-door-tale .opening-steps li{font-size:11px}
+ .paper-door-tale .opening-steps span{display:inline-grid;margin:0 8px 0 0;width:21px;height:21px}
+ .paper-door-tale .opening-note{grid-column:2;grid-row:4;font-size:10px;line-height:1.7}
+ .paper-door-tale .opening-actions{grid-column:2;grid-row:5;margin-top:10px;gap:2px}
+ .paper-door-tale .opening-actions .primary{min-width:110px;flex:1 0 100%;font-size:13px}
+ .paper-door-tale .opening-actions .text-button{font-size:10px;padding:7px 6px;flex:1}
+ .paper-door-tale .save-status{grid-column:2;grid-row:6;font-size:9px;line-height:1.5;margin-top:4px}
+ .paper-door-tale .opening-return{grid-column:1;grid-row:7;font-size:10px;min-height:44px}
+ .paper-door-tale .stage-hud{max-width:240px}
+ .paper-door-tale .lamp-progress{margin:13px 0}
+ .paper-door-tale .lamp-slot{min-height:58px;width:70px;font-size:13px}
+ .paper-door-tale .lamp-choices button{min-height:52px;font-size:12px;padding:8px}
+}

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+ <meta name="theme-color" content="#181514">
+ <meta name="description" content="西驿的门已经封了，门内仍有人替你答话。亲自行走、查簿循灰、辨清三声，走入夜游长安第二篇原创志怪《纸门客》。">
+ <title>纸门客 · 长安异闻其二</title>
+ <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%23181514'/%3E%3Cpath d='M15 56V10h34v46M32 11v44' fill='none' stroke='%23b8b2a8' stroke-width='3'/%3E%3Cpath d='m20 19 29 24m-3-24L20 43' stroke='%23a4473c' stroke-width='7'/%3E%3C/svg%3E">
+ <link rel="stylesheet" href="/night-tour-changan-play/assets/tales/changan-zhiguai.css">
+ <link rel="stylesheet" href="/night-tour-changan-play/assets/tales/changan-paper-door.css">
+ <script>
+ window.CHANGAN_TALE_CONFIG = {
+  id: 'paper-door', storageKey: 'changan:tale:paper-door:v1', storyUrl: '/night-tour-changan-play/assets/tales/paper-door.json', returnUrl: '/night-tour-changan-play/?tale-return=paper-door',
+  finalStageId: 'seal', puzzleTargetId: 'three-knocks', puzzleSolution: ['door', 'shadow', 'name'], sound: 'door',
+  portraits: { 'gu-huai': '/night-tour-changan-play/assets/tales/gu-huai.png', 'a-jian': '/night-tour-changan-play/assets/tales/a-jian.png' },
+  safeStagePoints: { gate: { x: -231, z: 16, yaw: -Math.PI / 2, pitch: .045 }, courtyard: { x: -249, z: 18, yaw: Math.atan2(-5, -2), pitch: .045 }, seal: { x: -266, z: 19, yaw: Math.PI, pitch: .045 } },
+  text: {
+   audioOff: '收起门风', audioOn: '听门风', audioResume: '点此续听门风', audioOpening: '听一段门风',
+   audioUnavailable: '这台浏览器暂未响起门风，文字线索仍完整，可静音走完故事。可再点一次续听。',
+   saveCorrupt: '这页旧记录未能读全，可重新来到夜门；《借灯人》与城中原有进度不受影响。',
+   saveUnavailable: '本机暂时不能保存，当前故事仍可继续；离开或刷新后可能需要重到夜门。',
+   sceneWaiting: '西驿夜门尚在显影，请稍候片刻。', guideUnavailable: '这段灰路暂未接通，可沿墙靠近标记。',
+   guideWalking: '循脚下灰白引路亲自走近；电脑用 W A S D，手机推左下摇杆。', guideArrived: '已到近处，停步查看。',
+   dialogueRecorded: '夜门对谈 · 已记下回应', dialogueKind: '夜门对谈', dialogueReply: '纸后回音', stageKind: '西驿夜行 · 原创志怪',
+   advanceKind: '循灰前行', nextPlace: '走向下一处夜门', transition: '灰迹越过你的脚尖，沿墙伸向前方。',
+   puzzleEmptySlot: '尚未辨清', puzzleUnit: '声', puzzleProgress: '{label}已辨。再认下一声来处。', puzzleAction: '辨声',
+   endingKind: '三声已辨 · 封纸由你处置', endingDecision: '决定补封，或亲手破封',
+   endingNote: '两种收束均有代价，选择前可重看线索与人物卡。无需先解锁其中一种。',
+   endingReturnScene: '回到夜门，看看留下了什么', returnLabel: '返回西驿', endedHint: '合卷后仍可留在西驿，也可重到夜门读另一种收束。',
+   emptyClues: '册页还空着。先走近西驿的门簿、灰迹或封纸，亲手查看，实物才会记在这里。',
+   characterEyebrow: '纸门客 · 独立角色卡', hiddenCharacterLabel: '尚在纸门之后',
+   helpKind: '西驿夜行 · 操作', helpTitle: '循灰寻物，门前辨声',
+   helpGuide: '点行动卡的「前往」，沿脚下灰白引路亲自走近。到达人物或物件附近，按钮会变成「交谈」或「查看」。全程在西驿室外，不必钻进实体房屋或跨过封门。',
+   helpAudio: '画面右侧「听门风」可开启低门风与轻木叩，默认关闭。所有三声线索都有文字，静音也能辨题；不要求输入或说出真实姓名。',
+   helpReturn: '若闲游走远，可点下方「回到本幕门外」，回到当前故事的安全落脚处；已收线索与对谈保留。',
+   helpExit: '故事阴冷诡异，无尖叫、追逐或限时，也没有失败扣分。右上「返回西驿」可暂离；本机能保存时，回来可接着这一幕。',
+   returnToStageLabel: '回到本幕门外', returnUnavailable: '夜门外的落脚处暂未接好，请稍候再试。', returnedToStage: '已回到本幕门外，线索与对谈仍在。',
+   restartTitle: '再来一次，仍到这扇门前？', restartDescription: '《纸门客》当前的线索、对谈与辨声次序将从西驿门前重新开始。已经看过的结尾与揭开的角色卡仍留在本机。《借灯人》与城中其他任务、存档均保留。', restartAction: '重到夜门，从门簿开始'
+  }
+ };
+ </script>
+ <script defer src="/night-tour-changan-play/assets/tales/changan-zhiguai-page.js"></script>
+</head>
+<body class="paper-door-tale">
+ <a class="skip-link" href="#actionDock">跳到当前行动</a>
+ <header class="tale-header">
+  <div class="tale-brand"><span class="seal" aria-hidden="true">西<br>驿</span><div><p>长安异闻 · 其二</p><h1>纸门客</h1></div></div>
+  <nav class="header-actions" aria-label="异闻工具"><button type="button" id="openClues">线索册 <span id="clueCount">0</span></button><button type="button" id="openPeople">人物册</button><a href="/night-tour-changan-play/?tale-return=paper-door" id="returnCity">返回西驿 <span aria-hidden="true">↗</span></a></nav>
+ </header>
+ <main class="tale-experience" id="taleExperience">
+  <iframe id="taleScene" class="tale-scene" src="/night-tour-changan-play/?tale-scene=paper-door" title="西驿夜门：纸门客三维故事场景" allow="fullscreen" tabindex="0"></iframe>
+  <div class="scene-shade" aria-hidden="true"></div>
+  <aside class="stage-hud" id="stageHud" hidden><p class="eyebrow" id="stageNumber"></p><h2 id="stageTitle"></h2><p id="stageObjective"></p><button type="button" id="openRecap" class="text-button">重听这一幕</button></aside>
+  <div class="scene-status" id="sceneStatus" role="status" aria-live="polite">正在辨认西驿夜色……</div>
+  <button type="button" class="scene-focus" id="focusScene" hidden>回到行走</button>
+  <button type="button" class="scene-audio" id="toggleTaleAudio" aria-pressed="false" hidden>听门风</button>
+  <section class="action-dock" id="actionDock" tabindex="-1" aria-label="当前行动" hidden><div class="dock-heading"><div><p class="eyebrow">循灰亲历</p><p id="actionHint">辨门外人语，查门前实物。</p></div><button type="button" id="openWalkHelp" class="text-button">怎样行走</button></div><div id="actionRows" class="action-rows"></div><div id="stageAdvance" class="stage-advance"></div></section>
+  <section class="opening" id="opening" aria-labelledby="openingTitle"><div class="opening-paper">
+   <div class="opening-door" aria-hidden="true"><i></i><i></i><span>封</span></div>
+   <p class="eyebrow">西驿夜门 · 原创虚构</p>
+   <p class="opening-volume">异闻 其二 <span>纸门客</span></p>
+   <h2 id="openingTitle">门已经封了，<br>门内仍有人<br class="door-line">替你答话。</h2>
+   <p class="opening-copy">门簿缺了一页姓名，灰中只剩向内的脚印。去问门外的两个人，再听清门后第三声。</p>
+   <ol class="opening-steps"><li><span>一</span>查缺名册，亲看门前物</li><li><span>二</span>循灰问人，辨话中隐情</li><li><span>三</span>依序辨声，亲定封门</li></ol>
+   <p class="opening-note"><strong>阴冷诡异 · 两种有代价的结尾</strong><br>约七至九分钟，无血腥、尖叫、追逐或限时。静音可玩，不输入真实姓名。本篇进度只记在本机。</p>
+   <div class="opening-actions"><button type="button" id="beginTale" class="primary" disabled>夜门尚在显影……</button><button type="button" id="restartTale" class="text-button" hidden>重到夜门</button><button type="button" id="openingWalkHelp" class="text-button" disabled>先读玩法</button><button type="button" id="openingTaleAudio" class="text-button" aria-pressed="false">听一段门风</button></div>
+   <p class="save-status" id="saveStatus" role="status"></p><a class="opening-return" href="/night-tour-changan-play/?tale-return=paper-door">今夜不留，返回西驿</a>
+  </div></section>
+ </main>
+ <dialog class="tale-dialog reading-dialog" id="readingDialog" aria-labelledby="readingTitle"><div class="dialog-top"><p class="eyebrow" id="readingKind"></p><button type="button" class="close-button" data-close="readingDialog" aria-label="合上书页">×</button></div><h2 id="readingTitle" tabindex="-1"></h2><div id="readingBody" class="reading-body"></div><div id="readingActions" class="reading-actions"></div></dialog>
+ <dialog class="tale-dialog drawer" id="cluesDialog" aria-labelledby="cluesTitle"><div class="dialog-top"><div><p class="eyebrow">门外实物</p><h2 id="cluesTitle" tabindex="-1">线索册</h2></div><button type="button" class="close-button" data-close="cluesDialog" aria-label="合上线索册">×</button></div><p class="drawer-intro">只录亲手查看的门簿、灰迹、封纸。声响已有文字，无需开声音辨题。</p><div id="cluesList" class="clues-list"></div><div class="hint-sheet" id="puzzleHints" hidden><h3>三声旧规</h3><div id="puzzleHintText"></div></div></dialog>
+ <dialog class="tale-dialog drawer" id="peopleDialog" aria-labelledby="peopleTitle"><div class="dialog-top"><div><p class="eyebrow">异闻人物 · 原创画像</p><h2 id="peopleTitle" tabindex="-1">门外两人</h2></div><button type="button" class="close-button" data-close="peopleDialog" aria-label="合上人物册">×</button></div><p class="drawer-intro">顾槐与阿缄，各有独立角色卡。门外所言未必尽实，藏着的那一层须亲历才能揭开。</p><div id="peopleList" class="people-list"></div></dialog>
+ <dialog class="tale-dialog character-dialog" id="characterDialog" aria-labelledby="characterTitle"><button type="button" class="close-button portrait-close" data-close="characterDialog" aria-label="合上人物卡">×</button><div id="characterBody"></div></dialog>
+ <dialog class="tale-dialog reading-dialog puzzle-dialog" id="puzzleDialog" aria-labelledby="puzzleTitle"><div class="dialog-top"><p class="eyebrow">第三幕 · 名从门内来</p><button type="button" class="close-button" data-close="puzzleDialog" aria-label="稍后再辨声">×</button></div><h2 id="puzzleTitle" tabindex="-1">辨门三声</h2><p id="puzzleInstruction"></p><div id="lampProgress" class="lamp-progress" aria-live="polite"></div><div id="lampChoices" class="lamp-choices"></div><p id="puzzleFeedback" class="puzzle-feedback" role="status"></p><details class="puzzle-help"><summary>再看一遍三件实物</summary><div id="puzzleHelpText"></div></details><div class="reading-actions"><button type="button" id="resetLamps" class="text-button">重新辨认</button><button type="button" id="finishLamps" class="primary" hidden>三声已辨，听门内说完</button></div></dialog>
+ <noscript><div class="noscript-note">这段亲历故事需要开启浏览器脚本。<a href="/night-tour-changan-play/?tale-return=paper-door">返回西驿</a></div></noscript>
+</body>
+</html>

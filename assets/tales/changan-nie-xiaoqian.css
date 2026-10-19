@@ -1,0 +1,128 @@
+/* The fourth folio follows pale poplar leaves, blue night, and a road home. */
+:root{--ink:#182b32;--deep:#102129;--paper:#e7e4d7;--paper-dim:#c4d1ca;--gold:#bfd7cb;--red:#527b7d;--line:rgba(177,193,179,.28)}
+body.nie-xiaoqian-tale{background:#102129;color:var(--paper)}
+.nie-xiaoqian-tale button{background:#253a39;border-radius:1px;border-color:#b5c1b35c}
+.nie-xiaoqian-tale button:hover{background:#354d49;border-color:#c6d1bd}
+.nie-xiaoqian-tale button:focus-visible,.nie-xiaoqian-tale a:focus-visible,.nie-xiaoqian-tale summary:focus-visible,.nie-xiaoqian-tale iframe:focus-visible{outline-color:#cfb4ab}
+.nie-xiaoqian-tale button.primary{background:#527b7d;border-color:#709b9b;color:#fff1dc}
+.nie-xiaoqian-tale button.primary:hover{background:#648f8f}
+.nie-xiaoqian-tale .text-button{background:transparent;color:#c4cfbf}
+.nie-xiaoqian-tale .tale-header{background:linear-gradient(90deg,#263c43,#152b35 78%);border-bottom-color:#bac6b54f}
+.nie-xiaoqian-tale .tale-brand h1{letter-spacing:.24em}
+.nie-xiaoqian-tale .tale-brand p{color:#b8c0b4;letter-spacing:.12em}
+.nie-xiaoqian-tale .seal{border-color:#729b98;color:#bed8c9;background:#b97d7010}
+.nie-xiaoqian-tale .header-actions button{background:transparent}
+.nie-xiaoqian-tale .tale-scene{background:#192526}
+.nie-xiaoqian-tale .scene-shade{background:linear-gradient(180deg,#13282c20,transparent 39%,transparent 68%,#091b2038)}
+.nie-xiaoqian-tale .stage-hud{background:#1c333deb;border-color:#a9b7a65c;border-radius:1px;border-left:3px solid #a2c6b4}
+.nie-xiaoqian-tale .stage-hud>p:last-of-type{color:#dedcc9}
+.nie-xiaoqian-tale .scene-status{background:#1e3131eb;border-color:#a4b2a259;border-radius:1px;color:#e2e9dc}
+.nie-xiaoqian-tale .scene-focus,.nie-xiaoqian-tale .scene-audio{background:#1f3434ee}
+.nie-xiaoqian-tale .scene-audio[aria-pressed="true"]{color:#e4c6bd;border-color:#c5938e}
+.nie-xiaoqian-tale .action-dock{background:#142e39f7;border-color:#aab8a669;border-radius:1px;box-shadow:0 8px 35px #0005}
+.nie-xiaoqian-tale .dock-heading{gap:8px}
+.nie-xiaoqian-tale .dock-tools{display:flex;gap:2px;flex-shrink:0}
+.nie-xiaoqian-tale .dock-tools .text-button{font-size:11px;padding:8px}
+.nie-xiaoqian-tale .action-row{background:#233f47;border-color:#acb9a346;border-radius:1px}
+.nie-xiaoqian-tale .action-row button{background:#3d6066;color:#f1eada}
+.nie-xiaoqian-tale .action-name small{color:#c4c7b9}
+.nie-xiaoqian-tale .action-row[data-done="true"]{border-color:#c7b1935c}
+.nie-xiaoqian-tale .action-row[data-done="true"] .action-name small{color:#d6baa4}
+.nie-xiaoqian-tale .opening{background:#09161996;padding:25px}
+.nie-xiaoqian-tale .opening-paper{width:min(780px,100%);padding:31px 35px 22px;border:1px solid #a4b39b80;border-radius:1px;background:repeating-linear-gradient(96deg,#edf1df02 0 1px,transparent 1px 5px),linear-gradient(115deg,#293d3dfe,#172a2cfc 83%);box-shadow:0 18px 100px #0009;overflow:hidden}
+.nie-xiaoqian-tale .opening-paper::before{content:"";position:absolute;inset:7px;border:1px solid #a5b79a30;pointer-events:none}
+.nie-xiaoqian-tale .opening-paper>.eyebrow{font-size:10px;letter-spacing:.11em;color:#bbc7b7}
+.nie-xiaoqian-tale .opening-volume{margin-top:13px;font:11px/1.5 var(--serif);letter-spacing:.23em;color:#a7b5a7}
+.nie-xiaoqian-tale .opening-volume span{display:inline-block;margin-left:9px;border:1px solid #b17974;padding:2px 8px;color:#d8a59b}
+.nie-xiaoqian-tale .opening h2{font-weight:400;font-size:35px;line-height:1.55;letter-spacing:.1em;color:#eee6d6;margin:15px 205px 14px 0}
+.nie-xiaoqian-tale .opening-copy{font-size:14px;line-height:1.9;color:#d8dccb;max-width:420px;padding-right:12px}
+.nie-xiaoqian-tale .opening-steps{margin:21px 0 14px;padding-top:15px;border-top:1px solid #bbc5ac38;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.nie-xiaoqian-tale .opening-steps li{font-size:12px;line-height:1.7;color:#dbe0cb}
+.nie-xiaoqian-tale .opening-steps span{border-radius:0;margin-bottom:8px;display:block;color:#dfb0a3;border-color:#ad7a745e;width:24px;height:24px;text-align:center;line-height:22px}
+.nie-xiaoqian-tale .opening-source{font:11px/1.85 var(--sans);color:#bcc6b7;margin:0 0 12px;padding-left:11px;border-left:2px solid #aa797069}
+.nie-xiaoqian-tale .opening-note{font-size:11px;color:#bdc7b8;line-height:1.85}
+.nie-xiaoqian-tale .opening-note strong{font-weight:400;color:#dbb7aa;letter-spacing:.07em}
+.nie-xiaoqian-tale .opening-actions{margin-top:16px;gap:5px}
+.nie-xiaoqian-tale .opening-actions .primary{flex:1 0 100%;min-width:150px}
+.nie-xiaoqian-tale .opening-actions .text-button{padding:8px;font-size:11px}
+.nie-xiaoqian-tale .save-status{font-size:10px;color:#c8c1a4}
+.nie-xiaoqian-tale .opening-return{font-size:11px;color:#b6c1ae}
+.nie-xiaoqian-tale .tale-dialog{background:repeating-linear-gradient(93deg,#345c5003 0 1px,transparent 1px 5px),#e7e4d7;color:#253b40;border:1px solid #aeb59f;border-radius:1px;box-shadow:0 18px 100px #0009}
+.nie-xiaoqian-tale .tale-dialog::backdrop{background:#0a1c1fb5}
+.nie-xiaoqian-tale .tale-dialog .eyebrow{color:#8b5154}
+.nie-xiaoqian-tale .tale-dialog button{background:#354e48;border-color:#7087776e;color:#f6efdc}
+.nie-xiaoqian-tale .tale-dialog button:hover{background:#496057}
+.nie-xiaoqian-tale .tale-dialog .primary{background:#527b7d;border-color:#527b7d;color:#fff0dc}
+.nie-xiaoqian-tale .tale-dialog .primary:hover{background:#648f8f}
+.nie-xiaoqian-tale .tale-dialog .text-button,.nie-xiaoqian-tale .tale-dialog .close-button{background:transparent;color:#805150}
+.nie-xiaoqian-tale .reading-body blockquote{border-color:#946063;background:#6c5d590c;color:#5e5b4b}
+.nie-xiaoqian-tale .dialog-note,.nie-xiaoqian-tale .drawer-intro{color:#64725d}
+.nie-xiaoqian-tale .clue-paper{border-radius:0;border-color:#8b9a8059;border-left:3px solid #a56c69;background:#f7f3e260}
+.nie-xiaoqian-tale .clue-paper h3{color:#42564b}
+.nie-xiaoqian-tale .clue-paper small{color:#7f5850}
+.nie-xiaoqian-tale .hint-sheet{border-color:#7b916c59}
+.nie-xiaoqian-tale .empty-note{color:#6a765f}
+.nie-xiaoqian-tale .people-list{gap:13px}
+.nie-xiaoqian-tale .person-cover{background:#203c45!important;border-color:#8b9f8473!important;border-radius:0}
+.nie-xiaoqian-tale .person-cover img{background:radial-gradient(ellipse at 50% 45%,#728279,#263e3c 85%);object-fit:contain}
+.nie-xiaoqian-tale .person-cover span{color:#efe3ce;border-top:1px solid #acb09148}
+.nie-xiaoqian-tale .person-cover small{color:#c4c8b1}
+.nie-xiaoqian-tale .character-dialog{padding:0}
+.nie-xiaoqian-tale .character-portrait{background:radial-gradient(ellipse at 50% 45%,#89978a,#284c57 85%);object-fit:contain}
+.nie-xiaoqian-tale .portrait-close{background:#203c45ed!important;border-color:#afba9c70!important;color:#f3e6cd!important}
+.nie-xiaoqian-tale .character-writing{background:linear-gradient(100deg,#c6d0b733,#f6f0dd55);border-left:1px solid #97a48c44}
+.nie-xiaoqian-tale .character-writing h2{color:#2d4740}
+.nie-xiaoqian-tale .character-role{color:#5e6c56}
+.nie-xiaoqian-tale .character-writing dt{color:#8e5454}
+.nie-xiaoqian-tale .character-quote{border-color:#93a0835c;color:#58644f}
+.nie-xiaoqian-tale .identity-layer{background:#baad8b1a;border-left:3px solid #996568}
+.nie-xiaoqian-tale .identity-layer h3{color:#547b7b}
+.nie-xiaoqian-tale .identity-layer.locked{background:#b3c1a51a;border-color:#a0ae93;color:#75806b}
+.nie-xiaoqian-tale .character-note{color:#7f886f}
+.nie-xiaoqian-tale .lamp-slot{width:85px;border-radius:0;border-color:#8b9a7c8c;color:#7b866d;background:#c3cbb226;min-height:79px}
+.nie-xiaoqian-tale .lamp-slot.lit{color:#527b7d;border-color:#a66e6d;background:linear-gradient(115deg,#c4968826,#a7927a1a);box-shadow:inset 3px 0 #ae737366}
+.nie-xiaoqian-tale .lamp-choices button{font-size:14px;line-height:1.7;min-height:64px}
+.nie-xiaoqian-tale .puzzle-feedback{color:#865557;line-height:1.85}
+.nie-xiaoqian-tale .puzzle-help{border-color:#87997a59}
+.nie-xiaoqian-tale .puzzle-help summary{color:#617254}
+.nie-xiaoqian-tale .adaptation-sheet{padding:15px 16px;background:#c1ccb51c;border-left:3px solid #8a9b7b;margin:19px 0}
+.nie-xiaoqian-tale .adaptation-sheet h3{font-size:16px;font-weight:400;color:#547b7b;margin-bottom:10px}
+.nie-xiaoqian-tale .adaptation-sheet p,.nie-xiaoqian-tale .source-afterword p{font-size:14px;line-height:1.9}
+.nie-xiaoqian-tale .source-afterword{border-top:1px solid #8d9f7d55;padding-top:5px}
+.nie-xiaoqian-tale .source-afterword summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font:13px/1.7 var(--sans);color:#805054;padding:7px 0}
+.nie-xiaoqian-tale .source-afterword p{margin-top:14px}
+.nie-xiaoqian-tale .source-reference a{display:inline-flex;align-items:center;min-height:44px;text-decoration:underline;text-underline-offset:4px;color:#3f7077}
+.nie-xiaoqian-tale .noscript-note{background:#e7e4d7;color:#253b40}
+@media(max-width:700px){
+ .nie-xiaoqian-tale .tale-brand h1{font-size:23px;letter-spacing:.16em}.nie-xiaoqian-tale .tale-brand p{font-size:9px;letter-spacing:.02em}
+ .nie-xiaoqian-tale .opening{padding:13px}.nie-xiaoqian-tale .opening-paper{padding:25px 24px 17px}.nie-xiaoqian-tale .opening-paper>.eyebrow{font-size:9px;letter-spacing:.01em}
+ .nie-xiaoqian-tale .opening-volume{font-size:10px;margin-top:11px}.nie-xiaoqian-tale .opening h2{font-size:28px;line-height:1.5;margin:13px 83px 13px 0;letter-spacing:.05em}
+ .nie-xiaoqian-tale .opening-copy{font-size:13px;max-width:100%;padding-right:0;line-height:1.85}
+ .nie-xiaoqian-tale .opening-steps{margin:17px 0 12px;padding-top:13px;gap:8px}.nie-xiaoqian-tale .opening-steps li{font-size:11px;line-height:1.65}.nie-xiaoqian-tale .opening-steps span{width:22px;height:22px;line-height:20px;margin-bottom:6px}
+ .nie-xiaoqian-tale .opening-source{font-size:10px;line-height:1.8;margin-bottom:10px;padding-left:8px}.nie-xiaoqian-tale .opening-note{font-size:10px;line-height:1.75}.nie-xiaoqian-tale .opening-actions{gap:2px;margin-top:13px}.nie-xiaoqian-tale .opening-actions .text-button{font-size:10px;flex:1;padding:8px 4px}.nie-xiaoqian-tale .opening-actions .primary{font-size:15px}.nie-xiaoqian-tale .save-status{font-size:10px;line-height:1.6}
+ .nie-xiaoqian-tale .dock-tools .text-button{font-size:10px;padding:6px;white-space:nowrap}.nie-xiaoqian-tale .dock-heading p:last-child{font-size:10px;line-height:1.45}.nie-xiaoqian-tale .dock-heading{gap:4px}.nie-xiaoqian-tale .action-rows{gap:5px}.nie-xiaoqian-tale .action-row{flex-basis:100%;padding-left:8px}.nie-xiaoqian-tale .action-name small{display:inline;margin-left:6px}.nie-xiaoqian-tale .action-row button{min-width:60px;font-size:11px}.nie-xiaoqian-tale .action-name{font-size:12px}
+ .nie-xiaoqian-tale .stage-hud{max-width:230px}.nie-xiaoqian-tale .scene-focus,.nie-xiaoqian-tale .scene-audio{max-width:88px}.nie-xiaoqian-tale .lamp-slot{width:76px;min-height:71px;font-size:13px}.nie-xiaoqian-tale .lamp-choices{gap:7px}.nie-xiaoqian-tale .lamp-choices button{font-size:12px;min-height:62px;padding:9px 5px}
+}
+@media(max-width:350px){
+ .nie-xiaoqian-tale .tale-brand h1{font-size:21px}.nie-xiaoqian-tale .tale-brand p{font-size:8px}.nie-xiaoqian-tale .opening-paper{padding:22px 20px 14px}.nie-xiaoqian-tale .opening h2{font-size:25px;margin-right:66px}.nie-xiaoqian-tale .opening-copy{font-size:12px}.nie-xiaoqian-tale .opening-steps li{font-size:10px}.nie-xiaoqian-tale .opening-actions .text-button{font-size:9px}.nie-xiaoqian-tale .stage-hud{max-width:205px}.nie-xiaoqian-tale .scene-focus,.nie-xiaoqian-tale .scene-audio{max-width:74px}.nie-xiaoqian-tale .lamp-choices button{font-size:11px}.nie-xiaoqian-tale .dock-tools .text-button{font-size:9px;padding:6px 4px}
+}
+@media(max-height:650px) and (max-width:599px){.nie-xiaoqian-tale .stage-hud>p:last-of-type{display:none}.nie-xiaoqian-tale .stage-hud h2{font-size:17px}.nie-xiaoqian-tale .stage-hud .text-button{margin-top:0}}
+@media(max-height:500px) and (min-width:600px){
+ .nie-xiaoqian-tale .opening{padding:9px}.nie-xiaoqian-tale .opening-paper{width:min(820px,100%);padding:18px 25px 12px;display:grid;grid-template-columns:1fr 1fr;gap:0 27px}
+ .nie-xiaoqian-tale .opening-paper>.eyebrow{grid-column:1;font-size:9px}.nie-xiaoqian-tale .opening-volume{grid-column:1;grid-row:2;font-size:9px;margin-top:7px}.nie-xiaoqian-tale .opening h2{grid-column:1;grid-row:3;font-size:26px;line-height:1.4;margin:9px 0}.nie-xiaoqian-tale .opening-copy{grid-column:1;grid-row:4;font-size:12px;line-height:1.75;max-width:100%}.nie-xiaoqian-tale .opening-source{grid-column:1;grid-row:5 / 7;font-size:9px;line-height:1.7;margin-top:9px;margin-bottom:0}.nie-xiaoqian-tale .opening-return{grid-column:1;grid-row:7;font-size:10px}
+ .nie-xiaoqian-tale .opening-steps{grid-column:2;grid-row:1 / 4;display:flex;flex-direction:column;border:0;margin:0 0 9px;padding:0;gap:6px}.nie-xiaoqian-tale .opening-steps li{font-size:11px}.nie-xiaoqian-tale .opening-steps span{display:inline-grid;margin:0 7px 0 0;width:22px;height:22px;line-height:20px}.nie-xiaoqian-tale .opening-note{grid-column:2;grid-row:4;font-size:10px;line-height:1.7}.nie-xiaoqian-tale .opening-actions{grid-column:2;grid-row:5;margin-top:9px;gap:1px}.nie-xiaoqian-tale .opening-actions .primary{flex-basis:100%;font-size:13px}.nie-xiaoqian-tale .opening-actions .text-button{font-size:9px;padding:7px 4px;flex:1}.nie-xiaoqian-tale .save-status{grid-column:2;grid-row:6;font-size:9px;line-height:1.5;margin-top:3px}
+ .nie-xiaoqian-tale .dock-heading p:last-child{font-size:10px}.nie-xiaoqian-tale .dock-tools .text-button{font-size:10px;padding:7px 5px}.nie-xiaoqian-tale .action-rows{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.nie-xiaoqian-tale .action-row{padding:3px 3px 3px 6px;gap:3px}.nie-xiaoqian-tale .action-name{font-size:10px;line-height:1.4}.nie-xiaoqian-tale .action-name small{font-size:8px;line-height:1.4}.nie-xiaoqian-tale .lamp-slot{min-height:58px;width:72px}.nie-xiaoqian-tale .lamp-progress{margin:13px 0}.nie-xiaoqian-tale .lamp-choices button{min-height:52px;font-size:12px;padding:8px}
+}
+
+/* A poplar and empty nest announce the fourth folio without another screen. */
+.opening-poplar{position:absolute;right:34px;top:77px;width:165px;height:220px;pointer-events:none;border-bottom:1px solid #9ebfaf66;background:radial-gradient(ellipse at 50% 44%,#9bc3ae14,transparent 68%)}
+.poplar-trunk{position:absolute;left:78px;top:27px;width:9px;height:172px;background:repeating-linear-gradient(178deg,#cad0bc 0 13px,#657f7b 14px 16px);transform:rotate(-3deg);clip-path:polygon(30% 0,70% 0,100% 100%,0 100%)}
+.poplar-trunk::before,.poplar-trunk::after{content:"";position:absolute;left:-24px;top:42px;width:65px;height:5px;background:#b6cbb6;transform:rotate(40deg)}
+.poplar-trunk::after{top:77px;transform:rotate(-35deg)}
+.poplar-leaves{position:absolute;left:23px;top:5px;width:120px;height:139px;background:repeating-linear-gradient(42deg,#779d883f 0 12px,#b1c6a157 13px 19px,transparent 20px 26px);clip-path:polygon(47% 0,68% 12%,65% 26%,88% 24%,100% 43%,84% 57%,100% 71%,77% 88%,60% 83%,44% 100%,30% 82%,9% 90%,0 67%,17% 48%,4% 32%,24% 22%,29% 5%)}
+.poplar-nest{position:absolute;left:96px;top:66px;width:34px;height:19px;border:3px solid #74847b;border-top-width:1px;border-radius:15% 20% 60% 55%;background:repeating-linear-gradient(11deg,#5d716b 0 2px,#a2ad9366 3px 4px);transform:rotate(-8deg)}
+.opening-poplar>span{position:absolute;right:3px;bottom:-23px;font:10px/1.4 var(--serif);letter-spacing:.3em;color:#bbd0be}
+.nie-xiaoqian-tale .lamp-choices{grid-template-columns:1fr}.nie-xiaoqian-tale .lamp-choices button{text-align:left;padding:12px 16px;min-height:58px}.nie-xiaoqian-tale .opening-paper{background:repeating-linear-gradient(96deg,#e9f5e702 0 1px,transparent 1px 5px),linear-gradient(115deg,#28434bfe,#152c39fc 83%)}
+@media(max-width:700px){.opening-poplar{width:75px;height:115px;right:20px;top:76px}.poplar-trunk{left:35px;top:14px;width:5px;height:89px}.poplar-leaves{left:8px;top:0;width:61px;height:74px}.poplar-nest{left:45px;top:34px;width:19px;height:12px;border-width:2px}.opening-poplar>span{font-size:8px;bottom:-14px;letter-spacing:.12em}.nie-xiaoqian-tale .lamp-choices button{font-size:12px;min-height:58px;padding:10px 12px}}
+@media(max-width:350px){.opening-poplar{right:12px;width:61px;height:103px}.nie-xiaoqian-tale .tale-brand h1{font-size:20px;letter-spacing:.1em}.nie-xiaoqian-tale .lamp-choices button{font-size:11px}}
+@media(max-height:500px) and (min-width:600px){.opening-poplar{display:none}.nie-xiaoqian-tale .action-rows{grid-template-columns:repeat(3,minmax(0,1fr))}.nie-xiaoqian-tale .lamp-choices button{min-height:48px;padding:8px 12px}}

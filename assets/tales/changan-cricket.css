@@ -1,0 +1,144 @@
+/* The third folio takes its color and rhythm from painted screens and old paper. */
+:root{--ink:#293326;--deep:#172018;--paper:#e8e1cd;--paper-dim:#c6c8bc;--gold:#bdc8bc;--red:#96704b;--line:rgba(177,193,179,.28)}
+body.cricket-tale{background:#172018;color:var(--paper)}
+.cricket-tale button{background:#344332;border-radius:1px;border-color:#b5c1b35c}
+.cricket-tale button:hover{background:#485b40;border-color:#c6d1bd}
+.cricket-tale button:focus-visible,.cricket-tale a:focus-visible,.cricket-tale summary:focus-visible,.cricket-tale iframe:focus-visible{outline-color:#cfb4ab}
+.cricket-tale button.primary{background:#96704b;border-color:#a86665;color:#fff1dc}
+.cricket-tale button.primary:hover{background:#ae8258}
+.cricket-tale .text-button{background:transparent;color:#c4cfbf}
+.cricket-tale .tale-header{background:linear-gradient(90deg,#35412e,#243222 78%);border-bottom-color:#bac6b54f}
+.cricket-tale .tale-brand h1{letter-spacing:.24em}
+.cricket-tale .tale-brand p{color:#b8c0b4;letter-spacing:.12em}
+.cricket-tale .seal{border-color:#a35e61;color:#d59b94;background:#b97d7010}
+.cricket-tale .header-actions button{background:transparent}
+.cricket-tale .tale-scene{background:#192526}
+.cricket-tale .scene-shade{background:linear-gradient(180deg,#13282c20,transparent 39%,transparent 68%,#091b2038)}
+.cricket-tale .stage-hud{background:#293a29eb;border-color:#a9b7a65c;border-radius:1px;border-left:3px solid #a55f64}
+.cricket-tale .stage-hud>p:last-of-type{color:#dedcc9}
+.cricket-tale .scene-status{background:#1e3131eb;border-color:#a4b2a259;border-radius:1px;color:#e0dece}
+.cricket-tale .scene-focus,.cricket-tale .scene-audio{background:#1f3434ee}
+.cricket-tale .scene-audio[aria-pressed="true"]{color:#e4c6bd;border-color:#c5938e}
+.cricket-tale .action-dock{background:#263426f7;border-color:#aab8a669;border-radius:1px;box-shadow:0 8px 35px #0005}
+.cricket-tale .dock-heading{gap:8px}
+.cricket-tale .dock-tools{display:flex;gap:2px;flex-shrink:0}
+.cricket-tale .dock-tools .text-button{font-size:11px;padding:8px}
+.cricket-tale .action-row{background:#3a4b32;border-color:#acb9a346;border-radius:1px}
+.cricket-tale .action-row button{background:#5c6a46;color:#f1eada}
+.cricket-tale .action-name small{color:#c4c7b9}
+.cricket-tale .action-row[data-done="true"]{border-color:#c7b1935c}
+.cricket-tale .action-row[data-done="true"] .action-name small{color:#d6baa4}
+.cricket-tale .opening{background:#09161996;padding:25px}
+.cricket-tale .opening-paper{width:min(780px,100%);padding:31px 35px 22px;border:1px solid #a4b39b80;border-radius:1px;background:repeating-linear-gradient(96deg,#edf1df02 0 1px,transparent 1px 5px),linear-gradient(115deg,#394936fe,#263626fc 83%);box-shadow:0 18px 100px #0009;overflow:hidden}
+.cricket-tale .opening-paper::before{content:"";position:absolute;inset:7px;border:1px solid #a5b79a30;pointer-events:none}
+.cricket-tale .opening-paper>.eyebrow{font-size:10px;letter-spacing:.11em;color:#bbc7b7}
+.cricket-tale .opening-volume{margin-top:13px;font:11px/1.5 var(--serif);letter-spacing:.23em;color:#a7b5a7}
+.cricket-tale .opening-volume span{display:inline-block;margin-left:9px;border:1px solid #b17974;padding:2px 8px;color:#d8a59b}
+.cricket-tale .opening h2{font-weight:400;font-size:35px;line-height:1.55;letter-spacing:.1em;color:#eee6d6;margin:15px 205px 14px 0}
+.cricket-tale .opening-copy{font-size:14px;line-height:1.9;color:#d8dccb;max-width:420px;padding-right:12px}
+.opening-screen{position:absolute;right:32px;top:77px;width:170px;height:230px;display:flex;gap:4px;transform:perspective(600px) rotateY(-8deg);pointer-events:none}
+.screen-leaf{position:relative;width:50%;height:215px;border:5px solid #58635c;outline:1px solid #aeb39751;background:repeating-linear-gradient(4deg,transparent 0 3px,#566c5e12 4px 5px),linear-gradient(110deg,#c1c9ae,#d8d8c0 60%,#a8b7a2);box-shadow:0 10px 24px #0006,inset 0 0 25px #3d56582b;overflow:hidden}
+.screen-leaf:nth-child(2){transform:skewY(-4deg);transform-origin:left bottom;background:linear-gradient(100deg,#bdc6ae,#b3bda8 85%,#9fae9a)}
+.screen-leaf::before,.screen-leaf::after{content:"";position:absolute;left:0;right:0;height:2px;background:#7b8a7659}
+.screen-leaf::before{top:17px}.screen-leaf::after{bottom:17px}
+.painted-silhouette{position:absolute;left:20px;top:45px;width:34px;height:127px;background:linear-gradient(#495b5777 0 14%,#4a625957 15% 28%,#695a5557 29% 100%);clip-path:polygon(38% 0,67% 0,79% 7%,77% 18%,61% 26%,78% 32%,100% 69%,82% 75%,73% 65%,84% 99%,6% 99%,17% 65%,6% 73%,0 65%,19% 33%,39% 26%,24% 19%,23% 7%);transform:rotate(2deg)}
+.screen-seam{position:absolute;left:44px;top:25px;width:8px;height:158px;background:#633e4078;clip-path:polygon(63% 0,20% 24%,90% 39%,12% 55%,68% 76%,25% 100%,0 98%,44% 76%,0 55%,66% 39%,0 24%,37% 0)}
+.brush-mark{position:absolute;left:18px;top:47px;width:34px;height:117px;border-left:3px solid #4b626768;transform:rotate(23deg)}
+.brush-mark::before,.brush-mark::after{content:"";position:absolute;background:#526b6768;transform:rotate(-23deg);width:35px;height:7px;left:-21px;top:34px;clip-path:polygon(0 22%,60% 0,100% 49%,68% 78%,0 100%)}
+.brush-mark::after{top:72px;left:-5px;width:27px;transform:rotate(3deg);opacity:.6}
+.screen-caption{position:absolute;bottom:-3px;right:0;font:10px/1.4 var(--serif);letter-spacing:.32em;color:#adb8a6}
+.cricket-tale .opening-steps{margin:21px 0 14px;padding-top:15px;border-top:1px solid #bbc5ac38;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.cricket-tale .opening-steps li{font-size:12px;line-height:1.7;color:#dbe0cb}
+.cricket-tale .opening-steps span{border-radius:0;margin-bottom:8px;display:block;color:#dfb0a3;border-color:#ad7a745e;width:24px;height:24px;text-align:center;line-height:22px}
+.cricket-tale .opening-source{font:11px/1.85 var(--sans);color:#bcc6b7;margin:0 0 12px;padding-left:11px;border-left:2px solid #aa797069}
+.cricket-tale .opening-note{font-size:11px;color:#bdc7b8;line-height:1.85}
+.cricket-tale .opening-note strong{font-weight:400;color:#dbb7aa;letter-spacing:.07em}
+.cricket-tale .opening-actions{margin-top:16px;gap:5px}
+.cricket-tale .opening-actions .primary{flex:1 0 100%;min-width:150px}
+.cricket-tale .opening-actions .text-button{padding:8px;font-size:11px}
+.cricket-tale .save-status{font-size:10px;color:#c8c1a4}
+.cricket-tale .opening-return{font-size:11px;color:#b6c1ae}
+.cricket-tale .tale-dialog{background:repeating-linear-gradient(93deg,#345c5003 0 1px,transparent 1px 5px),#e8e1cd;color:#283b37;border:1px solid #aeb59f;border-radius:1px;box-shadow:0 18px 100px #0009}
+.cricket-tale .tale-dialog::backdrop{background:#0a1c1fb5}
+.cricket-tale .tale-dialog .eyebrow{color:#8b5154}
+.cricket-tale .tale-dialog button{background:#354e48;border-color:#7087776e;color:#f6efdc}
+.cricket-tale .tale-dialog button:hover{background:#496057}
+.cricket-tale .tale-dialog .primary{background:#96704b;border-color:#96704b;color:#fff0dc}
+.cricket-tale .tale-dialog .primary:hover{background:#9b595b}
+.cricket-tale .tale-dialog .text-button,.cricket-tale .tale-dialog .close-button{background:transparent;color:#805150}
+.cricket-tale .reading-body blockquote{border-color:#946063;background:#6c5d590c;color:#5e5b4b}
+.cricket-tale .dialog-note,.cricket-tale .drawer-intro{color:#64725d}
+.cricket-tale .clue-paper{border-radius:0;border-color:#8b9a8059;border-left:3px solid #a56c69;background:#f7f3e260}
+.cricket-tale .clue-paper h3{color:#42564b}
+.cricket-tale .clue-paper small{color:#7f5850}
+.cricket-tale .hint-sheet{border-color:#7b916c59}
+.cricket-tale .empty-note{color:#6a765f}
+.cricket-tale .people-list{gap:13px}
+.cricket-tale .person-cover{background:#3c4b33!important;border-color:#8b9f8473!important;border-radius:0}
+.cricket-tale .person-cover img{background:radial-gradient(ellipse at 50% 45%,#818b68,#354630 85%);object-fit:contain}
+.cricket-tale .person-cover span{color:#efe3ce;border-top:1px solid #acb09148}
+.cricket-tale .person-cover small{color:#c4c8b1}
+.cricket-tale .character-dialog{padding:0}
+.cricket-tale .character-portrait{background:radial-gradient(ellipse at 50% 45%,#a1a17e,#3c5239 85%);object-fit:contain}
+.cricket-tale .portrait-close{background:#3c4b33ed!important;border-color:#afba9c70!important;color:#f3e6cd!important}
+.cricket-tale .character-writing{background:linear-gradient(100deg,#c6d0b733,#f6f0dd55);border-left:1px solid #97a48c44}
+.cricket-tale .character-writing h2{color:#2d4740}
+.cricket-tale .character-role{color:#5e6c56}
+.cricket-tale .character-writing dt{color:#8e5454}
+.cricket-tale .character-quote{border-color:#93a0835c;color:#58644f}
+.cricket-tale .identity-layer{background:#baad8b1a;border-left:3px solid #996568}
+.cricket-tale .identity-layer h3{color:#855355}
+.cricket-tale .identity-layer.locked{background:#b3c1a51a;border-color:#a0ae93;color:#75806b}
+.cricket-tale .character-note{color:#7f886f}
+.cricket-tale .lamp-slot{width:85px;border-radius:0;border-color:#8b9a7c8c;color:#7b866d;background:#c3cbb226;min-height:79px}
+.cricket-tale .lamp-slot.lit{color:#825258;border-color:#a66e6d;background:linear-gradient(115deg,#c4968826,#a7927a1a);box-shadow:inset 3px 0 #ae737366}
+.cricket-tale .lamp-choices button{font-size:14px;line-height:1.7;min-height:64px}
+.cricket-tale .puzzle-feedback{color:#865557;line-height:1.85}
+.cricket-tale .puzzle-help{border-color:#87997a59}
+.cricket-tale .puzzle-help summary{color:#617254}
+.cricket-tale .adaptation-sheet{padding:15px 16px;background:#c1ccb51c;border-left:3px solid #8a9b7b;margin:19px 0}
+.cricket-tale .adaptation-sheet h3{font-size:16px;font-weight:400;color:#815354;margin-bottom:10px}
+.cricket-tale .adaptation-sheet p,.cricket-tale .source-afterword p{font-size:14px;line-height:1.9}
+.cricket-tale .source-afterword{border-top:1px solid #8d9f7d55;padding-top:5px}
+.cricket-tale .source-afterword summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font:13px/1.7 var(--sans);color:#805054;padding:7px 0}
+.cricket-tale .source-afterword p{margin-top:14px}
+.cricket-tale .source-reference a{display:inline-flex;align-items:center;min-height:44px;text-decoration:underline;text-underline-offset:4px;color:#7d5051}
+.cricket-tale .noscript-note{background:#e8e1cd;color:#283b37}
+@media(max-width:700px){
+ .cricket-tale .tale-brand h1{font-size:23px;letter-spacing:.16em}.cricket-tale .tale-brand p{font-size:9px;letter-spacing:.02em}
+ .cricket-tale .opening{padding:13px}.cricket-tale .opening-paper{padding:25px 24px 17px}.cricket-tale .opening-paper>.eyebrow{font-size:9px;letter-spacing:.01em}
+ .cricket-tale .opening-volume{font-size:10px;margin-top:11px}.cricket-tale .opening h2{font-size:28px;line-height:1.5;margin:13px 83px 13px 0;letter-spacing:.05em}
+ .cricket-tale .opening-copy{font-size:13px;max-width:100%;padding-right:0;line-height:1.85}.cricket-tale .opening-screen{width:76px;height:128px;right:20px;top:73px;gap:2px;opacity:.8}
+ .cricket-tale .screen-leaf{height:112px;border-width:3px}.cricket-tale .painted-silhouette{left:5px;top:24px;width:24px;height:70px}.cricket-tale .screen-seam{left:20px;top:11px;width:5px;height:90px}.cricket-tale .brush-mark{top:25px;left:12px;height:58px;width:17px;border-width:2px}.cricket-tale .brush-mark::before{width:18px;top:15px;left:-12px;height:4px}.cricket-tale .brush-mark::after{width:14px;top:37px;left:-4px;height:4px}.cricket-tale .screen-caption{bottom:0;font-size:8px;letter-spacing:.2em}
+ .cricket-tale .opening-steps{margin:17px 0 12px;padding-top:13px;gap:8px}.cricket-tale .opening-steps li{font-size:11px;line-height:1.65}.cricket-tale .opening-steps span{width:22px;height:22px;line-height:20px;margin-bottom:6px}
+ .cricket-tale .opening-source{font-size:10px;line-height:1.8;margin-bottom:10px;padding-left:8px}.cricket-tale .opening-note{font-size:10px;line-height:1.75}.cricket-tale .opening-actions{gap:2px;margin-top:13px}.cricket-tale .opening-actions .text-button{font-size:10px;flex:1;padding:8px 4px}.cricket-tale .opening-actions .primary{font-size:15px}.cricket-tale .save-status{font-size:10px;line-height:1.6}
+ .cricket-tale .dock-tools .text-button{font-size:10px;padding:6px;white-space:nowrap}.cricket-tale .dock-heading p:last-child{font-size:10px;line-height:1.45}.cricket-tale .dock-heading{gap:4px}.cricket-tale .action-rows{gap:5px}.cricket-tale .action-row{flex-basis:100%;padding-left:8px}.cricket-tale .action-name small{display:inline;margin-left:6px}.cricket-tale .action-row button{min-width:60px;font-size:11px}.cricket-tale .action-name{font-size:12px}.cricket-tale .action-row[data-target-id="wang-sheng"] button{min-width:82px}.cricket-tale .action-row[data-target-id="wang-sheng"] .action-name small{font-size:8px}
+ .cricket-tale .stage-hud{max-width:230px}.cricket-tale .scene-focus,.cricket-tale .scene-audio{max-width:88px}.cricket-tale .lamp-slot{width:76px;min-height:71px;font-size:13px}.cricket-tale .lamp-choices{gap:7px}.cricket-tale .lamp-choices button{font-size:12px;min-height:62px;padding:9px 5px}
+}
+@media(max-width:350px){
+ .cricket-tale .tale-brand h1{font-size:21px}.cricket-tale .tale-brand p{font-size:8px}.cricket-tale .opening-paper{padding:22px 20px 14px}.cricket-tale .opening h2{font-size:25px;margin-right:66px}.cricket-tale .opening-screen{right:16px;top:75px;width:61px;height:116px}.cricket-tale .screen-leaf{height:103px}.cricket-tale .screen-caption{font-size:7px;letter-spacing:.1em}.cricket-tale .opening-copy{font-size:12px}.cricket-tale .opening-steps li{font-size:10px}.cricket-tale .opening-actions .text-button{font-size:9px}.cricket-tale .stage-hud{max-width:205px}.cricket-tale .scene-focus,.cricket-tale .scene-audio{max-width:74px}.cricket-tale .lamp-choices button{font-size:11px}.cricket-tale .dock-tools .text-button{font-size:9px;padding:6px 4px}
+}
+@media(max-height:650px) and (max-width:599px){.cricket-tale .stage-hud>p:last-of-type{display:none}.cricket-tale .stage-hud h2{font-size:17px}.cricket-tale .stage-hud .text-button{margin-top:0}}
+@media(max-height:500px) and (min-width:600px){
+ .cricket-tale .opening{padding:9px}.cricket-tale .opening-paper{width:min(820px,100%);padding:18px 25px 12px;display:grid;grid-template-columns:1fr 1fr;gap:0 27px}.cricket-tale .opening-screen{display:none}
+ .cricket-tale .opening-paper>.eyebrow{grid-column:1;font-size:9px}.cricket-tale .opening-volume{grid-column:1;grid-row:2;font-size:9px;margin-top:7px}.cricket-tale .opening h2{grid-column:1;grid-row:3;font-size:26px;line-height:1.4;margin:9px 0}.cricket-tale .opening-copy{grid-column:1;grid-row:4;font-size:12px;line-height:1.75;max-width:100%}.cricket-tale .opening-source{grid-column:1;grid-row:5 / 7;font-size:9px;line-height:1.7;margin-top:9px;margin-bottom:0}.cricket-tale .opening-return{grid-column:1;grid-row:7;font-size:10px}
+ .cricket-tale .opening-steps{grid-column:2;grid-row:1 / 4;display:flex;flex-direction:column;border:0;margin:0 0 9px;padding:0;gap:6px}.cricket-tale .opening-steps li{font-size:11px}.cricket-tale .opening-steps span{display:inline-grid;margin:0 7px 0 0;width:22px;height:22px;line-height:20px}.cricket-tale .opening-note{grid-column:2;grid-row:4;font-size:10px;line-height:1.7}.cricket-tale .opening-actions{grid-column:2;grid-row:5;margin-top:9px;gap:1px}.cricket-tale .opening-actions .primary{flex-basis:100%;font-size:13px}.cricket-tale .opening-actions .text-button{font-size:9px;padding:7px 4px;flex:1}.cricket-tale .save-status{grid-column:2;grid-row:6;font-size:9px;line-height:1.5;margin-top:3px}
+ .cricket-tale .dock-heading p:last-child{font-size:10px}.cricket-tale .dock-tools .text-button{font-size:10px;padding:7px 5px}.cricket-tale .action-rows{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.cricket-tale .action-row{padding:3px 3px 3px 6px;gap:3px}.cricket-tale .action-name{font-size:10px;line-height:1.4}.cricket-tale .action-name small{font-size:8px;line-height:1.4}.cricket-tale .action-row[data-target-id="wang-sheng"] .action-name small{display:none}.cricket-tale .action-row[data-target-id="wang-sheng"] button{min-width:70px;font-size:10px;padding:8px 5px}.cricket-tale .lamp-slot{min-height:58px;width:72px}.cricket-tale .lamp-progress{margin:13px 0}.cricket-tale .lamp-choices button{min-height:52px;font-size:12px;padding:8px}
+}
+
+/* Fifth folio: field grass, old bamboo and a small weighty insect. */
+.cricket-tale .people-list{grid-template-columns:repeat(3,minmax(0,1fr))}
+.cricket-frontispiece{position:absolute;right:36px;top:89px;width:164px;height:182px;pointer-events:none;opacity:.9}
+.cricket-rim{position:absolute;left:1px;top:10px;width:160px;height:141px;border:8px double #b3ab78;border-radius:50%;transform:rotate(-12deg);box-shadow:0 18px 24px #0004,inset 0 0 0 3px #bac18d28;background:repeating-linear-gradient(12deg,#b8bb7e08 0 2px,transparent 2px 8px)}
+.cricket-glyph{position:absolute;top:70px;left:47px;width:64px;height:26px;background:#191f18;border-top:5px solid #956c53;transform:rotate(-13deg);box-shadow:inset 20px 0 #37442b}
+.cricket-glyph::before{content:'';position:absolute;right:-17px;top:-10px;width:21px;height:22px;background:#252d20;box-shadow:1px 3px #b7b181}
+.cricket-glyph::after{content:'';position:absolute;right:-39px;top:-16px;width:38px;height:2px;background:#aeb18b;transform:rotate(-16deg)}
+.cricket-glyph b{position:absolute;top:17px;width:38px;height:4px;background:#85905f;transform:rotate(44deg);transform-origin:left center}
+.cricket-glyph b:nth-child(2){left:9px;top:23px;transform:rotate(125deg);width:29px}.cricket-glyph b:nth-child(3){left:36px;transform:rotate(35deg);width:33px}.cricket-glyph b:nth-child(4){left:47px;top:20px;transform:rotate(110deg);width:24px}
+.cricket-frontispiece>span{position:absolute;bottom:0;right:0;color:#c0bc8b;letter-spacing:.3em;font:11px/1.5 var(--serif)}
+.cricket-tale .opening h2{margin-right:170px;font-size:32px}
+.cricket-tale .opening-copy{max-width:430px}
+.cricket-tale .puzzle-dialog[data-puzzle-mode="cricket"] .lamp-choices button{font-size:14px;min-height:64px}
+@media(max-width:700px){.cricket-frontispiece{width:76px;height:110px;right:16px;top:93px;opacity:.65}.cricket-rim{width:72px;height:80px;border-width:5px;left:0;top:0}.cricket-glyph{left:23px;top:29px;transform:scale(.43) rotate(-13deg);transform-origin:left top}.cricket-frontispiece>span{font-size:8px;letter-spacing:.15em}.cricket-tale .opening h2{font-size:27px;margin-right:72px}.cricket-tale .people-list{grid-template-columns:repeat(2,minmax(0,1fr))}.cricket-tale .puzzle-dialog[data-puzzle-mode="cricket"] .lamp-choices button{font-size:12px}}
+@media(max-width:350px){.cricket-tale .opening h2{font-size:23px;margin-right:63px}.cricket-frontispiece{right:11px;width:62px;top:86px}.cricket-rim{width:60px;height:75px}.cricket-glyph{left:16px;transform:scale(.36) rotate(-13deg)}}
+@media(max-height:500px) and (min-width:600px){.cricket-frontispiece{display:none}.cricket-tale .opening h2{font-size:25px;margin-right:0}.cricket-tale .puzzle-dialog[data-puzzle-mode="cricket"] .lamp-choices button{min-height:55px}}

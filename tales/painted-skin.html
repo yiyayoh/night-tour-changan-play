@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+ <meta name="theme-color" content="#172323">
+ <meta name="description" content="据蒲松龄《聊斋志异·画皮》改编。在长安梦境坊巷换位观察窗内笔痕与偏影，比对证据，再带证追问画皮客。">
+ <title>画皮 · 窗下辨真｜夜游长安</title>
+ <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='6' fill='%23172323'/%3E%3Cpath d='M14 11h36v42H14z' fill='%23dfd8c9' stroke='%238e4b4e' stroke-width='2'/%3E%3Cpath d='m36 12-8 19 9 9-9 12' fill='none' stroke='%23556969' stroke-width='3'/%3E%3C/svg%3E">
+ <link rel="stylesheet" href="/night-tour-changan-play/assets/tales/changan-zhiguai.css">
+ <link rel="stylesheet" href="/night-tour-changan-play/assets/tales/changan-painted-skin.css">
+ <script>
+ window.CHANGAN_TALE_CONFIG = {
+  id: 'painted-skin', storageKey: 'changan:tale:painted-skin:v1', storyUrl: '/night-tour-changan-play/assets/tales/painted-skin.json', returnUrl: '/night-tour-changan-play/?tale-return=painted-skin',
+  expectedCharacters: 4, finalStageId: 'ward', puzzleTargetId: 'unmasking', puzzleSolution: ['ink', 'seam', 'whisk'], sound: 'paper',
+  portraits: { 'chen-shi': '/night-tour-changan-play/assets/tales/chen-shi.png', 'wang-sheng': '/night-tour-changan-play/assets/tales/wang-sheng.png', 'painted-guest': '/night-tour-changan-play/assets/tales/painted-guest.png', 'huapi-daoist': '/night-tour-changan-play/assets/tales/huapi-daoist.png' },
+  safeStagePoints: { threshold: { x: -169, z: 123, yaw: Math.atan2(5, -1), pitch: .045 }, window: { x: -146, z: 123, yaw: Math.atan2(6, -1.2), pitch: .045 }, ward: { x: -121, z: 123, yaw: Math.atan2(6, -1.2), pitch: .045 } },
+  text: {
+   audioOff: '收起风纸声', audioOn: '听风纸声', audioResume: '点此续听风纸声', audioOpening: '听一段风纸声',
+   audioUnavailable: '风纸声暂未响起，所有线索仍有文字，可静音走完故事。可再点一次续听。',
+   saveCorrupt: '这页记录未能读全，可从旧宅门外重入梦境；前两篇异闻与城中原有进度保留。',
+   saveUnavailable: '本机暂时不能保存，当前梦境仍可继续；离开或刷新后可能需要重新走到旧宅。',
+   sceneWaiting: '坊巷梦景尚在展开，请稍候片刻。', guideUnavailable: '这段墨白引路暂未接通，可沿街靠近标记。',
+   guideWalking: '循脚下墨白引路亲自走近；电脑用 W A S D，手机推左下摇杆。', guideArrived: '已到近处，停步辨认。',
+   dialogueRecorded: '旧宅问话 · 已记下回应', dialogueKind: '旧宅问话', dialogueReply: '窗下回音', encounterKind: '王生辩白 · 可选旁听',
+   stageKind: '聊斋梦境 · 文学改编', advanceKind: '循墨前行', nextPlace: '走向下一段坊巷', transition: '纸上墨色未干，你沿着旧宅外墙继续走。',
+   puzzleEmptySlot: '尚未辨明', puzzleUnit: '证', puzzleProgress: '已辨{label}。再循下一件实物。', puzzleAction: '辨真', puzzleSolvedAction: '回应', puzzleInitial: '次序不合可以重辨；所见线索仍留在册中。',
+   endingKind: '三证已明 · 这一夜由你回应', endingDecision: '止于窗外，或听见原作回声',
+   endingNote: '「避祸」是本作新增的改编分支；「原作回声」以文字淡出交代原作后事。两种均可选择，重游可读另一种。',
+   endingReturnScene: '回到旧宅，看看窗下余影', returnLabel: '返回坊巷', endedHint: '梦境已收束。仍可在窗外停留、翻看人物与线索，或另起一夜。',
+   emptyClues: '册页还空着。先走近旧宅外的画卷、画屏或断拂，亲自查看，所见才会记在这里。',
+   characterEyebrow: '画皮 · 独立角色卡', hiddenCharacterLabel: '尚在画面之外', characterNote: '文学角色的艺术设计，非历史人物画像。容貌与衣饰为本作重新设计。',
+   helpKind: '窗下辨真 · 操作', helpTitle: '先察眼前物，再听画中言',
+   helpGuide: '点行动卡的「前往」，循墨白引路走近。第二幕先到「正面笔痕」「侧面偏影」两处观察点，看向窗内再点观察；不要求精确瞄准。也可先到窗前点「文字察看」，核对同样的两段所见。两处看过后点「比对所见」，再靠近画皮客带证追问。第一、三幕仍是近处查物与问话。王生旁听为选读，不影响换幕；全程无需进入实体房屋。',
+   helpAudio: '「听风纸声」可轻启本篇的合成风声与纸响意象，默认关闭。声音不承担解题信息，静音同样能走完故事。',
+   helpReturn: '若在城中走远，可点下方「回到本幕巷口」，回到当前梦境的安全落脚处；已收线索与对谈保留。',
+   helpExit: '本篇有阴冷、欺瞒与死亡叙述，不展示血腥画面，不设惊跳、追逐或限时。右上「返回坊巷」可暂离；本机能保存时，回来可接着这一幕。',
+   returnToStageLabel: '回到本幕巷口', returnUnavailable: '巷口的落脚处暂未接好，请稍候再试。', returnedToStage: '已回到本幕巷口，线索与对谈仍在。',
+   restartTitle: '重入旧宅窗外的这一夜？', restartDescription: '《画皮·窗下辨真》当前的线索、对谈与辨真次序将从巷口重新开始。已读结尾与揭开的角色卡仍留在本机。《借灯人》《纸门客》和城中其他存档均保留。', restartAction: '重入梦境，从巷口开始'
+  }
+ };
+ </script>
+ <script defer src="/night-tour-changan-play/assets/tales/changan-zhiguai-page.js"></script>
+</head>
+<body class="painted-skin-tale">
+ <a class="skip-link" href="#actionDock">跳到当前行动</a>
+ <header class="tale-header">
+  <div class="tale-brand"><span class="seal" aria-hidden="true">聊<br>斋</span><div><p>窗下辨真 · 异闻其三</p><h1>画皮</h1></div></div>
+  <nav class="header-actions" aria-label="梦境工具"><button type="button" id="openClues">线索册 <span id="clueCount">0</span></button><button type="button" id="openPeople">人物册</button><a href="/night-tour-changan-play/?tale-return=painted-skin" id="returnCity">返回坊巷 <span aria-hidden="true">↗</span></a></nav>
+ </header>
+ <main class="tale-experience" id="taleExperience">
+  <iframe id="taleScene" class="tale-scene" src="/night-tour-changan-play/?tale-scene=painted-skin" title="画皮：长安梦境旧宅外的三维坊巷" allow="fullscreen" tabindex="0"></iframe>
+  <div class="scene-shade" aria-hidden="true"></div>
+  <aside class="stage-hud" id="stageHud" hidden><p class="eyebrow" id="stageNumber"></p><h2 id="stageTitle"></h2><p id="stageObjective"></p><button type="button" id="openRecap" class="text-button">重听这一幕</button></aside>
+  <div class="scene-status" id="sceneStatus" role="status" aria-live="polite">正在展开旧宅窗外的梦景……</div>
+  <button type="button" class="scene-focus" id="focusScene" hidden>回到行走</button>
+  <button type="button" class="scene-audio" id="toggleTaleAudio" aria-pressed="false" hidden>听风纸声</button>
+  <section class="action-dock" id="actionDock" tabindex="-1" aria-label="当前行动" hidden><div class="dock-heading"><div><p class="eyebrow">窗下亲历</p><p id="actionHint">察墨、辨缝，再问护身之物。</p></div><div class="dock-tools"><button type="button" id="openSource" class="text-button">原作与改编</button><button type="button" id="openWalkHelp" class="text-button">怎样行走</button></div></div><div id="actionRows" class="action-rows"></div><div id="stageAdvance" class="stage-advance"></div></section>
+  <section class="opening" id="opening" aria-labelledby="openingTitle"><div class="opening-paper">
+   <div class="opening-screen" aria-hidden="true"><div class="screen-leaf"><i class="painted-silhouette"></i><i class="screen-seam"></i></div><div class="screen-leaf"><i class="brush-mark"></i></div><span class="screen-caption">丹青未干</span></div>
+   <p class="eyebrow">蒲松龄《聊斋志异·画皮》改编</p>
+   <p class="opening-volume">长安梦境 <span>其三</span></p>
+   <h2 id="openingTitle">好看的皮相，<br>藏得住什么？</h2>
+   <p class="opening-copy">陈氏的劝告被留在门外，窗内的画笔还没有停。你沿旧宅外墙换位察看，将笔痕与偏影对在一起，再让画中人回应你亲眼所见。</p>
+   <ol class="opening-steps"><li><span>一</span>门前问话，察旧卷新墨</li><li><span>二</span>换位察证，比对后追问</li><li><span>三</span>断拂问道，亲定如何回应</li></ol>
+   <p class="opening-source">原作发生于太原；此处借长安坊巷作一场文学梦境。角色容貌、线索玩法与避祸分支由本作改编。</p>
+   <p class="opening-note"><strong>阴冷诡谲 · 三幕 · 两种收束</strong><br>约八至十分钟。有死亡叙述，不展示血腥画面，无惊跳、追逐或限时。声音默认关闭。本篇进度只记在本机。</p>
+   <div class="opening-actions"><button type="button" id="beginTale" class="primary" disabled>梦景尚在展开……</button><button type="button" id="restartTale" class="text-button" hidden>重入梦境</button><button type="button" id="openingWalkHelp" class="text-button" disabled>先读玩法</button><button type="button" id="openingTaleAudio" class="text-button" aria-pressed="false">听一段风纸声</button><button type="button" id="openingSource" class="text-button">原作与改编对照</button></div>
+   <p class="save-status" id="saveStatus" role="status"></p><a class="opening-return" href="/night-tour-changan-play/?tale-return=painted-skin">暂别梦境，返回坊巷</a>
+  </div></section>
+ </main>
+ <dialog class="tale-dialog reading-dialog" id="readingDialog" aria-labelledby="readingTitle"><div class="dialog-top"><p class="eyebrow" id="readingKind"></p><button type="button" class="close-button" data-close="readingDialog" aria-label="合上书页">×</button></div><h2 id="readingTitle" tabindex="-1"></h2><div id="readingBody" class="reading-body" tabindex="0" role="region" aria-label="书页正文，可滚动阅读"></div><div id="readingActions" class="reading-actions"></div></dialog>
+ <dialog class="tale-dialog drawer" id="cluesDialog" aria-labelledby="cluesTitle"><div class="dialog-top"><div><p class="eyebrow">窗外三证</p><h2 id="cluesTitle" tabindex="-1">线索册</h2></div><button type="button" class="close-button" data-close="cluesDialog" aria-label="合上线索册">×</button></div><p class="drawer-intro">只记已经查验的物件。窗下两处须先观察并比对，才能收入接缝证据；也可用文字完成同样的核对。墨、缝、拂各有来处，不必开启声音。</p><div id="cluesList" class="clues-list"></div><div class="hint-sheet" id="puzzleHints" hidden><h3>三证相照</h3><div id="puzzleHintText"></div></div></dialog>
+ <dialog class="tale-dialog drawer" id="peopleDialog" aria-labelledby="peopleTitle"><div class="dialog-top"><div><p class="eyebrow">文学角色 · 独立艺术设计</p><h2 id="peopleTitle" tabindex="-1">画内画外四人</h2></div><button type="button" class="close-button" data-close="peopleDialog" aria-label="合上人物册">×</button></div><p class="drawer-intro">陈氏、王生、画皮客、道士各有一张独立角色卡。容貌为本作重新设计，人物在这一夜中的另一层意味，随对谈与辨真逐渐揭开。</p><div id="peopleList" class="people-list"></div></dialog>
+ <dialog class="tale-dialog character-dialog" id="characterDialog" aria-labelledby="characterTitle"><button type="button" class="close-button portrait-close" data-close="characterDialog" aria-label="合上人物卡">×</button><div id="characterBody"></div></dialog>
+ <dialog class="tale-dialog reading-dialog puzzle-dialog" id="puzzleDialog" aria-labelledby="puzzleTitle"><div class="dialog-top"><p class="eyebrow">第三幕 · 断拂问道</p><button type="button" class="close-button" data-close="puzzleDialog" aria-label="稍后再辨真">×</button></div><h2 id="puzzleTitle" tabindex="-1">辨真三证</h2><p id="puzzleInstruction"></p><div id="lampProgress" class="lamp-progress" aria-live="polite"></div><div id="lampChoices" class="lamp-choices"></div><p id="puzzleFeedback" class="puzzle-feedback" role="status"></p><details class="puzzle-help"><summary>再看一遍三件实物</summary><div id="puzzleHelpText"></div></details><div class="reading-actions"><button type="button" id="resetLamps" class="text-button">重新辨认</button><button type="button" id="finishLamps" class="primary" hidden>三证已明，回应这一夜</button></div></dialog>
+ <dialog class="tale-dialog reading-dialog source-dialog" id="sourceDialog" aria-labelledby="sourceTitle"><div class="dialog-top"><div><p class="eyebrow">文学来处 · 改编说明</p><h2 id="sourceTitle" tabindex="-1">原作与此夜</h2></div><button type="button" class="close-button" data-close="sourceDialog" aria-label="合上改编说明">×</button></div><div class="reading-body"><p>本篇据清代蒲松龄《聊斋志异·画皮》改编。原作地点为太原；本作沿用夜游长安的坊巷场景，以「梦境」安放这段文学故事，不将它记作唐代长安的历史事件。</p><p>陈氏、王生与道士来自原作。原作中的异物没有姓名，本作以「画皮客」作角色称呼。四张画像的容貌、衣饰和持物意象均为重新设计。</p><div class="adaptation-sheet"><h3>亲历时改了什么</h3><p>你以窗外见证者的身份察物、问话。三幕线索、三证辨真、王生旁听与互动选择由本作编写；这些不属于原文已有的游戏或对话。</p><p>「避祸」是新增的分支，让玩家尝试在灾祸发生前回应陈氏的劝告；「原作回声」仍指向原文后事，以文字淡出呈现。</p></div><details class="source-afterword"><summary>展开原作后记与结尾对照（含剧透）</summary><p>原作中王生遇见一名女子，带回家中，未听陈氏劝其送走。道士看出邪异；王生窥窗，才看见异物将人皮铺开、执笔涂画，再披身作女子模样。</p><p>后来王生借道士之物镇护，仍遭异物所害。道士将其收伏后，陈氏为求丈夫复生，依道士所指寻人求救，忍受羞辱，最终使王生复生。</p><p>本作不重现挖心等血腥细节，也不将陈氏的忍辱设为玩家任务。「原作回声」以文字说明她后来的奔走；「避祸」是本作的文学假设，并非蒲松龄写下的另一结局。</p><p>原篇末的议论将迷恋外相与忠告被弃置相联系。本作通过陈氏的所见与玩家的察证来回应这一层，不以容貌美丑判断人的善恶。</p><p class="source-reference"><a href="https://zh.wikisource.org/zh-hant/聊齋志異/第01卷#畫皮" target="_blank" rel="noopener noreferrer">阅读《聊斋志异·画皮》原文 ↗</a></p></details></div><div class="reading-actions"><button type="button" class="primary" data-close="sourceDialog">已知来处，回到此夜</button></div></dialog>
+ <noscript><div class="noscript-note">这段亲历故事需要开启浏览器脚本。<a href="/night-tour-changan-play/?tale-return=painted-skin">返回坊巷</a></div></noscript>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+ <meta name="theme-color" content="#102623">
+ <meta name="description" content="曲江水岸，一盏不肯熄灭的灯。亲自行走、寻物问人，走入夜游长安第一则原创志怪故事《借灯人》。">
+ <title>借灯人 · 长安异闻</title>
+ <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23102623'/%3E%3Cpath d='M20 18h24v31H20zM25 12h14M32 6v8M27 54h10' fill='none' stroke='%23d7ba83' stroke-width='4'/%3E%3Cpath d='M31 24v18m-5-9h12' stroke='%23d7ba83' stroke-width='3'/%3E%3C/svg%3E">
+ <link rel="stylesheet" href="/night-tour-changan-play/assets/tales/changan-zhiguai.css">
+ <script defer src="/night-tour-changan-play/assets/tales/changan-zhiguai-page.js"></script>
+<script id="lanternWalkState">function createChanganLanternWalkState(storage,changed=()=>{}){
+ const key='changan:lantern-walk:v1',taleKey='changan:tale:borrowed-lantern:v1';
+ let writable=true,revision=0;
+ const fresh=()=>({version:1,discoveries:[],patched:false,angle:0,lastEnding:null,endingAt:'',seenEndings:[]});
+ let state=fresh();
+ function normalize(raw){
+  const s=fresh();if(!raw||raw.version!==1)return s;
+  s.discoveries=['ledger','paper','shadow'].filter(id=>Array.isArray(raw.discoveries)&&raw.discoveries.includes(id));
+  s.patched=raw.patched===true&&s.discoveries.includes('paper');
+  s.angle=Number.isInteger(raw.angle)&&raw.angle>=0&&raw.angle<=2?raw.angle:0;
+  if(!s.patched)s.angle=0;
+  if(!s.patched)s.discoveries=s.discoveries.filter(id=>id!=='shadow');
+  s.seenEndings=['send','keep'].filter(id=>Array.isArray(raw.seenEndings)&&raw.seenEndings.includes(id));
+  if(s.seenEndings.includes(raw.lastEnding)){s.lastEnding=raw.lastEnding;s.endingAt=Number.isFinite(Date.parse(raw.endingAt))?raw.endingAt:'';}
+  return s;
+ }
+ function read(k){try{if(!storage||typeof storage.getItem!=='function')throw Error('storage-unavailable');const raw=storage.getItem(k);return raw?JSON.parse(raw):null;}catch{writable=false;return null;}}
+ state=normalize(read(key));
+ function snapshot(){return{...JSON.parse(JSON.stringify(state)),complete:['ledger','paper','shadow'].every(id=>state.discoveries.includes(id)),storageOK:writable,revision};}
+ function merge(next,takeAngle=false){
+  for(const id of next.discoveries)if(!state.discoveries.includes(id))state.discoveries.push(id);
+  if(next.patched)state.patched=true;
+  if(takeAngle&&next.patched)state.angle=next.angle;
+  for(const id of next.seenEndings)if(!state.seenEndings.includes(id))state.seenEndings.push(id);
+  if(next.lastEnding&&(!state.lastEnding||(Date.parse(next.endingAt)||0)>(Date.parse(state.endingAt)||0))){state.lastEnding=next.lastEnding;state.endingAt=next.endingAt;}
+ }
+ function persist(keepAngle=false){
+  // Read again immediately before writing: a second tab may have saved since
+  // our last storage event. Discovery and completed-ending progress is additive.
+  merge(normalize(read(key)),!keepAngle);revision++;
+  try{storage.setItem(key,JSON.stringify(state));writable=true;}catch{writable=false;}
+  changed(snapshot());return snapshot();
+ }
+ function validEnding(t){return t&&t.version===1&&t.storyId==='borrowed-lantern'&&t.started===true&&t.stageIndex===2&&
+  ['empty-hook','ferry-board','mended-lantern'].every(id=>Array.isArray(t.clues)&&t.clues.includes(id))&&
+  t.dialogues&&['question','observe'].includes(t.dialogues.bridge)&&['name','wish'].includes(t.dialogues.shoreside)&&
+  Array.isArray(t.lamps)&&t.lamps.join('|')==='bridge|boat|shore'&&['send','keep'].includes(t.ending);}
+ function rememberTale(t){
+  if(!validEnding(t))return false;
+  const stamp=Number.isFinite(Date.parse(t.updatedAt))?t.updatedAt:'';
+  if(state.lastEnding&&Date.parse(state.endingAt)> (Date.parse(stamp)||0))return false;
+  let altered=false;if(!state.seenEndings.includes(t.ending)){state.seenEndings.push(t.ending);altered=true;}
+  if(state.lastEnding!==t.ending||stamp!==state.endingAt){state.lastEnding=t.ending;state.endingAt=stamp;altered=true;}
+  if(altered)persist();return true;
+ }
+ function inspect(id){if(!['ledger','paper'].includes(id))return false;if(!state.discoveries.includes(id)){state.discoveries.push(id);persist();}return snapshot();}
+ function mend(){if(!state.discoveries.includes('paper'))return false;if(!state.patched){state.patched=true;persist();}return snapshot();}
+ function turn(){if(!state.patched)return false;merge(normalize(read(key)),true);state.angle=(state.angle+1)%3;if(state.angle===1&&!state.discoveries.includes('shadow'))state.discoveries.push('shadow');return persist(true);}
+ function refresh(){
+  const raw=read(key);
+  // Missing, corrupt or blocked storage cannot reset the playable in-memory
+  // lamp. Only an actual compatible record can supply another tab's angle.
+  if(raw&&raw.version===1)merge(normalize(raw),true);
+  rememberTale(read(taleKey));revision++;changed(snapshot());return snapshot();
+ }
+ rememberTale(read(taleKey));
+ return{get revision(){return revision;},key,taleKey,snapshot,inspect,mend,turn,rememberTale,refresh,validEnding};
+}
+if(!window.CHANGAN_TALE_SCENE){let lanternStorage;try{lanternStorage=window.localStorage;}catch{}window.ChanganLanternWalk=createChanganLanternWalkState(lanternStorage,s=>window.dispatchEvent(new CustomEvent('changan-lantern-walk',{detail:s})));}</script>
+</head>
+<body>
+ <a class="skip-link" href="#actionDock">跳到当前行动</a>
+ <header class="tale-header">
+  <div class="tale-brand"><span class="seal" aria-hidden="true">异<br>闻</span><div><p>夜游长安 · 原创志怪</p><h1>借灯人</h1></div></div>
+  <nav class="header-actions" aria-label="异闻工具"><button type="button" id="openClues">线索册 <span id="clueCount">0</span></button><button type="button" id="openPeople">人物册</button><a href="/night-tour-changan-play/?tale-return=borrowed-lantern" id="returnCity">返回曲江 <span aria-hidden="true">↗</span></a></nav>
+ </header>
+ <main class="tale-experience" id="taleExperience">
+  <iframe id="taleScene" class="tale-scene" src="/night-tour-changan-play/?tale-scene=borrowed-lantern" title="曲江夜行：借灯人三维故事场景" allow="fullscreen" tabindex="0"></iframe>
+  <div class="scene-shade" aria-hidden="true"></div>
+  <aside class="stage-hud" id="stageHud" hidden><p class="eyebrow" id="stageNumber"></p><h2 id="stageTitle"></h2><p id="stageObjective"></p><button type="button" id="openRecap" class="text-button">重听这一幕</button></aside>
+  <div class="scene-status" id="sceneStatus" role="status" aria-live="polite">正在点亮曲江夜色……</div>
+  <button type="button" class="scene-focus" id="focusScene" hidden>回到行走</button>
+  <button type="button" class="scene-audio" id="toggleTaleAudio" aria-pressed="false" hidden>听水声</button>
+  <section class="action-dock" id="actionDock" tabindex="-1" aria-label="当前行动" hidden><div class="dock-heading"><div><p class="eyebrow">循灯亲历</p><p id="actionHint">走近灯下的人与物，再停步查看。</p></div><button type="button" id="openWalkHelp" class="text-button">怎样行走</button></div><div id="actionRows" class="action-rows"></div><div id="stageAdvance" class="stage-advance"></div></section>
+ <section class="opening" id="opening" aria-labelledby="openingTitle"><div class="opening-paper"><p class="eyebrow">曲江一夜 · 原创虚构</p><div class="opening-mark" aria-hidden="true">借<br>灯<br>人</div><h2 id="openingTitle">有些灯，<br>等的不是归人。</h2><p class="opening-copy">月桥少了一盏灯，水边多了一位借灯人。提灯沿岸走过三处夜色，亲手辨出今夜该走的路。也可先到照花灯馆查灯簿、修灯辨桥影；结尾回城后，桥灯与旧渡会留下你的选择。</p><ol class="opening-steps"><li><span>一</span>亲自行走，寻三处灯影</li><li><span>二</span>问人拾物，辨一夜异闻</li><li><span>三</span>点亮三灯，亲手作别</li></ol><p class="opening-note">约五至八分钟，无追逐、惊吓或限时。进度只记在本机，不影响城中原有故事。</p><div class="opening-actions"><button type="button" id="beginTale" class="primary" disabled>正在展开故事……</button><button type="button" id="restartTale" class="text-button" hidden>重新游历</button><button type="button" id="openingTaleAudio" class="text-button" aria-pressed="false">听一段水声</button></div><p class="save-status" id="saveStatus" role="status"></p><a class="opening-return" href="/night-tour-changan-play/?lantern-walk=gallery">先到照花灯馆察物 →</a><a class="opening-return" href="/night-tour-changan-play/?tale-return=borrowed-lantern">暂不借灯，返回曲江</a></div></section>
+ </main>
+ <dialog class="tale-dialog reading-dialog" id="readingDialog" aria-labelledby="readingTitle"><div class="dialog-top"><p class="eyebrow" id="readingKind"></p><button type="button" class="close-button" data-close="readingDialog" aria-label="合上书页">×</button></div><h2 id="readingTitle" tabindex="-1"></h2><div id="readingBody" class="reading-body"></div><div id="readingActions" class="reading-actions"></div></dialog>
+ <dialog class="tale-dialog drawer" id="cluesDialog" aria-labelledby="cluesTitle"><div class="dialog-top"><div><p class="eyebrow">灯下拾遗</p><h2 id="cluesTitle" tabindex="-1">线索册</h2></div><button type="button" class="close-button" data-close="cluesDialog" aria-label="合上线索册">×</button></div><p class="drawer-intro">已亲手查看的物件，收在此处。没有看过的，不会提前写下。</p><div id="cluesList" class="clues-list"></div><div class="hint-sheet" id="puzzleHints" hidden><h3>三灯旧言</h3><div id="puzzleHintText"></div></div></dialog>
+ <dialog class="tale-dialog drawer" id="peopleDialog" aria-labelledby="peopleTitle"><div class="dialog-top"><div><p class="eyebrow">异闻人物 · 原创画像</p><h2 id="peopleTitle" tabindex="-1">灯下两人</h2></div><button type="button" class="close-button" data-close="peopleDialog" aria-label="合上人物册">×</button></div><p class="drawer-intro">两位主要角色各有一张人物卡。未曾亲闻的身世，仍留在灯影里。</p><div id="peopleList" class="people-list"></div></dialog>
+ <dialog class="tale-dialog character-dialog" id="characterDialog" aria-labelledby="characterTitle"><button type="button" class="close-button portrait-close" data-close="characterDialog" aria-label="合上人物卡">×</button><div id="characterBody"></div></dialog>
+ <dialog class="tale-dialog reading-dialog puzzle-dialog" id="puzzleDialog" aria-labelledby="puzzleTitle"><div class="dialog-top"><p class="eyebrow">第三幕 · 灯照来路</p><button type="button" class="close-button" data-close="puzzleDialog" aria-label="稍后再点灯">×</button></div><h2 id="puzzleTitle" tabindex="-1">依旧言，次第点灯</h2><p id="puzzleInstruction"></p><div id="lampProgress" class="lamp-progress" aria-live="polite"></div><div id="lampChoices" class="lamp-choices"></div><p id="puzzleFeedback" class="puzzle-feedback" role="status"></p><details class="puzzle-help"><summary>再看一遍线索</summary><div id="puzzleHelpText"></div></details><div class="reading-actions"><button type="button" id="resetLamps" class="text-button">重新排列</button><button type="button" id="finishLamps" class="primary" hidden>灯已亮，听她说完</button></div></dialog>
+ <noscript><div class="noscript-note">这段亲历故事需要开启浏览器脚本。<a href="/night-tour-changan-play/?tale-return=borrowed-lantern">返回曲江</a></div></noscript>
+</body>
+</html>

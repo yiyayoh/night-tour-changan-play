@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+ <meta name="theme-color" content="#14272b">
+ <meta name="description" content="据蒲松龄《聊斋志异·聂小倩》改编。亲历古寺三幕，问客、辨白杨乌巢、安排归途与剑囊护门。">
+ <title>聂小倩 · 白杨归骨｜夜游长安</title>
+ <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='6' fill='%2314272b'/%3E%3Cpath d='M32 53V17m0 18L18 24m14 17 14-19' stroke='%23dae0cc' stroke-width='3' fill='none'/%3E%3Cpath d='m14 18 13 3-9 8zM44 12l9 7-14 8zM26 8l9 4-6 12z' fill='%2384a397'/%3E%3C/svg%3E">
+ <link rel="stylesheet" href="/night-tour-changan-play/assets/tales/changan-zhiguai.css">
+ <link rel="stylesheet" href="/night-tour-changan-play/assets/tales/changan-nie-xiaoqian.css">
+ <script>
+ window.CHANGAN_TALE_CONFIG = {
+  id: 'nie-xiaoqian', storageKey: 'changan:tale:nie-xiaoqian:v1', storyUrl: '/night-tour-changan-play/assets/tales/nie-xiaoqian.json', returnUrl: '/night-tour-changan-play/?tale-return=nie-xiaoqian',
+  expectedCharacters: 3, finalStageId: 'ward', puzzleTargetId: 'homeward', puzzleMode: 'choice', puzzleSolution: ['white-poplar', 'window', 'gate'], sound: 'paper',
+  puzzleRounds: [
+   { id: 'landmark', title: '一 · 辨墓标', prompt: '依小倩的请托，应在何处辨认她的墓？', hint: '线刻同时记着白杨和乌巢，两件都须对上。', choices: [ { id: 'stone-pagoda', label: '红幡石塔', detail: '塔边有红幡，却没有白杨乌巢。' }, { id: 'white-poplar', label: '白杨乌巢', detail: '浅白树干，枝上有一处乌巢。' }, { id: 'cypress', label: '井旁古柏', detail: '古柏临井，枝头空着。' } ], answer: 'white-poplar', success: '墓标已认清。今夜先避祸，天明再去迁骨。' },
+   { id: 'shelter', title: '二 · 定借宿处', prompt: '迁骨之前，今夜怎样借宿才有照应？', hint: '拒金留记与小倩的话都指向燕赤霞：与他同室，不要独入暗处。', choices: [ { id: 'pavilion', label: '独守荒亭', detail: '不去惊扰别人，独自在亭中等候。' }, { id: 'shadow', label: '随无名影入后院', detail: '影子声称知道更近的路。' }, { id: 'window', label: '与燕同室，窗下灯火相照应', detail: '先与燕赤霞同宿，待天明再启程。' } ], answer: 'window', success: '同宿已定。最后一页问的是原作多年后的护门安排。' },
+   { id: 'protection', title: '三 · 定悬囊处', prompt: '归家多年后妖物追来，应怎样使用留下的旧剑囊？', hint: '剑囊御妖，原作悬在家门上；它不用于束缚小倩。', choices: [ { id: 'gate', label: '将剑囊悬在归家门口', detail: '留在妖物来路，也留在共同生活的门前。' }, { id: 'wear', label: '将剑囊佩在小倩身上', detail: '把被保护的人当成需要束住的危险。' }, { id: 'well', label: '将剑囊投入井中', detail: '远远丢弃，希望危险一起消失。' } ], answer: 'gate', success: '三页各归其位。接下来回应已经听清的归葬请托。' }
+  ],
+  portraits: { 'nie-xiaoqian': '/night-tour-changan-play/assets/tales/nie-xiaoqian.png', 'ning-caichen': '/night-tour-changan-play/assets/tales/ning-caichen.png', 'yan-chixia': '/night-tour-changan-play/assets/tales/yan-chixia.png' },
+  safeStagePoints: { temple: { x: -179, z: -133, yaw: Math.atan2(6, -1.2), pitch: .045 }, poplar: { x: -155, z: -133, yaw: Math.atan2(6, -1.2), pitch: .045 }, ward: { x: -131, z: -133, yaw: Math.atan2(6, -1.2), pitch: .045 } },
+  text: {
+   audioOff: '收起夜寺风声', audioOn: '听夜寺风声', audioResume: '点此续听夜寺风声', audioOpening: '听一段夜寺风声', audioUnavailable: '风声暂未响起，文字仍包含全部线索，可静音走完故事。',
+   saveCorrupt: '这一卷记录未能读全，可从客舍重新开始；其余异闻与城中原有存档保留。', saveUnavailable: '本机暂时不能保存，当前梦境仍可继续；离开或刷新后可能需要重新走到古寺。',
+   sceneWaiting: '古寺的梦景尚在展开，请稍候片刻。', guideUnavailable: '这段杨叶引路暂未接通，可沿回廊靠近标记。', guideWalking: '循脚下浅青引路亲自走近；电脑用 W A S D，手机推左下摇杆。', guideArrived: '已到近处，停步听清。',
+   dialogueRecorded: '寺廊问话 · 已记下回应', dialogueKind: '寺廊问话', dialogueReply: '白杨回音', encounterKind: '寺中片语', stageKind: '聊斋梦境 · 文学改编', advanceKind: '循廊前行', nextPlace: '走向下一段回廊', transition: '白杨叶影落在寺廊，你沿着灯照得见的路继续走。',
+   puzzleEmptySlot: '尚待核清', puzzleUnit: '页', puzzleProgress: '已核清{label}。再看下一页准备。', puzzleAction: '推演归途', puzzleSolvedAction: '回应请托', puzzleInitial: '每页各有候选，辨认错误可重试，已答对的页保留。',
+   endingKind: '归途已明 · 此诺如何践行', endingDecision: '循原作归葬，或先留寺同守', endingNote: '「白杨之外」以文字回响原作后事；「再守一夜」是本作新增的暂缓分支。两种均可选择，重游可读另一种。', endingReturnScene: '回到寺廊，看这一诺的余影', returnLabel: '返回古寺', endedHint: '这一卷已收束。仍可在寺廊停留、翻看人物与线索，或另起一夜。',
+   emptyClues: '册页还空着。先走近客舍留记、白杨线刻与旧剑囊，亲自查看，所见才会记在这里。', characterEyebrow: '聂小倩 · 独立角色卡', hiddenCharacterLabel: '尚未听清的因缘', characterNote: '文学角色的艺术设计，非历史人物画像。三人容貌与衣饰均按本作重设计为成年形貌。',
+   helpKind: '白杨归骨 · 操作', helpTitle: '先听所求，再定归途', helpGuide: '点行动卡的「前往」，循地面浅青引路走近。到人物或物件附近，按钮会变为「交谈」「查看」。先问话、查看，再沿古寺北侧回廊进入下一幕；无需进入实体殿堂。末幕三问分别选择墓标、借宿与护门位置，选错可重试。', helpAudio: '「听夜寺风声」开启轻柔合成风声意象，默认关闭。声音不承担解题信息，静音同样能走完故事。', helpReturn: '若在寺中走远，可点下方「回到本幕廊口」回到当前安全落脚处；已收线索与对谈保留。', helpExit: '本篇含墓葬与受胁迫叙述，以裹好的衣衾代指迁骨；不展示遗骸、挖掘或血腥，没有惊跳、追逐和限时。右上「返回古寺」可暂离；本机能保存时，回来可接着这一幕。',
+   returnToStageLabel: '回到本幕廊口', returnUnavailable: '廊口的落脚处暂未接好，请稍候再试。', returnedToStage: '已回到本幕廊口，线索与问话仍在。', restartTitle: '重入白杨影下的这一夜？', restartDescription: '当前三幕、问话与归途推演将从客舍重新开始。已读结尾和已揭开的三张角色卡仍保留；其余异闻和城中记录均保留。', restartAction: '重入梦境，从客舍开始'
+  }
+ };
+ </script>
+ <script defer src="/night-tour-changan-play/assets/tales/changan-zhiguai-page.js"></script>
+</head>
+<body class="nie-xiaoqian-tale">
+ <a class="skip-link" href="#actionDock">跳到当前行动</a>
+ <header class="tale-header"><div class="tale-brand"><span class="seal" aria-hidden="true">归<br>途</span><div><p>白杨归骨 · 异闻其四</p><h1>聂小倩</h1></div></div><nav class="header-actions" aria-label="梦境工具"><button type="button" id="openClues">线索册 <span id="clueCount">0</span></button><button type="button" id="openPeople">人物册</button><a href="/night-tour-changan-play/?tale-return=nie-xiaoqian" id="returnCity">返回古寺 <span aria-hidden="true">↗</span></a></nav></header>
+ <main class="tale-experience" id="taleExperience">
+  <iframe id="taleScene" class="tale-scene" src="/night-tour-changan-play/?tale-scene=nie-xiaoqian" title="聂小倩：古寺北廊与白杨影下的三维梦境" allow="fullscreen" tabindex="0"></iframe><div class="scene-shade" aria-hidden="true"></div>
+  <aside class="stage-hud" id="stageHud" hidden><p class="eyebrow" id="stageNumber"></p><h2 id="stageTitle"></h2><p id="stageObjective"></p><button type="button" id="openRecap" class="text-button">重听这一幕</button></aside>
+  <div class="scene-status" id="sceneStatus" role="status" aria-live="polite">正在展开古寺的白杨梦景……</div><button type="button" class="scene-focus" id="focusScene" hidden>回到行走</button><button type="button" class="scene-audio" id="toggleTaleAudio" aria-pressed="false" hidden>听夜寺风声</button>
+  <section class="action-dock" id="actionDock" tabindex="-1" aria-label="当前行动" hidden><div class="dock-heading"><div><p class="eyebrow">白杨亲历</p><p id="actionHint">听所求，认墓标，备归途。</p></div><div class="dock-tools"><button type="button" id="openSource" class="text-button">原作与改编</button><button type="button" id="openWalkHelp" class="text-button">怎样行走</button></div></div><div id="actionRows" class="action-rows"></div><div id="stageAdvance" class="stage-advance"></div></section>
+  <section class="opening" id="opening" aria-labelledby="openingTitle"><div class="opening-paper">
+   <div class="opening-poplar" aria-hidden="true"><i class="poplar-trunk"></i><i class="poplar-leaves"></i><i class="poplar-nest"></i><span>白杨之外</span></div>
+   <p class="eyebrow">蒲松龄《聊斋志异·聂小倩》改编</p><p class="opening-volume">长安梦境 <span>其四</span></p><h2 id="openingTitle">她想离开的，<br>是没有归处的夜。</h2>
+   <p class="opening-copy">白杨枝上有乌巢，寺廊深处有人等你听完一个请求。与宁采臣守诺，向燕赤霞问清照应，再为聂小倩认出通向归处的路。</p>
+   <ol class="opening-steps"><li><span>一</span>客舍问话，听拒金之后</li><li><span>二</span>白杨请托，认乌巢墓标</li><li><span>三</span>归途三问，将承诺做实</li></ol>
+   <p class="opening-source">原作发生于金华及宁采臣家乡；长安古寺只作文学梦境。角色形貌、现场物证与暂缓分支均为本作设计。</p><p class="opening-note"><strong>幽冷哀婉 · 三幕 · 两种收束</strong><br>约八至十分钟。有墓葬与胁迫叙述，不展示遗骸、挖掘或血腥，无惊跳、追逐和限时。声音默认关闭，进度只记本机。</p>
+   <div class="opening-actions"><button type="button" id="beginTale" class="primary" disabled>梦景尚在展开……</button><button type="button" id="restartTale" class="text-button" hidden>重入梦境</button><button type="button" id="openingWalkHelp" class="text-button" disabled>先读玩法</button><button type="button" id="openingTaleAudio" class="text-button" aria-pressed="false">听一段夜寺风声</button><button type="button" id="openingSource" class="text-button">原作与改编对照</button></div><p class="save-status" id="saveStatus" role="status"></p><a class="opening-return" href="/night-tour-changan-play/?tale-return=nie-xiaoqian">暂别梦境，返回古寺</a>
+  </div></section>
+ </main>
+ <dialog class="tale-dialog reading-dialog" id="readingDialog" aria-labelledby="readingTitle"><div class="dialog-top"><p class="eyebrow" id="readingKind"></p><button type="button" class="close-button" data-close="readingDialog" aria-label="合上书页">×</button></div><h2 id="readingTitle" tabindex="-1"></h2><div id="readingBody" class="reading-body"></div><div id="readingActions" class="reading-actions"></div></dialog>
+ <dialog class="tale-dialog drawer" id="cluesDialog" aria-labelledby="cluesTitle"><div class="dialog-top"><div><p class="eyebrow">归途三页</p><h2 id="cluesTitle" tabindex="-1">线索册</h2></div><button type="button" class="close-button" data-close="cluesDialog" aria-label="合上线索册">×</button></div><p class="drawer-intro">只记亲自看过的物件。留记、墓标与剑囊各有用途；全部解题线索都有文字，不必开启声音。</p><div id="cluesList" class="clues-list"></div><div class="hint-sheet" id="puzzleHints" hidden><h3>归途三问</h3><div id="puzzleHintText"></div></div></dialog>
+ <dialog class="tale-dialog drawer" id="peopleDialog" aria-labelledby="peopleTitle"><div class="dialog-top"><div><p class="eyebrow">文学角色 · 独立艺术设计</p><h2 id="peopleTitle" tabindex="-1">寺中三人</h2></div><button type="button" class="close-button" data-close="peopleDialog" aria-label="合上人物册">×</button></div><p class="drawer-intro">聂小倩、宁采臣、燕赤霞各有独立角色卡。三位的成年形貌与衣饰为本作设计；原作因缘随问话与归途推演逐渐揭开。</p><div id="peopleList" class="people-list"></div></dialog>
+ <dialog class="tale-dialog character-dialog" id="characterDialog" aria-labelledby="characterTitle"><button type="button" class="close-button portrait-close" data-close="characterDialog" aria-label="合上人物卡">×</button><div id="characterBody"></div></dialog>
+ <dialog class="tale-dialog reading-dialog puzzle-dialog" id="puzzleDialog" aria-labelledby="puzzleTitle"><div class="dialog-top"><p class="eyebrow">第三幕 · 归骨护途</p><button type="button" class="close-button" data-close="puzzleDialog" aria-label="稍后再定归途">×</button></div><h2 id="puzzleTitle" tabindex="-1">归途三问</h2><p id="puzzleInstruction"></p><div id="lampProgress" class="lamp-progress" aria-live="polite"></div><div id="lampChoices" class="lamp-choices" role="group" aria-label="本页可选安排"></div><p id="puzzleFeedback" class="puzzle-feedback" role="status"></p><details class="puzzle-help"><summary>再看一遍归途线索</summary><div id="puzzleHelpText"></div></details><div class="reading-actions"><button type="button" id="resetLamps" class="text-button">重置归途推演</button><button type="button" id="finishLamps" class="primary" hidden>三页已明，回应请托</button></div></dialog>
+ <dialog class="tale-dialog reading-dialog source-dialog" id="sourceDialog" aria-labelledby="sourceTitle"><div class="dialog-top"><div><p class="eyebrow">文学来处 · 改编说明</p><h2 id="sourceTitle" tabindex="-1">原作与此夜</h2></div><button type="button" class="close-button" data-close="sourceDialog" aria-label="合上改编说明">×</button></div><div class="reading-body"><p>本篇据清代蒲松龄《聊斋志异·聂小倩》改编。原作从金华北郭寺写起，后来移至宁采臣家乡。眼前借长安古寺安放一场文学梦境，不将它说成唐代长安史事或金华原址复原。</p><p>聂小倩、宁采臣、燕赤霞均来自原作。三张画像重新设计为成年形貌；原文燕赤霞是自言秦人的剑客，不沿用电影道士造型。原文未明确将胁迫小倩的妖物设为树精，本作也不加入树妖、黑山老妖或影视对白。</p><div class="adaptation-sheet"><h3>亲历时改了什么</h3><p>三幕问话、拒金留记、白杨线刻与归途三问为本作新写。玩家以同行见证者的身份确认墓标、借宿照应及后来悬囊的位置；这不是古籍中已有的游戏或法术。</p><p>原作先有同宿避祸，后有迁骨归葬；剑囊收妖发生在返家多年以后。末幕是把准备分别核清的推演，不将不同年月合成同夜施法。</p><p>迁骨用裹好的衣衾象征，不展示遗骸或挖掘。小倩的请求与判断被认真保留，帮助她也不以婚姻、爱恋或好感奖励作为条件。</p></div><details class="source-afterword"><summary>展开原作后记与两种收束（含剧透）</summary><p>原作宁采臣拒绝求欢与赠金，聂小倩随后告知自己受妖物胁迫，指点同宿避祸，并以白杨乌巢为墓标，请宁迁骨。宁按约归葬，小倩随他返家，拜见宁母，在家庭中相处。</p><p>宁的原妻去世后，宁母同意两人成婚。多年后小倩察觉妖物追来，建议悬起燕赤霞留下的旧剑囊，妖物遂被收住。</p><p>《白杨之外》以文字回响上述迁骨、返家与后来悬囊的脉络，现场告别与余影仍是改编。《再守一夜》则是新增的暂缓分支，留下具体照应与约期，不声称已经完成归葬，也不假称这是蒲松龄原文的另一结局。</p><p class="source-reference"><a href="https://zh.wikisource.org/zh-hant/聊齋志異/第02卷#聶小倩" target="_blank" rel="noopener noreferrer">阅读《聊斋志异·聂小倩》原文 ↗</a></p></details></div><div class="reading-actions"><button type="button" class="primary" data-close="sourceDialog">已知来处，回到此夜</button></div></dialog>
+ <noscript><div class="noscript-note">这段亲历故事需要开启浏览器脚本。<a href="/night-tour-changan-play/?tale-return=nie-xiaoqian">返回古寺</a></div></noscript>
+</body>
+</html>

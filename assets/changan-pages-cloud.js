@@ -19,7 +19,11 @@
  window.addEventListener('message',event=>{
   if(event.origin!==cloudOrigin||event.source!==bridge||event.data?.channel!==channel)return;
   const data=event.data;
-  if(data.type==='changan-cloud-ready'){ready=true;label();window.dispatchEvent(new Event('changan-journal-changed'));return;}
+  if(data.type==='changan-cloud-ready'){
+   const newlyConnected=!ready;ready=true;label();window.dispatchEvent(new Event('changan-journal-changed'));
+   if(newlyConnected)for(const[retry,signin]of [['bondRetry','bondSignIn'],['mainNightRetry','mainNightSignIn'],['cityStoryRetry','cityStorySignIn']]){const link=document.getElementById(signin),read=document.getElementById(retry);if(link&&!link.hidden&&link.closest('dialog[open]')&&read&&!read.disabled)read.click();}
+   return;
+  }
   if(['changan-cloud-auth','changan-cloud-unavailable','changan-cloud-disconnected'].includes(data.type)){disconnect();return;}
   if(data.type!=='changan-cloud-response')return;
   const item=pending.get(data.id);if(!item)return;const status=Number.isInteger(data.status)&&data.status>=200&&data.status<=599?data.status:502;

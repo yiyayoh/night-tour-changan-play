@@ -69,45 +69,47 @@ window.CHANGAN_CHARACTER_PLAY={"characters":{"xishi":{"name":"西施","greeting"
  'use strict';
  const root=window,catalog=root.CHANGAN_CHARACTER_PLAY;if(!catalog||!root.ChanganCharacterLocal)return;
  let storage;try{storage=localStorage;}catch{}
- const local=root.ChanganCharacterLocal.create(catalog,storage),nativeFetch=root.fetch?.bind(root),modes=new Map(),controllers=new Set();let journalMode=null,disposed=false;
+ const local=root.ChanganCharacterLocal.create(catalog,storage),nativeFetch=root.fetch?.bind(root),modes=new Map(),controllers=new Set();let journalMode=null,disposed=false,storeEpoch=0;
  const response=(r)=>new Response(JSON.stringify(r.value),{status:r.status,headers:{'Content-Type':'application/json','Cache-Control':'no-store'}});
  const aborted=()=>new DOMException('The operation was aborted.','AbortError');
+ function current(epoch,signal){if(disposed||signal?.aborted||epoch!==storeEpoch)throw aborted();}
  function mode(id,value){if(modes.get(id)&&modes.get(id)!==value)root.changanForgetProgress?.(id);modes.set(id,value);}
  function canProbe(){return location.protocol!=='file:'&&nativeFetch&&(!root.CHANGAN_PAGES||root.ChanganPagesCloud?.state().ready);}
  async function probe(input,options){
   if(!canProbe())return null;const controller=new AbortController(),outer=options.signal,onAbort=()=>controller.abort();controllers.add(controller);outer?.addEventListener('abort',onAbort,{once:true});if(outer?.aborted)controller.abort();const timer=setTimeout(()=>controller.abort(),root.ChanganPagesCloud?.state().ready?11000:1800);
   try{const r=await nativeFetch(input,{...options,signal:controller.signal});if(outer?.aborted)throw aborted();return r;}catch(error){if(outer?.aborted)throw aborted();return null;}finally{clearTimeout(timer);controllers.delete(controller);outer?.removeEventListener('abort',onAbort);}
  }
- async function readCharacter(id,input,options){
+ async function readCharacter(id,input,options,epoch=storeEpoch){
   if(modes.get(id)!=='local'){
-   const remote=await probe(input,options);if(disposed||options.signal?.aborted)throw aborted();if(remote?.ok){let value;try{value=await remote.clone().json();}catch{}if(value?.progress&&value?.journey&&Array.isArray(value.questions)){mode(id,'cloud');return response({status:remote.status,value:{...value,storageMode:'cloud',writable:true}});}}
+   const remote=await probe(input,options);current(epoch,options.signal);if(remote?.ok){let value;try{value=await remote.clone().json();}catch{}current(epoch,options.signal);if(value?.progress&&value?.journey&&Array.isArray(value.questions)){mode(id,'cloud');return response({status:remote.status,value:{...value,storageMode:'cloud',writable:true}});}}
   }
-  if(disposed||options.signal?.aborted)throw aborted();mode(id,'local');return response(local.request('/api/relationships/'+id));
+  current(epoch,options.signal);mode(id,'local');return response(local.request('/api/relationships/'+id));
  }
  root.fetch=async(input,options={})=>{
   const url=new URL(typeof input==='string'||input instanceof URL?String(input):input.url,location.href),request=input instanceof Request?input:null,method=String(options.method||request?.method||'GET').toUpperCase(),signal=options.signal||request?.signal;
-  if(signal?.aborted||disposed)throw aborted();
+  const epoch=storeEpoch;current(epoch,signal);
   const match=url.pathname.match(/^\/api\/(relationships|journeys)\/([a-z][a-z-]+)$/),id=match?.[2],character=!!id&&Object.hasOwn(catalog.characters,id),isJournal=url.pathname==='/api/journal'||['/api/journal/scenery','/api/journal/import'].includes(url.pathname);
   if(url.origin!==location.origin||(!character&&!isJournal))return nativeFetch(input,options);
   options={...options,signal};
   if(!['GET','POST'].includes(method)||(character&&method==='GET'&&match[1]==='journeys')||(isJournal&&method==='GET'&&url.pathname!=='/api/journal')||(isJournal&&method==='POST'&&url.pathname==='/api/journal'))return response({status:405,value:{error:'请使用网页中的人物与收藏操作。'}});
-  if(character&&method==='GET'&&match[1]==='relationships')return readCharacter(id,input,options);
+  if(character&&method==='GET'&&match[1]==='relationships')return readCharacter(id,input,options,epoch);
   if(isJournal&&method==='GET'){
-   if(journalMode!=='local'){const remote=await probe(input,options);if(disposed||signal?.aborted)throw aborted();if(remote?.ok){let value;try{value=await remote.clone().json();}catch{}if(Array.isArray(value?.people)){journalMode='cloud';return response({status:200,value:{...value,storageMode:'cloud',writable:true}});}}}
+   if(journalMode!=='local'){const remote=await probe(input,options);current(epoch,signal);if(remote?.ok){let value;try{value=await remote.clone().json();}catch{}current(epoch,signal);if(Array.isArray(value?.people)){journalMode='cloud';return response({status:200,value:{...value,storageMode:'cloud',writable:true}});}}}
    journalMode='local';return response(local.request('/api/journal'));
   }
-  if(character&&!modes.has(id))await readCharacter(id,'/api/relationships/'+id,{signal,credentials:'same-origin'});
-  if((character&&modes.get(id)==='cloud')||(isJournal&&journalMode==='cloud')){const remote=await nativeFetch(input,options);if(remote.status===401){invalidate();notify();return response({status:409,value:{error:'云端会话已结束，已展开本机进度；本次云端保存未确认，可直接继续本机游玩。'}});}return remote;}
+  if(character&&!modes.has(id))await readCharacter(id,'/api/relationships/'+id,{signal,credentials:'same-origin'},epoch);
+  current(epoch,signal);
+  if((character&&modes.get(id)==='cloud')||(isJournal&&journalMode==='cloud')){const remote=await nativeFetch(input,options);current(epoch,signal);if(remote.status===401){invalidate();notify();return response({status:409,value:{error:'云端会话已结束，已展开本机进度；本次云端保存未确认，可直接继续本机游玩。'}});}return remote;}
   let text=options.body??(request?await request.clone().text():null),body;try{if(typeof text!=='string'||text.length>4096)throw Error();body=JSON.parse(text);}catch{return response({status:400,value:{error:'请选择网页中的一个回答。'}});}
-  if(signal?.aborted||disposed)throw aborted();return response(local.request(url.pathname,method,body));
+  current(epoch,signal);return response(local.request(url.pathname,method,body));
  };
- function invalidate(){modes.clear();journalMode=null;root.changanForgetProgress?.();}
+ function invalidate(){storeEpoch++;for(const controller of controllers)controller.abort();modes.clear();journalMode=null;root.changanForgetProgress?.();}
  function notify(){root.dispatchEvent(new Event('changan-character-store-changed'));root.dispatchEvent(new CustomEvent('changan-journal-changed',{detail:{characterStoreChanged:true}}));}
  root.addEventListener('changan-cloud-connected',()=>{invalidate();notify();});
  root.addEventListener('changan-cloud-disconnected',()=>{invalidate();notify();});
  root.addEventListener('focus',()=>{if(!root.CHANGAN_PAGES){invalidate();notify();}});
  root.addEventListener('storage',event=>{if(event.key===local.key){local.refresh();root.changanForgetProgress?.();notify();}});
- root.addEventListener('pagehide',event=>{for(const controller of controllers)controller.abort();controllers.clear();if(!event.persisted)disposed=true;});
+ root.addEventListener('pagehide',event=>{invalidate();controllers.clear();if(!event.persisted)disposed=true;});
  root.addEventListener('pageshow',event=>{if(event.persisted){disposed=false;invalidate();local.refresh();notify();}});
  root.ChanganCharacterAccess={local,mode:id=>modes.get(id)||null,describe:value=>value?.storageMode==='local'?(value.writable?'免登录游玩，进度自动记在此浏览器。本机与云端各自保存。':'本机保存暂不可用，本页仍可玩；离开后可能无法续接。'):'正在使用原账号的云端进度；本机记录另行保留。',state:()=>({modes:Object.fromEntries(modes),journalMode,disposed,pending:controllers.size})};
 })();
@@ -1898,6 +1900,7 @@ entries.forEach(b=>b.onclick=()=>{if(gallery.hidden)openGallery();else closeGall
  const knownViews=['city','alley','poem','village','mountains','waterfalls','landscape','inn','avenue','west','east','palace','lake','temple','tower'];knownViews.push(...["outer-west","outer-east","southwest-courts","southeast-crafts"]);
  const stage=score=>score>=60?'知音':score>=30?'相知':score>=10?'初识':'尚未相识';
  let data=null,pages=[],pageIndex=0,filter='all',loading=false,busy=false,epoch=0,readController=null,returnFocus=null,bypassNotes=false,lastError=null,dirty=false;
+ const storageLabel=()=>data?.storageMode==='local'?'本机':'云端';
  function status(message){$('journalStatus').textContent=message;}
  function currentView(){const view=window.changanState?.().activeView;return knownViews.includes(view)?view:'city';}
  function oldCollections(){const views=window.changanNotesState?.().saved||[];return [...new Set(views.filter(v=>knownViews.includes(v)))];}
@@ -1914,24 +1917,24 @@ entries.forEach(b=>b.onclick=()=>{if(gallery.hidden)openGallery();else closeGall
   const count=letters.length+travels.length+scenery.length,active=(data?.people||[]).filter(p=>p.journey?.state.active).length;
   const cover={key:'cover',type:'cover',kind:'夜游长安 / 私人游记',title:'一卷灯下相逢',paragraphs:[count?'把今夜遇见的人、街巷里的小事，与走过的山河，慢慢收进这一卷。':'游记还在等第一盏灯。去角色卡与故人对谈，遇见城坊小事，或把眼前喜欢的夜色留在这里。','已展开 '+letters.length+' 封书信 · '+travels.length+' 篇相遇 · '+scenery.length+' 处夜色'+(active?'，另有 '+active+' 段托付正等待续写。':'。'),'从人物卡的「梦中托付」循线入城，或在「城坊小事」里留下一次选择，这里便多一页。'],seal:'长安记'};
   all.push(cover,...letters,...travels,...scenery);pages=filter==='all'?all:filter==='letters'?letters:filter==='travels'?travels:scenery;
-  if(!pages.length&&data){const empty={letters:['知音书信，待君亲启','在角色卡的「灯下对谈」中积累好感度。初识、相知与知音，会分别展开一封原创书信。'],travels:['走一程，留一页','在「城坊小事」里留下一次选择，便能收进一件纪念。也可从人物卡的「梦中托付」循三处线索完成支线，读到这次选择的结尾。知音相约须看完才会入卷。'],scenery:['山河尚未入卷','切换到喜欢的景致，点「留住眼前夜色」。收藏保存于当前登录账号，可在另一台设备继续看。']}[filter];pages=[{key:'empty:'+filter,type:'empty',kind:'尚未落笔',title:empty[0],paragraphs:[empty[1]],seal:'待相逢'}];}
+  if(!pages.length&&data){const empty={letters:['知音书信，待君亲启','在角色卡的「灯下对谈」中积累好感度。初识、相知与知音，会分别展开一封原创书信。'],travels:['走一程，留一页','在「城坊小事」里留下一次选择，便能收进一件纪念。也可从人物卡的「梦中托付」循三处线索完成支线，读到这次选择的结尾。知音相约须看完才会入卷。'],scenery:['山河尚未入卷','切换到喜欢的景致，点「留住眼前夜色」。'+(data?.storageMode==='local'?'收藏留在此浏览器，回到同一网址可续看。':'收藏保存于当前登录账号，可在另一台设备继续看。')]}[filter];pages=[{key:'empty:'+filter,type:'empty',kind:'尚未落笔',title:empty[0],paragraphs:[empty[1]],seal:'待相逢'}];}
   pageIndex=Math.max(0,Math.min(pageIndex,pages.length-1));
  }
  function syncControls(){const unavailable=!data||loading||busy,saved=!!data?.scenery.some(s=>s.view===currentView());$('journalSaveScenery').disabled=unavailable;$('journalSaveScenery').textContent=saved?'此景已留在游记':'留住眼前夜色';$('journalSaveScenery').setAttribute('aria-pressed',String(saved));$('journalWallpaper').disabled=!window.changanCapture;$('journalImport').hidden=!data||!missingCollections().length;$('journalImport').disabled=loading||busy;$('journalImport').textContent='导入本机旧收藏（'+missingCollections().length+'）';$('journalPrevious').disabled=unavailable||pageIndex===0;$('journalNext').disabled=unavailable||pageIndex>=pages.length-1;document.querySelectorAll('[data-journal-filter]').forEach(b=>{b.disabled=loading||busy;b.setAttribute('aria-pressed',String(b.dataset.journalFilter===filter));});}
- function render(direction=0){buildPages();$('journalArt').replaceChildren();$('journalPageText').replaceChildren();$('journalPageActions').replaceChildren();const page=pages[pageIndex];if(!page){$('journalPageKind').textContent='云端游记';$('journalPageTitle').textContent=loading?'正在展开这一卷…':'书页暂未展开';$('journalPageText').append(elem('p',loading?'稍候片刻，书信与足迹正在灯下归卷。':'登录后可读取并保存你的书信、相遇与夜色。'));$('journalArt').append(elem('span','夜游长安','journal-art-symbol'));$('journalPageCount').textContent='卷首';syncControls();return;}
+ function render(direction=0){buildPages();$('journalArt').replaceChildren();$('journalPageText').replaceChildren();$('journalPageActions').replaceChildren();const page=pages[pageIndex];if(!page){$('journalPageKind').textContent='人物与夜色游记';$('journalPageTitle').textContent=loading?'正在展开这一卷…':'书页暂未展开';$('journalPageText').append(elem('p',loading?'稍候片刻，书信与足迹正在灯下归卷。':'人物书信与夜色可免登录保存于本机；连接云端后可接续原账号旧卷。'));$('journalArt').append(elem('span','夜游长安','journal-art-symbol'));$('journalPageCount').textContent='卷首';syncControls();return;}
   const image=portrait(page.person);if(image){const img=document.createElement('img');img.src=image;img.alt='';img.width=190;img.height=280;$('journalArt').append(img);}else $('journalArt').append(elem('span',page.type==='scenery'?'山河夜色':'灯下相逢','journal-art-symbol'));
   $('journalArt').append(elem('span',page.seal,'journal-art-seal'));$('journalPageKind').textContent=page.kind;$('journalPageTitle').textContent=page.title;for(const text of page.paragraphs||[])if(text)$('journalPageText').append(elem('p',text));if(page.basis)$('journalPageText').append(elem('p',page.basis,'journal-basis'));if(page.sourceUrl&&safeSource(page.sourceUrl)){const link=elem('a',page.sourceLabel||'查看创作依据');link.href=page.sourceUrl;link.target='_blank';link.rel='noopener noreferrer';$('journalPageText').append(link);}
   if(palacePeople.has(page.person)){const revisit=elem('button','翻开人物图卷');revisit.onclick=()=>{dialog.close();window.changanJourneyVisit?.(page.person);window.changanBondSelectTab?.(page.type==='letter'?'rewards':'journey');};$('journalPageActions').append(revisit);}
   if(page.type==="main-night"){const reread=elem("button","重读长安这一夜");reread.dataset.mainNightJournal="true";reread.onclick=()=>{dialog.close();window.changanOpenMainNight?.(page.run);};$("journalPageActions").append(reread);}
   if(page.cityStoryId){const revisit=elem('button','重访这段小事');revisit.onclick=()=>{dialog.close();window.changanOpenCityStory?.(page.cityStoryId);};$('journalPageActions').append(revisit);}
-  if(page.view){const visit=elem('button','再看这处夜色');visit.onclick=()=>{dialog.close();window.changanNavigate?.(page.view);};const remove=elem('button','移出收藏');remove.dataset.danger='true';remove.disabled=busy||loading;remove.onclick=()=>mutate('/api/journal/scenery',{view:page.view,saved:false},'已将'+page.title+'移出云端收藏。');$('journalPageActions').append(visit,remove);}
+  if(page.view){const visit=elem('button','再看这处夜色');visit.onclick=()=>{dialog.close();window.changanNavigate?.(page.view);};const remove=elem('button','移出收藏');remove.dataset.danger='true';remove.disabled=busy||loading;remove.onclick=()=>mutate('/api/journal/scenery',{view:page.view,saved:false},'已将'+page.title+'移出'+storageLabel()+'收藏。');$('journalPageActions').append(visit,remove);}
   $('journalPageCount').textContent=String(pageIndex+1).padStart(2,'0')+' / '+String(pages.length).padStart(2,'0')+' 页';$('journalWriting').scrollTop=0;const book=$('journalPage');book.classList.remove('journal-turn','journal-turn-back');if(direction){void book.offsetWidth;book.classList.add(direction>0?'journal-turn':'journal-turn-back');}syncControls();
  }
  function errorState(error){lastError=error;status(error.message);$('journalRetry').hidden=!!error.signIn;$('journalSignIn').hidden=!error.signIn;if(error.signIn){data=null;render();}}
- async function load(){readController?.abort();readController=new AbortController();const requestEpoch=++epoch;loading=true;data=null;lastError=null;$('journalRetry').hidden=true;$('journalSignIn').hidden=true;status('正在从云端展开书信与足迹…');render();if(location.protocol==='file:'&&!window.ChanganCharacterAccess){loading=false;status('离线图卷可继续看景与保存壁纸；游记请在网站登录后展开。');render();return;}
+ async function load(){readController?.abort();readController=new AbortController();const requestEpoch=++epoch;loading=true;data=null;lastError=null;$('journalRetry').hidden=true;$('journalSignIn').hidden=true;status('正在展开书信与足迹…');render();if(location.protocol==='file:'&&!window.ChanganCharacterAccess){loading=false;status('离线图卷可继续看景与保存壁纸；游记请在网站登录后展开。');render();return;}
   try{const result=await api('/api/journal',{signal:readController.signal});if(requestEpoch!==epoch)return;data=result;loading=false;status(result.storageMode==='local'?window.ChanganCharacterAccess.describe(result)+' 本页展示本机人物与收藏；云端家书和城坊旧卷仍另行保留。':'这一卷已与当前登录账号同步。');render();window.dispatchEvent(new CustomEvent('changan-journal-changed',{detail:{savedViews:data.scenery.map(s=>s.view)}}));}catch(error){if(requestEpoch!==epoch||error.name==='AbortError')return;loading=false;render();errorState(error);}
  }
- async function mutate(path,body,message){if(busy||loading||!data)return;busy=true;const requestEpoch=epoch,lastPage=pages[pageIndex]?.key;lastError=null;$('journalRetry').hidden=true;$('journalSignIn').hidden=true;status('正在把这一笔记入云端…');syncControls();$('journalPageActions').querySelectorAll('button').forEach(b=>b.disabled=true);
+ async function mutate(path,body,message){if(busy||loading||!data)return;busy=true;const requestEpoch=epoch,lastPage=pages[pageIndex]?.key;lastError=null;$('journalRetry').hidden=true;$('journalSignIn').hidden=true;status('正在把这一笔记入'+storageLabel()+'…');syncControls();$('journalPageActions').querySelectorAll('button').forEach(b=>b.disabled=true);
   try{const result=await api(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(requestEpoch===epoch){data=result;buildPages();const found=pages.findIndex(p=>p.key===lastPage);if(found>=0)pageIndex=found;status(result.storageMode==='local'?message.replaceAll('云端','本机')+' '+window.ChanganCharacterAccess.describe(result):message);render();}window.dispatchEvent(new CustomEvent('changan-journal-changed',{detail:{savedViews:result.scenery.map(s=>s.view)}}));}catch(error){if(requestEpoch===epoch){errorState(error);status(error.message+' 这次保存尚未确认，可再点一次。');}}finally{busy=false;if(requestEpoch===epoch){syncControls();$('journalPageActions').querySelectorAll('button').forEach(b=>b.disabled=false);}else if(dialog.open)load();if(dirty&&dialog.open){dirty=false;load();}}
  }
  function open(value='all'){returnFocus=document.activeElement;window.ChanganNightTour?.pause();window.changanClearWalkingInput?.();window.closePortraitGallery?.();for(const other of document.querySelectorAll('dialog[open]'))if(other!==dialog)other.close();filter=['all','letters','travels','scenery'].includes(value)?value:'all';pageIndex=0;if(!dialog.open)dialog.showModal();document.body.classList.add('reading-notes');$('journalTitle').focus({preventScroll:true});dialog.scrollTop=0;if(busy){render();status('上一笔记录仍在保存，稍候便可续读。');}else load();}
@@ -1939,11 +1942,11 @@ entries.forEach(b=>b.onclick=()=>{if(gallery.hidden)openGallery();else closeGall
  openNotes.addEventListener('click',event=>{if(bypassNotes)return;event.preventDefault();event.stopImmediatePropagation();open();},true);
  $('closeJourneyJournal').onclick=()=>dialog.close();$('journalPrevious').onclick=()=>turn(-1);$('journalNext').onclick=()=>turn(1);$('journalRetry').onclick=()=>load();
  document.querySelectorAll('[data-journal-filter]').forEach(button=>button.onclick=()=>{if(loading||busy)return;filter=button.dataset.journalFilter;pageIndex=0;render();});
- $('journalSaveScenery').onclick=()=>{const view=currentView();if(data?.scenery.some(s=>s.view===view)){status('这一处夜色已经留在当前账号的游记中。');return;}mutate('/api/journal/scenery',{view,saved:true},'眼前夜色已留在云端游记。');};
- $('journalImport').onclick=()=>{const views=missingCollections();if(views.length)mutate('/api/journal/import',{views},'本机旧收藏已合入当前登录账号的游记。');};
+ $('journalSaveScenery').onclick=()=>{const view=currentView();if(data?.scenery.some(s=>s.view===view)){status('这一处夜色已经留在'+storageLabel()+'游记中。');return;}mutate('/api/journal/scenery',{view,saved:true},'眼前夜色已留在'+storageLabel()+'游记。');};
+ $('journalImport').onclick=()=>{const views=missingCollections();if(views.length)mutate('/api/journal/import',{views},'本机旧收藏已合入'+storageLabel()+'游记。');};
  $('journalWallpaper').onclick=()=>{if(!window.changanCapture)return;dialog.close();bypassNotes=true;try{openNotes.onclick?.call(openNotes);}finally{bypassNotes=false;}};
- // The earlier wallpaper page keeps its local screenshot workflow; mirror saves only after a cloud acknowledgement.
- $('saveNote')?.addEventListener('click',async()=>{const view=window.changanNotesState?.().view;if(!knownViews.includes(view)||location.protocol==='file:')return;try{const result=await api('/api/journal/scenery',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({view,saved:true})});window.dispatchEvent(new CustomEvent('changan-journal-changed',{detail:{savedViews:result.scenery.map(s=>s.view)}}));if($('nightNotes').open&&window.changanNotesState?.().view===view)$('noteStatus').textContent='此景已收藏到云端游记。';}catch(error){if($('nightNotes').open&&window.changanNotesState?.().view===view)$('noteStatus').textContent=error.message+' 壁纸仍可保存，本机收藏可稍后导入游记。';}});
+ // The earlier wallpaper page keeps its screenshot workflow; describe the store that acknowledged the save.
+ $('saveNote')?.addEventListener('click',async()=>{const view=window.changanNotesState?.().view;if(!knownViews.includes(view)||location.protocol==='file:')return;try{const result=await api('/api/journal/scenery',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({view,saved:true})});window.dispatchEvent(new CustomEvent('changan-journal-changed',{detail:{savedViews:result.scenery.map(s=>s.view)}}));if($('nightNotes').open&&window.changanNotesState?.().view===view)$('noteStatus').textContent='此景已收藏到'+(result.storageMode==='local'?'本机':'云端')+'游记。';}catch(error){if($('nightNotes').open&&window.changanNotesState?.().view===view)$('noteStatus').textContent=error.message+' 壁纸仍可保存，本机收藏可稍后导入游记。';}});
  dialog.addEventListener('keydown',event=>{if(event.altKey||event.ctrlKey||event.metaKey||event.target.closest('input,select,textarea,a'))return;if(event.key==='ArrowLeft'){event.preventDefault();turn(-1);}if(event.key==='ArrowRight'){event.preventDefault();turn(1);}});
  dialog.addEventListener('click',event=>{const box=dialog.getBoundingClientRect();if(event.target===dialog&&(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom))dialog.close();});
  dialog.addEventListener('close',()=>{epoch++;readController?.abort();loading=false;if(!$('nightNotes').open)document.body.classList.remove('reading-notes');if(document.querySelector('dialog[open]'))return;const target=[returnFocus,openNotes,$('viewer')].find(el=>el?.getClientRects().length&&!el.disabled&&getComputedStyle(el).visibility!=='hidden');target?.focus({preventScroll:true});});

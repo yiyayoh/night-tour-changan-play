@@ -34,17 +34,17 @@
   roof(0,73,16,7,8.5);for(const x of[-7,7])box(x,4.2,73,1.3,8.4,1.3,'red',true,'column');box(0,8.35,73,16,.4,1,'wood',false,'beam');plaque('兩儀門',0,7.55,73.6,5.0);
   // Sheltered connecting galleries, with distinct rear garden and court.
   for(const x of[-40,40]){box(x,6.5,36,4,.45,41,'tile',false);for(const z of[18,30,42,54])box(x,3.2,z,.7,6.4,.7,'red',true,'column');}
-  function hangingLamp(x,y,z){box(x,y+.65,z,.08,1.3,.08,'wood',false,'lamp-chain');box(x,y,z,.62,.86,.62,'lamp',false,'hanging-lantern');for(const side of[-1,1]){box(x+side*.33,y,z,.07,.9,.7,'wood',false,'lantern-frame');box(x,y+side*.45,z,.74,.08,.74,'wood',false,'lantern-frame');}box(x,y-.65,z,.08,.4,.08,'red',false,'tassel');}
+  function hangingLamp(x,y,z){box(x,y+1.1,z,.08,2.2,.08,'wood',false,'lamp-chain');box(x,y,z,.62,.86,.62,'lamp',false,'hanging-lantern');for(const side of[-1,1]){box(x+side*.33,y,z,.07,.9,.7,'wood',false,'lantern-frame');box(x,y+side*.45,z,.74,.08,.74,'wood',false,'lantern-frame');}box(x,y-.65,z,.08,.4,.08,'red',false,'tassel');}
   function tree(x,z){box(x,2.2,z,1,4.4,1,'wood',true,'tree');for(let i=0;i<3;i++)box(x+i*.3,5+i*.8,z,5.5-i*.7,1.5,4.4-i*.6,'leaf',false);}
   for(const p of[[-35,44],[35,44],[-17,34],[17,34],[-38,-24],[38,-24],[-16,-66],[16,-66]])tree(...p);
   for(const x of[-21,21]){box(x,.25,41,8,.5,12,'stone',true,'platform');box(x,.56,41,6.7,.12,10.8,'water',false);for(const z of[36,46])box(x,.75,z,7,.7,.65,'stone',true);}
-  function desk(x,z,color='wood'){box(x,.86,z,3.2,.3,1.8,color,true);for(const dx of[-1.2,1.2])box(x+dx,.48,z,.25,.8,1.4,color,true);}
+  function desk(x,z,color='wood'){box(x,.86,z,3.2,.3,1.8,color,true);for(const dx of[-1.2,1.2])box(x+dx,.44,z,.25,.88,1.4,color,true);}
   for(const id of['rain-report','work-ledger','silk-book','court-draft','court-map']){const[x,z]=targetsAt[id];desk(x,z);box(x,1.04,z,2,.05,1.2,'paper',false);for(let i=0;i<3;i++)box(x-.55+i*.45,1.075,z,.06,.015,.75,'ink',false);}
   box(-5,1.13,-41,.35,.12,.35,'red',false).echo='seal';
   for(const x of[-6,-4])box(x,1.18,-41,.4,.25,1.2,'paper',false).echo='records';
   box(5,1.13,-41,.8,.13,1.1,'gold',false).echo='dawn';
   box(33,1.5,-2,2.8,.3,.6,'wood',true);for(const x of[31.8,34.2])box(x,.85,-2,.2,1.7,.3,'wood',true);box(33,1.05,-2,1.7,1.3,.15,'silk',false);
-  box(0,2.2,-54,10,4,1,'screen',true,'wall');for(const x of[-4,-2,0,2,4])box(x,2.2,-53.4,.12,3.6,.1,'gold',false);
+  box(0,2.1,-54,10,4.2,1,'screen',true,'wall');for(const x of[-4,-2,0,2,4])box(x,2.2,-53.4,.12,3.6,.1,'gold',false);
   for(const x of[-33,-21])for(const z of[-2,16]){box(x,1.1,z,2,2.2,1,'wood',true);for(let i=0;i<5;i++)box(x,0.5+i*.35,z+.55,1.65,.15,.2,i%2?'paper':'ink',false);}
   for(const x of[-10,10]){box(x,.5,-48,2.2,1,1.3,'red',true);box(x,.9,-49,2.2,1.8,.3,'wood',true);}
   function person(id,cloth){const[x,z]=targetsAt[id];box(x,.75,z,.9,1.5,.55,cloth,true,'actor');box(x,1.8,z,.65,.65,.6,'skin',false);box(x,2.18,z,.8,.2,.7,'ink',false);box(x,2.35,z,.5,.25,.5,id==='empress-zhangsun'?'gold':'ink',false);for(const side of[-1,1]){box(x+side*.59,1,z,.28,.85,.35,cloth,false);box(x+side*.14,1.9,z+.32,.07,.07,.05,'ink',false);box(x+side*.23,.15,z+.05,.3,.3,.5,'ink',false);}if(id!=='empress-zhangsun')box(x,1.5,z+.35,.3,.4,.1,'ink',false);box(x,1.09,z,.95,.12,.62,'gold',false);}

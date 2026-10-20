@@ -7,7 +7,7 @@
  const response=(status,body)=>new Response(JSON.stringify(body),{status,headers:{'Content-Type':'application/json','Cache-Control':'no-store'}});
  function label(){if(button){button.textContent=ready?'云端已连接':'云端手札';button.title=ready?'保持原站连接页打开，继续使用原来的云端存档':'打开原站连接页，登录并接上原来的云端存档';}}
  function post(type,extra={}){if(bridge&&!bridge.closed)bridge.postMessage({type,channel,...extra},cloudOrigin);}
- function disconnect(){ready=false;label();for(const[id,item]of [...pending]){post('changan-cloud-cancel',{id});item.finish(response(401,{error:'云端连接页已合上，请点「云端手札」重新连接。'}));}}
+ function disconnect(){const wasReady=ready;ready=false;label();for(const[id,item]of [...pending]){post('changan-cloud-cancel',{id});item.finish(response(401,{error:'云端连接页已合上，请点「云端手札」重新连接。'}));}if(wasReady)window.dispatchEvent(new Event('changan-cloud-disconnected'));}
  function connect(){
   if(bridge&&!bridge.closed){try{bridge.focus();}catch{}if(!ready)post('changan-cloud-hello');return;}
   disconnect();channel=crypto.randomUUID().replaceAll('-','');
@@ -27,7 +27,7 @@
   if(['changan-cloud-auth','changan-cloud-unavailable','changan-cloud-disconnected'].includes(data.type)){disconnect();return;}
   if(data.type!=='changan-cloud-response')return;
   const item=pending.get(data.id);if(!item)return;const status=Number.isInteger(data.status)&&data.status>=200&&data.status<=599?data.status:502;
-  if(status===401){ready=false;label();}item.finish(response(status,data.body??{error:'暂未读到云端回应。'}));
+  if(status===401){disconnect();return;}item.finish(response(status,data.body??{error:'暂未读到云端回应。'}));
  });
  window.fetch=async(input,options={})=>{
   const url=new URL(typeof input==='string'||input instanceof URL?String(input):input.url,location.href);
@@ -46,7 +46,7 @@
   });
  };
  document.addEventListener('click',event=>{const anchor=event.target?.closest?.('a[href]');if(!anchor)return;let url;try{url=new URL(anchor.href,location.href);}catch{return;}if((url.origin===location.origin||url.origin===cloudOrigin)&&url.pathname==='/signin-with-chatgpt'){event.preventDefault();event.stopImmediatePropagation();connect();}},true);
- function mount(){const nav=document.querySelector('.header-nav');if(!nav)return;button=document.createElement('button');button.type='button';button.className='pages-cloud-connect';button.id='pagesCloudConnect';button.addEventListener('click',connect);nav.append(button);label();}
+ function mount(){const nav=document.querySelector('.header-nav, .palace-header nav');if(!nav)return;button=document.createElement('button');button.type='button';button.className='pages-cloud-connect';button.id='pagesCloudConnect';button.addEventListener('click',connect);nav.append(button);label();}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
  window.addEventListener('focus',()=>{if(bridge?.closed)disconnect();});window.addEventListener('pagehide',()=>{disconnect();});
  window.addEventListener('pageshow',event=>{if(event.persisted&&bridge&&!bridge.closed)post('changan-cloud-hello');});

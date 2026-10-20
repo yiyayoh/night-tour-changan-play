@@ -20,7 +20,7 @@
   if(event.origin!==cloudOrigin||event.source!==bridge||event.data?.channel!==channel)return;
   const data=event.data;
   if(data.type==='changan-cloud-ready'){
-   const newlyConnected=!ready;ready=true;label();window.dispatchEvent(new Event('changan-journal-changed'));
+   const newlyConnected=!ready;ready=true;label();if(newlyConnected)window.dispatchEvent(new Event('changan-cloud-connected'));window.dispatchEvent(new Event('changan-journal-changed'));
    if(newlyConnected)for(const[retry,signin]of [['bondRetry','bondSignIn'],['mainNightRetry','mainNightSignIn'],['cityStoryRetry','cityStorySignIn']]){const link=document.getElementById(signin),read=document.getElementById(retry);if(link&&!link.hidden&&link.closest('dialog[open]')&&read&&!read.disabled)read.click();}
    return;
   }

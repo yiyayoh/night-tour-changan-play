@@ -614,7 +614,7 @@ function syncCityComposerSize(){
  composer.setPixelRatio(renderer.getPixelRatio());composer.setSize(host.clientWidth,host.clientHeight);cityComposerDirty=false;
 }
 function flushCityRender(now,continuous=false){
- if(!cityRenderDirty||document.hidden)return false;
+ if(!cityRenderDirty||document.hidden||window.changanPalacePortalActive)return false;
  cityRenderDirty=false;
  const drawTime=performance.now(),sampleContinuous=!!continuous&&walk.active&&!activeDream&&window.changanSelectedQuality==='auto';
  if(walk.active&&typeof walkMouseLook!=='undefined'&&walkMouseLook.lastMoveAt>walkingLastInputAt)walkingLastInputAt=walkMouseLook.lastMoveAt;
@@ -913,7 +913,7 @@ function enterWalk(place){
 }
 function exitWalk({restore=true}={}){if(!walk.active)return;walk.active=false;clearWalkInput();gateResetWalkingFoot();window.changanStreetRouteClear?.();document.body.classList.remove('walking');document.getElementById('walkHUD').hidden=true;document.getElementById('openNotes').disabled=false;camera.near=3;camera.fov=42;camera.updateProjectionMatrix();if(restore)restoreOrbit(walk.saved);walk.saved=null;if(restore){render();document.getElementById('enterWalk').focus({preventScroll:true});}}
 function setWalkCamera(){gateSyncWalkingFoot();camera.position.set(walk.x,gateWalkingEyeY(),walk.z);camera.lookAt(walk.x+Math.sin(walk.yaw)*Math.cos(walk.pitch),camera.position.y+Math.sin(walk.pitch),walk.z+Math.cos(walk.yaw)*Math.cos(walk.pitch));}
-function updateWalk(dt){
+function updateWalk(dt){if(window.changanPalacePortalActive)return false;window.ChanganPalacePortal?.sample();if(window.changanPalacePortalActive)return false;
   window.changanFirstWalkSample?.();
   walkDiagnostics.updateFrames++;walkDiagnostics.lastDt=Number.isFinite(dt)?dt:0;
   if(walkInputBlocked())clearWalkInput();
@@ -928,7 +928,7 @@ function updateWalk(dt){
   // Camera forward is (sin yaw, cos yaw); its screen-right is (-cos yaw, sin yaw).
   return stepWalk((Math.sin(walk.yaw)*forward-Math.cos(walk.yaw)*side)*elapsed*speed,(Math.cos(walk.yaw)*forward+Math.sin(walk.yaw)*side)*elapsed*speed)||jumped;
 }
-window.changanStartWalk=enterWalk;window.changanExitWalk=exitWalk;window.changanWalkState=()=>({active:walk.active,x:walk.x,z:walk.z,yaw:walk.yaw,pitch:walk.pitch,place:walk.place,distance:walk.distance,footHeight:walk.footHeight,footY:walkMap.groundY+walk.footHeight,physicalFootY:gatePhysicalWalkingFootY(),grounded:walk.grounded,verticalVelocity:walk.jumpVelocity,eyeY:gateWalkingEyeY()});
+window.changanStartWalk=enterWalk;window.changanPalaceStreetSky=()=>scene.background.getHexString();window.changanPalaceStreetReturn=()=>{enterWalk("avenue");walk.x=0;walk.z=-58;walk.yaw=0;walk.pitch=.02;clearWalkInput();gateResetWalkingFoot();render();return {x:walk.x,z:walk.z,yaw:walk.yaw};};window.changanExitWalk=exitWalk;window.changanWalkState=()=>({active:walk.active,x:walk.x,z:walk.z,yaw:walk.yaw,pitch:walk.pitch,place:walk.place,distance:walk.distance,footHeight:walk.footHeight,footY:walkMap.groundY+walk.footHeight,physicalFootY:gatePhysicalWalkingFootY(),grounded:walk.grounded,verticalVelocity:walk.jumpVelocity,eyeY:gateWalkingEyeY()});
 window.changanWalkDiagnostics=()=>({keys:[...walk.keys],stickX:walk.stickX,stickY:walk.stickY,lookPointer:walk.lookPointer,stickPointer,blocked:walkInputBlocked(),documentHidden:document.hidden,...walkDiagnostics});
 window.changanWalkMove=(dx,dz)=>{if(walk.active&&!document.hidden&&!activeDream&&!document.querySelector("dialog[open]")&&!document.body.classList.contains("exhibition")&&!document.body.classList.contains("reading-notes")){stepWalk(THREE.MathUtils.clamp(dx,-10,10),THREE.MathUtils.clamp(dz,-10,10));refreshStreetInteractions();render();streetRouteRenderPending=false;}return window.changanWalkState();};
 document.addEventListener('keydown',e=>{

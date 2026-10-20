@@ -14,7 +14,7 @@
   for(const [z,d,w]of[[180.5,203,260],[315,46,260],[287,10,260],[-1,154,90]])box(0,.025,z,w,.02,d,'paving',false,'court-paving','paving');
   box(0,.055,80,9,.02,502,'path',false,'processional-path','paving');
   const plaqueNames=['承天門','太極門','兩儀門','太極殿','兩儀殿','甘露殿','議事廊','書閣','東朝堂','西朝堂','東廊','西廊'];
-  function plaque(text,x,y,z,width=5.8){const slot=plaqueNames.indexOf(text);if(slot<0)return;const height=width/3.2,board=box(x,y,z,width+.18,height+.16,.24,'signwood',false,'signboard'),mount=box(x,y+.25,z-.12,width+1,.28,.50,'wood',false,'sign-mount');signs.push({text,slot,x,y,z:z+.132,w:width,h:height,boardId:board.id,mountId:mount.id});}
+  function plaque(text,x,y,z,width=5.8){z+=.35;const slot=plaqueNames.indexOf(text);if(slot<0)return;const height=width/3.2,board=box(x,y,z,width+.18,height+.16,.24,'signwood',false,'signboard'),mount=box(x,y+.25,z-.32,width+1,.28,.50,'wood',false,'sign-mount');for(const side of[-1,1]){box(x,y+side*(height/2+.035),z+.13,width+.18,.09,.08,'wood',false,'plaque-frame');box(x+side*(width/2+.045),y,z+.13,.09,height,.08,'wood',false,'plaque-frame');}signs.push({text,slot,x,y,z:z+.132,w:width,h:height,boardId:board.id,mountId:mount.id});}
 
   for(const x of [-46,46]){box(x,3,-1,2,6,158,'wall',true,'wall');box(x,6.25,-1,2.8,.5,158,'tile',false);}
   for(const x of[-27,27]){box(x,3,-79,40,6,2,'wall',true,'wall');box(x,6.25,-79,42,.5,2.8,'tile',false);}
@@ -34,6 +34,7 @@
   roof(0,73,16,7,8.5);for(const x of[-7,7])box(x,4.2,73,1.3,8.4,1.3,'red',true,'column');box(0,8.35,73,16,.4,1,'wood',false,'beam');plaque('兩儀門',0,7.55,73.6,5.0);
   // Sheltered connecting galleries, with distinct rear garden and court.
   for(const x of[-40,40]){box(x,6.5,36,4,.45,41,'tile',false);for(const z of[18,30,42,54])box(x,3.2,z,.7,6.4,.7,'red',true,'column');}
+  function hangingLamp(x,y,z){box(x,y+.65,z,.08,1.3,.08,'wood',false,'lamp-chain');box(x,y,z,.62,.86,.62,'lamp',false,'hanging-lantern');for(const side of[-1,1]){box(x+side*.33,y,z,.07,.9,.7,'wood',false,'lantern-frame');box(x,y+side*.45,z,.74,.08,.74,'wood',false,'lantern-frame');}box(x,y-.65,z,.08,.4,.08,'red',false,'tassel');}
   function tree(x,z){box(x,2.2,z,1,4.4,1,'wood',true,'tree');for(let i=0;i<3;i++)box(x+i*.3,5+i*.8,z,5.5-i*.7,1.5,4.4-i*.6,'leaf',false);}
   for(const p of[[-35,44],[35,44],[-17,34],[17,34],[-38,-24],[38,-24],[-16,-66],[16,-66]])tree(...p);
   for(const x of[-21,21]){box(x,.25,41,8,.5,12,'stone',true,'platform');box(x,.56,41,6.7,.12,10.8,'water',false);for(const z of[36,46])box(x,.75,z,7,.7,.65,'stone',true);}
@@ -48,14 +49,15 @@
   for(const x of[-10,10]){box(x,.5,-48,2.2,1,1.3,'red',true);box(x,.9,-49,2.2,1.8,.3,'wood',true);}
   function person(id,cloth){const[x,z]=targetsAt[id];box(x,.75,z,.9,1.5,.55,cloth,true,'actor');box(x,1.8,z,.65,.65,.6,'skin',false);box(x,2.18,z,.8,.2,.7,'ink',false);box(x,2.35,z,.5,.25,.5,id==='empress-zhangsun'?'gold':'ink',false);for(const side of[-1,1]){box(x+side*.59,1,z,.28,.85,.35,cloth,false);box(x+side*.14,1.9,z+.32,.07,.07,.05,'ink',false);box(x+side*.23,.15,z+.05,.3,.3,.5,'ink',false);}if(id!=='empress-zhangsun')box(x,1.5,z+.35,.3,.4,.1,'ink',false);box(x,1.09,z,.95,.12,.62,'gold',false);}
   person('wei-zheng','purple');person('empress-zhangsun','teal');person('li-shimin','ochre');
-  for(const[x,z]of[[-7,66],[7,66],[-12,27],[12,27],[-34,22],[-20,22],[21,9],[35,9],[-12,-28],[12,-28]]){box(x,2,z,.2,4,.2,'wood',true,'column');box(x,4.6,z,1.1,1.45,1.1,'lamp',false);box(x,5.4,z,1.4,.22,1.4,'red',false);}
   for(const b of boxes)if(['prop','actor'].includes(b.kind)&&halls.slice(0,3).some(h=>Math.abs(b.x-h.x)<h.w/2&&Math.abs(b.z-h.z)<h.d/2))b.y+=.36;
   for(const[id,[x,z]]of Object.entries(targetsAt))targets.push({id,x,z,kind:['wei-zheng','empress-zhangsun','li-shimin'].includes(id)?'person':'evidence'});
   function largeHall(x,z,w,d,title,{height=8,base=1.08,bays=7,style='office',sign=null}={}){
    const openFront=['court','study','pavilion'].includes(style),openSides=style==='pavilion',form=['study','library','court','pavilion','office'].includes(style)?'gable':'hip',wallColor=['residence','library'].includes(style)?'cream':'plaster';
    box(x,base/2,z,w+6,base,d+6,'stone',true,'platform');box(x,.11,z,w+6.5,.22,d+6.5,'foundation',true,'platform');
-   const n=Math.ceil(base/.18);for(const side of[-1,1])for(let i=0;i<n;i++){const h=base*(i+1)/n;box(x,h/2,z+side*(d/2+3+(n-i-.5)*.65),8,h,.67,'stone',true,'platform');}
-   for(let i=0;i<=bays;i++)for(const side of[-1,1]){const px=x-w/2+i*w/bays;round(px,base+.16,z+side*d/2,.70,.32,'stone');round(px,base+height/2,z+side*d/2,style==='state'?.55:.42,height,'red',true,'column');bracket(px,base+height,z+side*d/2);}
+   // Stone courses and stair nosings read at walking height, without new collision barriers.
+   for(const side of[-1,1]){box(x,base-.06,z+side*(d/2+3.04),w+6.1,.12,.18,'foundation',false,'plinth-coping');box(x,base*.45,z+side*(d/2+3.03),w+5.9,.045,.08,'joint',false,'stone-course');for(let px=-w/2-2;px<w/2+3;px+=2.8)box(x+px,base*.68,z+side*(d/2+3.045),.025,base*.5,.025,'joint',false,'stone-joint');}
+   const n=Math.ceil(base/.18);for(const side of[-1,1])for(let i=0;i<n;i++){const h=base*(i+1)/n;box(x,h/2,z+side*(d/2+3+(n-i-.5)*.65),8,h,.67,'stone',true,'platform');box(x,h-.035,z+side*(d/2+3+(n-i-.5)*.65)+side*.32,8.1,.07,.12,'foundation',false,'stair-nosing');}
+   for(let i=0;i<=bays;i++)for(const side of[-1,1]){const px=x-w/2+i*w/bays;round(px,base+.16,z+side*d/2,.76,.32,'stone',false,'column-base').shape='base';round(px,base+.36,z+side*d/2,.57,.10,'stone',false,'base-ring');round(px,base+height/2,z+side*d/2,style==='state'?.55:.42,height,'red',true,'column').shape='column';bracket(px,base+height,z+side*d/2);}
    for(const side of[-1,1]){
     if(!openSides)box(x+side*w/2,base+height/2,z,.7,height,d,wallColor,true,'wall');
     if(!openSides)box(x+side*(w/4+2),base+height/2,z-d/2,w/2-4,height,.7,wallColor,true,'wall');
@@ -68,9 +70,15 @@
     for(const yy of[1.5,1.5+windowHeight/2,1.5+windowHeight])box(x+px,base+yy,facade+.25,bay-.5,.16,.2,'wood',false,'window-frame');
     const bars=style==='residence'?5:7;for(let j=0;j<bars;j++)box(x+px-bay*.38+j*bay*.76/(bars-1),windowY,facade+.25,.09,windowHeight,.14,'lattice',false,'window-lattice');
    }
+   if(!openFront){const doorWidth=Math.min(3.1,bay*.72),doorZ=facade+.18;for(const side of[-1,1]){const door=box(x+side*(openSpan+doorWidth*.32),base+2.3,doorZ-.65,doorWidth,4.6,.20,'screen',false,'open-door');door.ry=side*.80;for(const yy of[.8,2.5,4])box(x+side*(openSpan+.18),base+yy,doorZ,.12,.12,.12,'gold',false,'door-stud');box(x+side*(openSpan+.17),base+2.4,doorZ+.13,.28,.38,.08,'gold',false,'door-handle','ring');}box(x,base+5,facade+.2,openSpan*2+1,.4,.38,'wood',false,'door-lintel');}
    if(!openSides)for(const side of[-1,1])for(const pz of[-d/4,d/4]){box(x+side*(w/2+.36),base+3.5,z+pz,.12,2.8,d*.23,'window',false,'window');for(let j=0;j<5;j++)box(x+side*(w/2+.45),base+3.5,z+pz-d*.10+j*d*.2/4,.1,2.7,.10,'lattice',false,'window-lattice');}
    for(let i=0;i<=bays;i++){const px=x-w/2+i*w/bays;box(px,base+height+.2,z,.45,.7,d,'wood',false,'beam');}
    box(x,base+height+.73,z,w-.3,.16,d-.3,'ceiling',false,'ceiling');
+   for(let pz=-d/2+2.5;pz<d/2;pz+=3.2)box(x,base+height+.60,z+pz,w-.5,.22,.22,'wood',false,'ceiling-joist');
+   for(const side of[-1,1]){for(let px=-w/2-2;px<w/2+2;px+=1.2){const r=box(x+px,base+height+1.08,z+side*(d/2+1.2),.17,.18,3.6,'ceiling',false,'eave-rafter');r.rx=side*.14;}for(const px of[-w*.29,w*.29])hangingLamp(x+px,base+height-1.35,z+side*(d/2-1));}
+   if(style==='library')for(const side of[-1,1]){const sx=x+side*(w/2-1.5);box(sx,base+1.35,z-d*.17,1.2,2.7,d*.5,'wood',true,'bookcase');for(let j=0;j<5;j++)for(let k=0;k<4;k++)box(sx-side*.65,base+.35+j*.47,z-d*.36+k*d*.12,.22,.24,.8,k%2?'paper':'silk',false,'scroll-stack');}
+   if(style==='study'||style==='office')for(const side of[-1,1]){box(x+side*w*.32,base+.65,z-d*.26,3,.20,1.7,'wood',true,'writing-desk');for(const dx of[-1,1])box(x+side*w*.32+dx,base+.32,z-d*.26,.18,.64,1.3,'wood',true,'desk-leg');box(x+side*w*.32,base+.78,z-d*.26,1.7,.05,.9,'paper',false,'scroll');}
+   if(style==='residence'){box(x,base+2.4,z-d*.30,w*.56,4.8,.13,'silk',false,'inner-curtain');for(let k=0;k<9;k++)box(x-w*.25+k*w*.5/8,base+2.4,z-d*.30+.08,.07,4.6,.08,'screen',false,'curtain-fold');}
    if(style==='court')for(let i=-1;i<=1;i+=2){box(x+i*w*.30,base+.46,z,7,.22,1.2,'wood',true,'bench');for(const p of[-2.7,2.7])box(x+i*w*.30+p,base+.21,z,.25,.42,.8,'wood',true,'bench');}
    if(style==='residence')for(const px of[-w*.30,w*.30]){box(x+px,base+.22,z,5,.44,4,'wood',true,'furniture');box(x+px,base+.46,z,4.7,.07,3.7,'silk',false,'mat');}
    if(style==='pavilion')for(const side of[-1,1]){box(x+side*(w/2-.6),base+.55,z,.2,1.1,d-2,'wood',true,'railing');box(x,base+.55,z-d/2+.6,w-2,1.1,.2,'wood',true,'railing');}
@@ -87,7 +95,9 @@
    box(0,pierTop+1.2,z,width,2.4,12,'wall',true,'gate-deck');box(0,deckTop-.08,z,width+.8,.28,12.8,'stone',false,'gate-coping');box(0,deckTop+.06,z,width,.12,11.5,'wood',false,'floor');
    for(let x=-width/2+1;x<width/2;x+=5)for(const side of[-1,1]){round(x,deckTop+columnHeight/2,z+side*5,.35,columnHeight,'red',false,'column');bracket(x,deckTop+columnHeight,z+side*5,.75);}
    for(const side of[-1,1])box(0,deckTop+columnHeight+1.1,z+side*5,width+2,.4,.6,'wood',false,'roof-bearing-beam');
-   box(0,deckTop+columnHeight+.6,z,width,.2,11.4,'ceiling',false,'ceiling');roof(0,z,width,13,deckTop+columnHeight+1.25,'tile',title==='承天门'?'hip':'gable');plaque(title==='承天门'?'承天門':'太極門',0,pierTop+1.2,z+6.12,title==='承天门'?6.4:5.2);
+   box(0,deckTop+columnHeight+.6,z,width,.2,11.4,'ceiling',false,'ceiling');
+   for(const side of[-1,1]){box(0,deckTop+.95,z+side*5.9,width,.20,.20,'wood',false,'gate-rail');box(0,deckTop+.35,z+side*5.9,width,.18,.20,'wood',false,'gate-rail');for(let px=-width/2+.6;px<width/2;px+=1.25)box(px,deckTop+.58,z+side*5.9,.12,1.12,.12,'red',false,'baluster');for(let px=-width/2-1;px<width/2+1;px+=1.2)box(px,deckTop+columnHeight+1.05,z+side*6.5,.18,.20,3.0,'wood',false,'eave-rafter');for(const px of[-20,-7,7,20].filter(v=>Math.abs(v)<width/2-1))hangingLamp(px,pierTop-.85,z+side*5.6);}
+   for(const side of[-1,1])for(let yy=.7;yy<pierTop;yy+=.72){for(const[c,gap]of gaps)for(const sx of[-1,1])box(c+sx*(gap/2+.40),yy,z+side*6.02,.75,.045,.035,'joint',false,'gate-masonry-joint');}roof(0,z,width,13,deckTop+columnHeight+1.25,'tile',title==='承天门'?'hip':'gable');plaque(title==='承天门'?'承天門':'太極門',0,pierTop+1.2,z+6.12,title==='承天门'?6.4:5.2);
    buildings.push({title,x:0,z,w:width,d:12,deckTop,columnHeight,kind:'gate',style:title==='承天门'?'monumental-gate':'inner-gate',basis:title==='承天门'?'three-passages-attested/upper-structure-inferred':'inferred-form'});
   }
   function gallery(x,z,length,vertical=true){
@@ -155,6 +165,6 @@
   return[];
  }
  function direction(yaw,forward,right){return {x:Math.sin(yaw)*forward-Math.cos(yaw)*right,z:Math.cos(yaw)*forward+Math.sin(yaw)*right};}
- function roofMesh(b){const vertices=[],colors=[],nu=Math.max(16,Math.min(144,Math.ceil(b.w/.5))),nv=16;function point(face,u,t){const hx=b.w/2-b.d*(b.shape==='gable'?Math.min(t,.35):t)/2,hz=b.d*(1-t)/2,x=face<2?u*hx:(face===2?1:-1)*hx,z=face<2?(face===0?1:-1)*hz:u*hz,y=b.h*(.72*t+.28*t*t)+.25*Math.pow(Math.abs(u),10)*Math.pow(1-t,4);return[x/b.w,y/b.h-.5,z/b.d];}for(let face=0;face<4;face++)for(let v=0;v<nv;v++)for(let u=0;u<nu;u++){const a=u/nu*2-1,d=(u+1)/nu*2-1,t=v/nv,next=(v+1)/nv,points=[point(face,a,t),point(face,d,t),point(face,d,next),point(face,a,t),point(face,d,next),point(face,a,next)],shade=(u%2?.91:1.02)*(v%4===0?.93:1);for(const p of points){vertices.push(...p);const gable=b.shape==='gable'&&face>=2&&v/nv>=.35;colors.push(gable?shade*1.2:shade,gable?shade*.70:shade,gable?shade*.45:shade);}}return{vertices,colors};}
+ function roofMesh(b){const vertices=[],colors=[],nu=Math.max(16,Math.min(144,Math.ceil(b.w/.5))),nv=16;function point(face,u,t){const hx=b.w/2-b.d*(b.shape==='gable'?Math.min(t,.35):t)/2,hz=b.d*(1-t)/2,x=face<2?u*hx:(face===2?1:-1)*hx,z=face<2?(face===0?1:-1)*hz:u*hz,y=b.h*(.72*t+.28*t*t)+.25*Math.pow(Math.abs(u),10)*Math.pow(1-t,4)+.05*Math.pow(Math.sin((u+1)*Math.PI*Math.round(b.w/.85)/2),2)*Math.pow(1-t,.45);return[x/b.w,y/b.h-.5,z/b.d];}for(let face=0;face<4;face++)for(let v=0;v<nv;v++)for(let u=0;u<nu;u++){const a=u/nu*2-1,d=(u+1)/nu*2-1,t=v/nv,next=(v+1)/nv,points=[point(face,a,t),point(face,d,t),point(face,d,next),point(face,a,t),point(face,d,next),point(face,a,next)],shade=(u%2?.91:1.02)*(v%4===0?.93:1);for(const p of points){vertices.push(...p);const gable=b.shape==='gable'&&face>=2&&v/nv>=.35;colors.push(gable?shade*1.2:shade,gable?shade*.70:shade,gable?shade*.45:shade);}}return{vertices,colors};}
  root.ChanganPalaceWorld={layout,physics,direction,roofMesh,route,segment};if(typeof module!=='undefined')module.exports=root.ChanganPalaceWorld;
 })(typeof window!=='undefined'?window:globalThis);

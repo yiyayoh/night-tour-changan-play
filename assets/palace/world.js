@@ -128,7 +128,8 @@
    for(const z of[-151,-99,83,200])tree(side*116,z);
   }
   buildings.push({title:'两仪门·推定',x:0,z:73,w:16,d:7,kind:'gate',basis:'inferred-form'});
-  return {boxes,targets,halls,buildings,signs,bounds:{minX:-148,maxX:148,minZ:-177,maxZ:335},spawns:{gate:{x:0,z:320,yaw:Math.PI},outer:{x:0,z:254,yaw:Math.PI},taiji:{x:0,z:165,yaw:Math.PI},west:{x:-27,z:25,yaw:Math.PI},garden:{x:28,z:12,yaw:Math.PI},court:{x:0,z:-23,yaw:Math.PI},rear:{x:0,z:-104,yaw:Math.PI}},routes:{west:[[0,62],[0,29],[-27,29],[-27,24],[-27,11],[-27,6]],garden:[[-27,6],[-27,26],[0,26],[28,26],[28,12],[28,2]],court:[[28,2],[28,13],[0,13],[0,-24],[0,-33],[0,-43]]},interpretation:{type:'source-based-study',period:'Zhenguan story setting',dimensions:'Visitor precinct; unsurveyed hall sizes, spacing and upper structures are inferred'}};
+  const garden=(root.ChanganPalaceGarden||(typeof require==='function'?require('./changan-palace-garden.js'):null)).layout();boxes.push(...garden.boxes);
+  return {garden,boxes,targets,halls,buildings,signs,bounds:{minX:-148,maxX:148,minZ:-177,maxZ:335},spawns:{gate:{x:0,z:320,yaw:Math.PI},outer:{x:0,z:254,yaw:Math.PI},taiji:{x:0,z:165,yaw:Math.PI},west:{x:-27,z:25,yaw:Math.PI},garden:{x:28,z:12,yaw:Math.PI},court:{x:0,z:-23,yaw:Math.PI},rear:{x:0,z:-104,yaw:Math.PI}},routes:{west:[[0,62],[0,29],[-27,29],[-27,24],[-27,11],[-27,6]],garden:[[-27,6],[-27,26],[0,26],[28,26],[28,12],[28,2]],court:[[28,2],[28,13],[0,13],[0,-24],[0,-33],[0,-43]]},interpretation:{type:'source-based-study',period:'Zhenguan story setting',dimensions:'Visitor precinct; unsurveyed hall sizes, spacing and upper structures are inferred'}};
  }
  function physics(world){
   const solid=world.boxes.filter(b=>b.solid),state={x:world.spawns.gate.x,z:world.spawns.gate.z,y:0,velocity:0,grounded:true},radius=.32,height=1.75,cells=new Map(),cellSize=8;

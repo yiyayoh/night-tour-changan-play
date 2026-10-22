@@ -372,6 +372,60 @@ for(const bucket of buckets.values()){
 }
 
 }
+function createChanganCityCraftPlan(model){
+ const buildings=model.buildings.filter(b=>Math.abs(b.x)<280&&Math.abs(b.z)<180),parts=[],patches=[],ribs=[],windows=[];
+ const colors={roof:'#42596b',ridge:'#667c87',palaceRoof:'#9c9279',tileWarm:'#86675b',tileGreen:'#4e756e',wood:'#8a6c4e',dark:'#463e36',red:'#853d35'};
+ const regions=buildings.map((b,index)=>({...b,index,wx:b.turn%2?b.hz:b.hx,wz:b.turn%2?b.hx:b.hz}));
+ const owner=(x,z)=>regions.find(b=>Math.abs(x-b.x)<=b.wx+2&&Math.abs(z-b.z)<=b.wz+2);
+ const cells=new Map(),column=new Map(),key=(x,y,z)=>x+','+y+','+z;
+ for(const [type,quads]of Object.entries(model.meshes))if(model.types[type]?.[1]==='屋顶')for(const [p,u,v,w,h,dir]of quads){
+  if(dir!==2||p<5)continue;
+  for(let x=u;x<u+w;x++)for(let z=v;z<v+h;z++){const b=owner(x,z);if(!b)continue;const y=Math.round(p),id=key(x,y,z);if(!cells.has(id)){const cell={x,y,z,type,building:b.index};cells.set(id,cell);const k=x+','+z;if(!column.has(k))column.set(k,[]);column.get(k).push(cell);}}
+ }
+ // Vertices follow the upper envelope of adjacent retained steps. Large height
+ // discontinuities remain separate roofs, rather than being bridged across a loft.
+ const corner=(cell,sx,sz)=>{let y=cell.y;for(const dx of [0,sx])for(const dz of [0,sz])for(const next of column.get((cell.x+dx)+','+(cell.z+dz))||[])if(next.building===cell.building&&Math.abs(next.y-cell.y)<=1.01)y=Math.max(y,next.y);return y+.57;};
+ for(const c of cells.values()){
+  const a=corner(c,-1,-1),b=corner(c,-1,1),d=corner(c,1,-1),e=corner(c,1,1),building=regions[c.building];
+  patches.push({x:c.x,z:c.z,heights:[a,b,e,d],type:c.type,sourceY:c.y,building:c.building});
+  const alongZ=building.wx>=building.wz;
+  if((alongZ?c.x:c.z)%3===0&&c.type!=='ridge'){
+   const p=alongZ?[c.x,(a+d)*.5+.055,c.z-.49]:[c.x-.49,(a+b)*.5+.055,c.z];
+   const q=alongZ?[c.x,(b+e)*.5+.055,c.z+.49]:[c.x+.49,(d+e)*.5+.055,c.z];
+   ribs.push({a:p,b:q,radius:.055,type:c.type});
+  }
+ }
+ const box=(x,y,z,w,h,d,type,kind,building)=>parts.push({x,y,z,w,h,d,type,kind,building});
+ // Muntins sit on actual window faces. No fictitious doorway or panel is put
+ // across a passage, and both sides of existing windows remain where they were.
+ for(const type of ['windowHome','windowMarket','windowPalace','windowTemple','windowDark','window'])for(const [p,u,v,w,h,dir]of model.meshes[type]||[]){
+  if(dir===2||dir===3||w<.9||h<.9)continue;
+  const center=dir<2?[p,u+(w-1)/2]:[u+(w-1)/2,p],building=owner(...center);if(!building||v+h<3)continue;
+  const normal=dir%2===0?1:-1;if(normal*(dir<2?center[0]-building.x:center[1]-building.z)<=0)continue;
+  const plane=p+normal*.565,across=u+(w-1)/2,cy=v+(h-1)/2,fw=Math.max(.68,w-.13),fh=Math.max(.68,h-.13),beam=building.style==='palace'?'red':'dark';
+  const face=(a,y,width,height,depth=.085)=>dir<2?box(plane,y,a,depth,height,width,beam,'window',building.index):box(a,y,plane,width,height,depth,beam,'window',building.index);
+  for(const side of [-1,1]){face(across+side*fw/2,cy,.075,fh+.09);face(across,cy+side*fh/2,fw+.09,.075);}
+  const vertical=Math.min(8,Math.max(2,Math.ceil(fw/.58))),horizontal=Math.min(5,Math.max(1,Math.floor(fh/1.05)));
+  for(let j=1;j<vertical;j++)face(across-fw/2+j*fw/vertical,cy,.042,fh,.07);
+  for(let j=1;j<=horizontal;j++)face(across,cy-fh/2+j*fh/(horizontal+1),fw,.042,.07);
+  windows.push({building:building.index,dir,plane,source:[p,u,v,w,h,dir],parts:4+vertical-1+horizontal});
+ }
+ // Eave ledgers and paired bracket arms grow from the sampled roof edge. All
+ // projecting parts stay above headroom; the old doors and pillars are retained.
+ const details=[];
+ for(const b of regions){
+  const front=b.turn===0?[0,1]:b.turn===1?[1,0]:b.turn===2?[0,-1]:[-1,0],side=[front[1],-front[0]],length=front[0]?b.wz:b.wx,depth=front[0]?b.wx:b.wz;
+  let eave=Infinity;for(let t=-length;t<=length;t++)for(let n=depth;n<=depth+2;n++)for(const c of column.get((b.x+side[0]*t+front[0]*n)+','+(b.z+side[1]*t+front[1]*n))||[])if(c.building===b.index&&c.y>b.base+b.h-3)eave=Math.min(eave,c.y);
+  if(!Number.isFinite(eave)||eave<7)continue;
+  const cy=eave-.12,offset=depth+.30,wood=b.style==='palace'?'red':'wood',minimum=Math.max(6.1,cy-.95);
+  const local=(t,y,n,w,h,d,kind)=>box(b.x+side[0]*t+front[0]*n,y,b.z+side[1]*t+front[1]*n,front[0]?d:w,h,front[0]?w:d,wood,kind,b.index);
+  local(0,cy,offset,length*2+.55,.16,.22,'eave-ledger');
+  const count=Math.max(2,Math.floor(length*2/3));for(let j=0;j<=count;j++){const t=-length+.35+j*(length*2-.7)/count;local(t,Math.max(minimum+.28,cy-.31),offset-.24,.24,.46,.28,'bracket-block');local(t,Math.max(minimum+.12,cy-.62),offset+.07,.58,.17,.86,'bracket-arm');local(t,Math.max(minimum+.05,cy-.82),offset-.08,.82,.12,.41,'bracket-seat');}
+  details.push({building:b.index,eave,minY:minimum,front});
+ }
+ return {version:1,colors,patches,ribs,parts,windows,buildings:regions.map(({index,x,z,style,base,h})=>({index,x,z,style,base,h})),details,stats:{buildings:regions.length,finishedRoofs:new Set(patches.map(p=>p.building)).size,roofCells:patches.length,roofRibs:ribs.length,windowFaces:windows.length,trimInstances:parts.length,bracketedFacades:details.length,newPointLights:0,collisionChanges:0}};
+}
+const cityCraftPlan=createChanganCityCraftPlan(data);
 delete data.meshes;window.setCityLoadProgress?.(.75,"铺过溪桥与长街…");await yieldBuild();
 // A tiled city foundation replaces hundreds of thousands of identical floor cubes.
 const fc=document.createElement('canvas');fc.width=data.width*2;fc.height=data.depth*2;const fp=fc.getContext('2d');
@@ -1621,47 +1675,71 @@ function focusedCityCharacter(story,box){
  // Separated ankles, projecting toes and a two-step hem give a clear standing
  // silhouette without a solid pillar between the shoes and coat.
  for(const across of [-.17,.17]){
-  face(0,.32,across,.20,.42,.27,'dark');
-  face(.07,.105,across,.24,.21,.39,'dark');
+  face(0,.31,across,.18,.38,.25,'dark');
+  face(.055,.095,across,.22,.18,.32,'dark');
+  face(.24,.08,across,.18,.11,.10,'dark');
+  face(.14,.174,across,.19,.027,.20,style.lining);
  }
- part(0,.59,0,.70,.27,.62,style.cloth);
- part(0,.85,0,.66,.34,.58,style.cloth);
- face(.364,.49,0,.69,.055,.025,style.belt);
- for(const across of [-.24,.24])face(.364,.65,across,.065,.28,.024,style.lining);
-
- part(0,1.36,0,.68,.86,.59,style.cloth);
- for(const across of [-.16,.16])face(.355,1.32,across,.30,.64,.028,style.panel);
- face(-.355,1.30,0,.48,.65,.027,style.cloth);
- part(0,.97,0,.73,.11,.66,style.belt);
- face(.395,.97,0,.14,.15,.07,style.belt);
- face(.39,.80,-.065,.085,.23,.045,style.belt);
- face(.387,.83,.04,.065,.17,.04,style.belt);
+ // A flared hem, shallow alternating folds and a fitted waist replace the
+ // two solid skirt blocks. The fold planes follow the actual facing side.
+ for(let j=0;j<6;j++){
+  const width=.80-j*.033,depth=.64-j*.018,y=.48+j*.085;
+  part(0,y,0,width,.10,depth,style.cloth);
+  for(const across of [-.25,-.12,.12,.25])if(Math.abs(across)<width/2-.04)face(depth/2+.018,y,across,.034,.092,.035,j===0?style.lining:style.cloth);
+ }
+ face(.343,.438,0,.77,.035,.035,style.lining);
+ part(0,1.15,0,.58,.30,.51,style.cloth);
+ part(0,1.40,0,.65,.25,.55,style.cloth);
+ part(0,1.62,0,.73,.20,.57,style.cloth);
+ face(.30,1.29,.08,.31,.55,.045,style.panel);
+ face(-.30,1.33,0,.45,.52,.035,style.cloth);
+ part(0,.97,0,.67,.095,.59,style.belt);
+ face(.323,.97,0,.12,.12,.055,style.belt);
+ face(.326,.81,-.065,.055,.23,.038,style.belt);
+ face(.325,.84,.04,.044,.17,.033,style.belt);
 
  // Shoulder caps meet the old pivot at y=1.70. One sleeve and one hand per
  // role are essential: cityHumanRefs stores exactly one instance for each key.
- part(-.43,1.66,0,.29,.20,.53,style.cloth);
- part(.43,1.66,0,.29,.20,.53,style.cloth);
- box(.77,1.33,.45,.30,.74,.36,style.sleeve,'arm-left');pieces++;
- box(1.86,1.33,.45,.30,.74,.36,style.sleeve,'arm-right');pieces++;
- box(.77,.89,.45,.19,.16,.21,'skin','hand-left');pieces++;
- box(1.86,.89,.45,.19,.16,.21,'skin','hand-right');pieces++;
+ for(const dx of [-.41,.41]){
+  part(dx,1.66,0,.27,.17,.49,style.cloth);
+  part(dx,1.57,0,.30,.13,.48,style.cloth);
+ }
+ for(const [side,x]of [['left',.77],['right',1.86]]){
+  box(x,1.33,.45,.30,.74,.36,style.sleeve,'arm-'+side);pieces++;
+  box(x,.89,.45,.18,.16,.20,'skin','hand-'+side);pieces++;
+  box(x,1.055,.45,.34,.13,.40,style.sleeve,'arm-'+side+'-cuff');pieces++;
+  box(x,.992,.45,.355,.045,.415,style.lining,'arm-'+side+'-edging');pieces++;
+  box(x+front[0]*.19,1.34,.45+front[1]*.19,frontAlongX?.028:.042,.43,frontAlongX?.042:.028,style.cloth,'arm-'+side+'-fold');pieces++;
+ }
 
  // Crossed collar, visible neck, ears and a restrained face read at human
  // walking height; eye centers stay near 2.24 m and headwear below 2.80 m.
  part(0,1.85,0,.25,.22,.26,'skin');
- face(.36,1.75,0,.14,.15,.048,'paper');
- face(.365,1.67,-.105,.19,.18,.045,style.lining);
- face(.37,1.55,.05,.18,.15,.045,style.lining);
- part(0,2.16,0,.60,.60,.60,'skin');
- face(-.273,2.29,0,.63,.37,.115,'dark');
- part(0,2.48,0,.65,.15,.64,'dark');
+ face(.30,1.76,0,.14,.12,.045,'paper');
+ for(let j=0;j<6;j++)face(.315,1.73-j*.037,-.17+j*.054,.080,.075,.038,style.lining);
+ for(let j=0;j<5;j++)face(.325,1.72-j*.034,.17-j*.041,.073,.068,.036,style.lining);
+ // Seven shallow planes bevel the jaw, cheeks and forehead while retaining
+ // the small square face and the original eye height of the voxel figures.
+ part(0,2.17,0,.53,.60,.53,'skin');
+ part(0,2.17,0,.60,.44,.60,'skin');
+ part(0,2.40,0,.57,.10,.57,'skin');
+ part(0,1.897,0,.45,.10,.48,'skin');
+ face(.293,2.08,-.232,.11,.15,.028,'skin');
+ face(.293,2.08,.232,.11,.15,.028,'skin');
+ face(-.273,2.29,0,.61,.34,.11,'dark');
+ part(0,2.475,0,.61,.11,.60,'dark');
+ part(0,2.535,0,.54,.045,.54,'dark');
+ for(const across of [-.265,.265])face(.165,2.36,across,.055,.20,.11,'dark');
  for(const across of [-.326,.326])face(-.01,2.13,across,.09,.17,.14,'skin');
  for(const across of [-.132,.132]){
-  face(.309,2.235,across,.055,.05,.025,'dark');
-  face(.308,2.329,across,.09,.025,.024,'dark');
+  face(.309,2.235,across,.055,.043,.025,'dark');
+  face(.325,2.245,across-.012,.014,.013,.012,'paper');
+  face(.308,2.323,across,.087,.022,.025,'dark');
  }
- face(.345,2.13,0,.083,.10,.10,'skin');
- face(.309,2.025,0,.13,.025,.025,'dark');
+ face(.328,2.16,0,.060,.13,.067,'skin');
+ face(.365,2.113,0,.075,.045,.043,'skin');
+ face(.309,2.026,0,.115,.020,.025,'dark');
+ face(.321,2.003,0,.071,.017,.018,'skin');
 
  if(type==='tea'){
   // Sage coat, pale apron, compact bun and a horizontal brass hairpin.
@@ -1806,6 +1884,7 @@ const cityHumanSaved=new Map(),cityHumanWorlds=new Set(),cityHumanMainChoices={}
 const cityHumanReduced=matchMedia('(prefers-reduced-motion: reduce)'),cityHumanMatrix=new THREE.Matrix4(),cityHumanReadMatrix=new THREE.Matrix4(),cityHumanQuaternion=new THREE.Quaternion(),cityHumanEuler=new THREE.Euler(),cityHumanPosition=new THREE.Vector3(),cityHumanScale=new THREE.Vector3(),cityHumanDirty=new Set();
 const cityHumanActions={tea:'递茶',book:'翻书',inn:'拨灯芯',vendor:'理彩绳',music:'举笛',boat:'收船绳'};
 const cityHumanActors=cityStoryDefinitions.map((story,index)=>({id:story.id,type:story.type,index,action:'歇手',near:false,distance:null,elapsed:0,remaining:0,amplitude:0,pending:false,activeFrames:0}));
+const cityHumanLimbParts=new Map();for(const actor of cityHumanActors)for(const side of ['left','right'])cityHumanLimbParts.set(actor.id+'/'+side,[...cityHumanRefs].filter(([key])=>key===actor.id+'/hand-'+side||key===actor.id+'/arm-'+side||key.startsWith(actor.id+'/arm-'+side+'-')).map(([,ref])=>ref));
 let cityHumanActiveFrames=0,cityHumanNoticeId=null;
 function cityHumanRef(actor,role){return cityHumanRefs.get(actor.id+'/'+role);}
 function cityHumanWrite(ref,{x=ref.base.x,y=ref.base.y,z=ref.base.z,rx=0,ry=0,rz=0,visible=true}={}){
@@ -1815,7 +1894,7 @@ function cityHumanWrite(ref,{x=ref.base.x,y=ref.base.y,z=ref.base.z,rx=0,ry=0,rz
 function cityHumanRuleVisible(rule){return rule.kind==='choice'?cityHumanSaved.get(rule.id)===rule.choice:cityHumanWorlds.has(rule.token);}
 function cityHumanArm(actor,side,angle){let changed=false;const left=side==='left',arm=cityHumanRef(actor,'arm-'+side),hand=cityHumanRef(actor,'hand-'+side);if(!arm||!hand)return false;
  const shoulderY=walkMap.groundY+1.70,shoulderX=arm.base.x;
- for(const ref of [arm,hand]){const dy=ref.base.y-shoulderY;changed=cityHumanWrite(ref,{x:shoulderX-Math.sin(angle)*dy,y:shoulderY+Math.cos(angle)*dy,rz:angle})||changed;}return changed;
+ for(const ref of cityHumanLimbParts.get(actor.id+'/'+side)){const dx=ref.base.x-shoulderX,dy=ref.base.y-shoulderY;changed=cityHumanWrite(ref,{x:shoulderX+Math.cos(angle)*dx-Math.sin(angle)*dy,y:shoulderY+Math.sin(angle)*dx+Math.cos(angle)*dy,rz:angle})||changed;}return changed;
 }
 function cityHumanPose(actor,a){let changed=false;
  const set=(role,pose)=>{const ref=cityHumanRef(actor,role);if(ref)changed=cityHumanWrite(ref,pose)||changed;},left=-1.32*a,right=.16*a;
@@ -2291,7 +2370,46 @@ let previousAspect=host.clientWidth/host.clientHeight;
 function resizeStage(){stopJourneyScene({restore:true});if(host.clientWidth<1||host.clientHeight<1)return;cancelCameraJourney();const aspect=host.clientWidth/host.clientHeight;camera.aspect=aspect;camera.updateProjectionMatrix();renderer.setSize(host.clientWidth,host.clientHeight);syncCityComposerSize();const next=fittingRadius();if(activeDream){radius*=dreamAspectScale(aspect)/dreamAspectScale(previousAspect);const limits=orbitLimits();radius=THREE.MathUtils.clamp(radius,limits.min,limits.max);}else if(!walk.active){if(activeView==='landscape')radius*=next/baseRadius;else radius*=Math.max(1,.93/aspect)/Math.max(1,.93/previousAspect);}baseRadius=next;previousAspect=aspect;render();}
 new ResizeObserver(resizeStage).observe(host);addEventListener('resize',resizeStage);
 document.getElementById('blockCount').textContent=`941 × 821 方块 · 可旋转漫游`;chooseView(innerWidth<600?'poem':'city');host.dataset.ready='true';startWaterAnimation();window.changanState=()=>({theta,phi,radius,roofHidden,blocks:data.count,meshes:model.children.length,wards:data.wardCount,buildings:data.buildingCount,quads:data.quadCount,boatPosition:movingBoat.position.toArray(),boatHeading:movingBoat.rotation.y,wakeVertices:wakePositions.length/3,motionPaused,motionSeconds,cameraTransition:!!cameraJourney,character:data.character,lighting:data.lighting,poetry:data.poetry,mistCount:mist.length,waterTextureOffset:waterMeshes[0].material.map.offset.y,sprayCount:spraySeeds.length,landscape:data.landscape,waterfalls:data.waterfalls,archetypes:data.archetypes,districts:data.districts.length,activeView,target:target.toArray()});
-window.changanNavigate=(name,options)=>chooseView(name,options);window.changanFreezeCamera=()=>{cancelCameraJourney();render();};window.changanCapture=()=>{if(cameraJourney){const destination=cameraJourney.to;target.copy(destination.target);theta=destination.theta;phi=destination.phi;radius=destination.radius;cancelCameraJourney();}render(true);return renderer.domElement.toDataURL('image/jpeg',.92);};window.changanSetQuality=mode=>{quality=window.changanQualityConfig(mode);if(!walk.active||activeDream)renderer.setPixelRatio(quality.pixelRatio);syncCityComposerSize();sunlight.shadow.mapSize.set(quality.shadowSize,quality.shadowSize);if(sunlight.shadow.map){sunlight.shadow.map.dispose();sunlight.shadow.map=null;}renderer.shadowMap.needsUpdate=true;bloom.enabled=quality.bloom;resizeStage();};window.changanPerformanceState=()=>({...quality,width:renderer.domElement.width,height:renderer.domElement.height});window.changanWalkingPerformanceState=walkingPerformanceSnapshot;window.changanFocusedCityState=()=>({removedStatic:focusedCrowdStats.removedColumns,removedFaces:focusedCrowdStats.removedFaces,unblockedCells:focusedCrowdNavigation.changed,ambientActors:people.length+teaGuests.length,taskActors:cityHumanActors.map(a=>({id:a.id,type:a.type,host:cityStoryDefinitions.find(s=>s.id===a.id).host})),batches:cityHumanMeshes.length});window.changanExpansionState=()=>({version:cityExpansion.version,...cityExpansion.stats,existingBuildings:204,totalBuildings:204+cityExpansion.stats.buildingCount,regions:cityExpansion.regions.map(({id,name,subtitle,spawn})=>({id,name,subtitle,spawn})),navigation:walkMap.validation});window.changanTeaGameTHREE=THREE;// Insert inside the retained engine closure immediately before changan-ready.
+window.changanNavigate=(name,options)=>chooseView(name,options);window.changanFreezeCamera=()=>{cancelCameraJourney();render();};window.changanCapture=()=>{if(cameraJourney){const destination=cameraJourney.to;target.copy(destination.target);theta=destination.theta;phi=destination.phi;radius=destination.radius;cancelCameraJourney();}render(true);return renderer.domElement.toDataURL('image/jpeg',.92);};window.changanSetQuality=mode=>{quality=window.changanQualityConfig(mode);if(!walk.active||activeDream)renderer.setPixelRatio(quality.pixelRatio);syncCityComposerSize();sunlight.shadow.mapSize.set(quality.shadowSize,quality.shadowSize);if(sunlight.shadow.map){sunlight.shadow.map.dispose();sunlight.shadow.map=null;}renderer.shadowMap.needsUpdate=true;bloom.enabled=quality.bloom;resizeStage();};window.changanPerformanceState=()=>({...quality,width:renderer.domElement.width,height:renderer.domElement.height});window.changanWalkingPerformanceState=walkingPerformanceSnapshot;window.changanFocusedCityState=()=>({removedStatic:focusedCrowdStats.removedColumns,removedFaces:focusedCrowdStats.removedFaces,unblockedCells:focusedCrowdNavigation.changed,ambientActors:people.length+teaGuests.length,taskActors:cityHumanActors.map(a=>({id:a.id,type:a.type,host:cityStoryDefinitions.find(s=>s.id===a.id).host})),batches:cityHumanMeshes.length});window.changanExpansionState=()=>({version:cityExpansion.version,...cityExpansion.stats,existingBuildings:204,totalBuildings:204+cityExpansion.stats.buildingCount,regions:cityExpansion.regions.map(({id,name,subtitle,spawn})=>({id,name,subtitle,spawn})),navigation:walkMap.validation});// Static, shared geometry: no frame callback, point light or collision overlay.
+const cityCraftRoot=new THREE.Group();cityCraftRoot.name='city-joinery-and-tiles';scene.add(cityCraftRoot);
+const cityCraftRoofMeshes=[],cityCraftRibMeshes=[];
+// Overview uses three shared batches. Walking uses bounded spatial subsets,
+// so a close street view does not submit the entire city's fine joinery.
+function cityCraftInstanceChunks(source,records,kind){
+ const buckets=new Map();for(let i=0;i<records.length;i++){const p=records[i],x=p.x??(p.a[0]+p.b[0])*.5,z=p.z??(p.a[2]+p.b[2])*.5,key=Math.floor(x/96)+','+Math.floor(z/96);if(!buckets.has(key))buckets.set(key,[]);buckets.get(key).push(i);}
+ source.layers.set(1);source.castShadow=false;
+ for(const [key,indices]of buckets){const mesh=new THREE.InstancedMesh(source.geometry,source.material,indices.length);for(let j=0;j<indices.length;j++){source.getMatrixAt(indices[j],cityCraftMatrix);mesh.setMatrixAt(j,cityCraftMatrix);source.getColorAt(indices[j],cityCraftColor);mesh.setColorAt(j,cityCraftColor);}mesh.instanceMatrix.needsUpdate=true;mesh.instanceColor.needsUpdate=true;mesh.computeBoundingSphere();mesh.layers.set(2);mesh.receiveShadow=true;mesh.name=kind+'-'+key;cityCraftRoot.add(mesh);if(kind==='tile-joints'){roofs.push(mesh);cityCraftRibMeshes.push(mesh);}}
+}
+const cityCraftGeometry=new THREE.BufferGeometry(),cityCraftPositions=[],cityCraftColors=[],cityCraftIndices=[];
+const cityCraftColor=new THREE.Color(),cityCraftMatrix=new THREE.Matrix4(),cityCraftPosition=new THREE.Vector3(),cityCraftQuaternion=new THREE.Quaternion(),cityCraftScale=new THREE.Vector3(),cityCraftEuler=new THREE.Euler();
+for(const patch of cityCraftPlan.patches){
+ const {x,z,heights:h,type}=patch,start=cityCraftPositions.length/3;
+ cityCraftPositions.push(x-.5,h[0],z-.5,x-.5,h[1],z+.5,x+.5,h[2],z+.5,x+.5,h[3],z-.5);
+ const variation=.96+((Math.abs(x*17+z*31)%11)/10)*.08;cityCraftColor.set(cityCraftPlan.colors[type]||cityCraftPlan.colors.roof).multiplyScalar(variation);
+ for(let k=0;k<4;k++)cityCraftColors.push(cityCraftColor.r,cityCraftColor.g,cityCraftColor.b);
+ cityCraftIndices.push(start,start+1,start+2,start,start+2,start+3);
+}
+cityCraftGeometry.setAttribute('position',new THREE.Float32BufferAttribute(cityCraftPositions,3));cityCraftGeometry.setAttribute('color',new THREE.Float32BufferAttribute(cityCraftColors,3));cityCraftGeometry.setIndex(cityCraftIndices);cityCraftGeometry.computeVertexNormals();cityCraftGeometry.computeBoundingSphere();
+const cityCraftRoofMaterial=new THREE.MeshStandardMaterial({vertexColors:true,roughness:.91}),cityCraftRoof=new THREE.Mesh(cityCraftGeometry,cityCraftRoofMaterial);cityCraftRoof.name='city-finished-tile-surfaces';cityCraftRoof.castShadow=true;cityCraftRoof.receiveShadow=true;cityCraftRoof.visible=!roofHidden;cityCraftRoot.add(cityCraftRoof);roofs.push(cityCraftRoof);
+cityCraftRoof.layers.set(1);cityCraftRoof.castShadow=false;cityCraftRoofMeshes.push(cityCraftRoof);
+const cityCraftRoofBuckets=new Map();for(let i=0;i<cityCraftPlan.patches.length;i++){const p=cityCraftPlan.patches[i],key=Math.floor(p.x/96)+','+Math.floor(p.z/96);if(!cityCraftRoofBuckets.has(key))cityCraftRoofBuckets.set(key,[]);cityCraftRoofBuckets.get(key).push(i);}
+for(const [key,patches]of cityCraftRoofBuckets){const geometry=new THREE.BufferGeometry(),indices=[],bounds=new THREE.Box3(),point=new THREE.Vector3();for(const name of ['position','normal','color'])geometry.setAttribute(name,cityCraftGeometry.getAttribute(name));for(const index of patches){const first=index*4;indices.push(first,first+1,first+2,first,first+2,first+3);for(let v=0;v<4;v++){point.fromBufferAttribute(cityCraftGeometry.getAttribute('position'),first+v);bounds.expandByPoint(point);}}geometry.setIndex(indices);geometry.boundingBox=bounds;geometry.boundingSphere=bounds.getBoundingSphere(new THREE.Sphere());const mesh=new THREE.Mesh(geometry,cityCraftRoofMaterial);mesh.layers.set(2);mesh.receiveShadow=true;mesh.name='tile-surfaces-'+key;cityCraftRoot.add(mesh);roofs.push(mesh);cityCraftRoofMeshes.push(mesh);}
+const cityCraftTrimMaterial=new THREE.MeshStandardMaterial({color:'#ffffff',roughness:.88}),cityCraftTrim=new THREE.InstancedMesh(boatGeometry,cityCraftTrimMaterial,cityCraftPlan.parts.length);
+for(let i=0;i<cityCraftPlan.parts.length;i++){const p=cityCraftPlan.parts[i];cityCraftPosition.set(p.x,p.y,p.z);cityCraftScale.set(p.w,p.h,p.d);cityCraftQuaternion.identity();cityCraftMatrix.compose(cityCraftPosition,cityCraftQuaternion,cityCraftScale);cityCraftTrim.setMatrixAt(i,cityCraftMatrix);cityCraftTrim.setColorAt(i,cityCraftColor.set(cityCraftPlan.colors[p.type]||cityCraftPlan.colors.wood));}
+cityCraftTrim.instanceMatrix.needsUpdate=true;cityCraftTrim.instanceColor.needsUpdate=true;cityCraftTrim.castShadow=true;cityCraftTrim.receiveShadow=true;cityCraftTrim.computeBoundingSphere();cityCraftTrim.name='city-muntins-and-brackets';cityCraftRoot.add(cityCraftTrim);
+cityCraftInstanceChunks(cityCraftTrim,cityCraftPlan.parts,'joinery');
+const cityCraftRibGeometry=new THREE.CylinderGeometry(1,1,1,4,1,true),cityCraftRibMaterial=new THREE.MeshStandardMaterial({color:'#ffffff',roughness:.88}),cityCraftRibs=new THREE.InstancedMesh(cityCraftRibGeometry,cityCraftRibMaterial,cityCraftPlan.ribs.length),cityCraftAxis=new THREE.Vector3(0,1,0),cityCraftDirection=new THREE.Vector3(),cityCraftA=new THREE.Vector3(),cityCraftB=new THREE.Vector3();
+for(let i=0;i<cityCraftPlan.ribs.length;i++){const r=cityCraftPlan.ribs[i];cityCraftA.fromArray(r.a);cityCraftB.fromArray(r.b);cityCraftDirection.subVectors(cityCraftB,cityCraftA);const length=cityCraftDirection.length();cityCraftQuaternion.setFromUnitVectors(cityCraftAxis,cityCraftDirection.normalize());cityCraftPosition.copy(cityCraftA).add(cityCraftB).multiplyScalar(.5);cityCraftScale.set(r.radius,length,r.radius);cityCraftMatrix.compose(cityCraftPosition,cityCraftQuaternion,cityCraftScale);cityCraftRibs.setMatrixAt(i,cityCraftMatrix);cityCraftRibs.setColorAt(i,cityCraftColor.set(cityCraftPlan.colors[r.type]||cityCraftPlan.colors.roof).multiplyScalar(1.15));}
+cityCraftRibs.instanceMatrix.needsUpdate=true;cityCraftRibs.instanceColor.needsUpdate=true;cityCraftRibs.receiveShadow=true;cityCraftRibs.computeBoundingSphere();cityCraftRibs.name='city-rounded-tile-joints';cityCraftRibs.visible=!roofHidden;cityCraftRoot.add(cityCraftRibs);roofs.push(cityCraftRibs);
+cityCraftRibMeshes.push(cityCraftRibs);cityCraftInstanceChunks(cityCraftRibs,cityCraftPlan.ribs,'tile-joints');
+function syncCityCraftQuality(){for(const mesh of cityCraftRoofMeshes)mesh.visible=!roofHidden;for(const mesh of cityCraftRibMeshes)mesh.visible=!roofHidden&&!quality.light;}
+syncCityCraftQuality();document.getElementById('roof').addEventListener('click',syncCityCraftQuality);
+window.addEventListener('changan-ready',()=>{const previous=window.changanSetQuality;window.changanSetQuality=mode=>{previous(mode);syncCityCraftQuality();render();};},{once:true});
+const cityCraftSummary={...cityCraftPlan.stats,overviewBatches:3,walkingBatches:cityCraftRoot.children.length-3,materials:3,triangles:cityCraftIndices.length/3+cityCraftPlan.parts.length*12+cityCraftPlan.ribs.length*8,frameCallbacks:0,roofToggleSupported:true,finite:cityCraftPositions.every(Number.isFinite)};
+window.changanCityCraftState=()=>({...cityCraftSummary,visibleRoofs:cityCraftRoof.visible,visibleRibs:cityCraftRibs.visible});
+cityCraftPositions.length=cityCraftColors.length=cityCraftIndices.length=0;cityCraftPlan.patches.length=cityCraftPlan.ribs.length=cityCraftPlan.parts.length=cityCraftPlan.windows.length=0;
+
+window.changanTeaGameTHREE=THREE;// Insert inside the retained engine closure immediately before changan-ready.
 // The normal city allocates no tale objects, textures, listeners or frame loops.
 if (window.CHANGAN_TALE_SCENE && window.CHANGAN_TALE_ID === 'borrowed-lantern') {
   (function initializeChanganTaleScene(resume) {

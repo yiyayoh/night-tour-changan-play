@@ -110,7 +110,7 @@
    else if(b.hasAttribute('data-dossier-scene-start')){if(data()?.journey.vignette.available&&canReach(current)){meeting={id:current,index:0};render();}}
    else if(b.hasAttribute('data-dossier-scene-next')){if(!pending&&meeting){if(meeting.index<2){meeting.index++;render();}else mutate({action:'vignette'});}}
   });
-  listen(dialog,'close',()=>{cancel();current=null;meeting=null;message='';});
+  listen(dialog,'close',()=>{if(dialog.open)return;cancel();current=null;meeting=null;message='';});
   function refreshAccount(){cancel();records.clear();reply=null;meeting=null;changed();if(current&&dialog.open)load(current);else if(tracked)load(tracked,{quiet:true});}
   listen(root,'changan-journal-changed',event=>{if(!event.detail?.palaceDossier)refreshAccount();});
   listen(root,'changan-cloud-disconnected',()=>{if(root.ChanganCharacterAccess){refreshAccount();return;}cancel();records.clear();reply=null;meeting=null;signIn=true;message='云端连接已合上。请重新连接，再展开当前账号的人物志。';changed();render(true);});

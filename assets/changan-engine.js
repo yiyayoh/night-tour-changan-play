@@ -957,7 +957,7 @@ function walkInputBlocked(){return !walk.active||document.hidden||!!activeDream|
 function walkCell(x,z){const ix=Math.floor(x+.5)-walkMap.minX,iz=Math.floor(z+.5)-walkMap.minZ;return ix>=0&&iz>=0&&ix<walkMap.width&&iz<walkMap.depth&&walkMask[iz*walkMap.width+ix]===0;}
 function walkClear(x,z){if(Math.abs(x+5)<3.45&&Math.abs(z-153)<2.95)return false;return [[0,0],[-.55,-.55],[-.55,.55],[.55,-.55],[.55,.55]].every(([dx,dz])=>walkCell(x+dx,z+dz));}
 function stepWalk(dx,dz){const steps=Math.max(1,Math.ceil(Math.hypot(dx,dz)/.18)),beforeX=walk.x,beforeZ=walk.z;for(let i=0;i<steps;i++){if(walkClear(walk.x+dx/steps,walk.z))walk.x+=dx/steps;if(walkClear(walk.x,walk.z+dz/steps))walk.z+=dz/steps;}const distance=Math.hypot(walk.x-beforeX,walk.z-beforeZ);walk.distance+=distance;return distance>.0001;}
-function setWalkPlace(id){const spawn=walkMap.spawns.find(p=>p.id===id)||walkMap.spawns[0];clearWalkInput();walk.place=spawn.id;walk.x=spawn.x;walk.z=spawn.z;walk.yaw=spawn.yaw;walk.pitch=.045;gateResetWalkingFoot();document.getElementById('walkPlace').value=spawn.id;document.getElementById('walkPlaceTitle').textContent=spawn.id==='gate'?'南门灯下':spawn.name;document.getElementById('walkPlaceCopy').textContent=spawn.id==='avenue'?'灯火映着长街，宫阙在前，城门在后。':spawn.text;
+function setWalkPlace(id){window.changanHorse?.dismount();const spawn=walkMap.spawns.find(p=>p.id===id)||walkMap.spawns[0];clearWalkInput();walk.place=spawn.id;walk.x=spawn.x;walk.z=spawn.z;walk.yaw=spawn.yaw;walk.pitch=.045;gateResetWalkingFoot();document.getElementById('walkPlace').value=spawn.id;document.getElementById('walkPlaceTitle').textContent=spawn.id==='gate'?'南门灯下':spawn.name;document.getElementById('walkPlaceCopy').textContent=spawn.id==='avenue'?'灯火映着长街，宫阙在前，城门在后。':spawn.text;
   const name=spawn.scene||(spawn.id==='bridgehead'?'poem':spawn.id==='gate'?'avenue':spawn.id);activeView=name;syncGalleryView(name);window.dispatchEvent(new CustomEvent('changan-walk-place',{detail:{place:spawn.id,scene:name}}));
 }
 function enterWalk(place){
@@ -965,8 +965,8 @@ function enterWalk(place){
   if(!walk.active)walk.saved=rememberOrbit();walk.active=true;walk.distance=0;pointers.clear();setWalkPlace(place||'gate');
   document.body.classList.add('walking');document.getElementById('walkHUD').hidden=false;document.getElementById('openNotes').disabled=true;camera.near=.2;camera.fov=63;camera.updateProjectionMatrix();host.focus({preventScroll:true});render();
 }
-function exitWalk({restore=true}={}){if(!walk.active)return;walk.active=false;clearWalkInput();gateResetWalkingFoot();window.changanStreetRouteClear?.();document.body.classList.remove('walking');document.getElementById('walkHUD').hidden=true;document.getElementById('openNotes').disabled=false;camera.near=3;camera.fov=42;camera.updateProjectionMatrix();if(restore)restoreOrbit(walk.saved);walk.saved=null;if(restore){render();document.getElementById('enterWalk').focus({preventScroll:true});}}
-function setWalkCamera(){gateSyncWalkingFoot();camera.position.set(walk.x,gateWalkingEyeY(),walk.z);camera.lookAt(walk.x+Math.sin(walk.yaw)*Math.cos(walk.pitch),camera.position.y+Math.sin(walk.pitch),walk.z+Math.cos(walk.yaw)*Math.cos(walk.pitch));}
+function exitWalk({restore=true}={}){window.changanHorse?.dismount();if(!walk.active)return;walk.active=false;clearWalkInput();gateResetWalkingFoot();window.changanStreetRouteClear?.();document.body.classList.remove('walking');document.getElementById('walkHUD').hidden=true;document.getElementById('openNotes').disabled=false;camera.near=3;camera.fov=42;camera.updateProjectionMatrix();if(restore)restoreOrbit(walk.saved);walk.saved=null;if(restore){render();document.getElementById('enterWalk').focus({preventScroll:true});}}
+function setWalkCamera(){if(window.changanHorse?.camera())return;gateSyncWalkingFoot();camera.position.set(walk.x,gateWalkingEyeY(),walk.z);camera.lookAt(walk.x+Math.sin(walk.yaw)*Math.cos(walk.pitch),camera.position.y+Math.sin(walk.pitch),walk.z+Math.cos(walk.yaw)*Math.cos(walk.pitch));}
 function updateWalk(dt){if(window.changanPalacePortalActive)return false;window.ChanganPalacePortal?.sample();if(window.changanPalacePortalActive)return false;
   window.changanFirstWalkSample?.();
   walkDiagnostics.updateFrames++;walkDiagnostics.lastDt=Number.isFinite(dt)?dt:0;
@@ -977,7 +977,7 @@ function updateWalk(dt){if(window.changanPalacePortalActive)return false;window.
   let forward=(walk.keys.has('KeyW')||walk.keys.has('ArrowUp')?1:0)-(walk.keys.has('KeyS')||walk.keys.has('ArrowDown')?1:0)-walk.stickY;
   let side=(walk.keys.has('KeyD')||walk.keys.has('ArrowRight')?1:0)-(walk.keys.has('KeyA')||walk.keys.has('ArrowLeft')?1:0)+walk.stickX;
   const length=Math.hypot(forward,side);if(!length)return jumped;walkDiagnostics.inputFrames++;if(length>1){forward/=length;side/=length;}
-  const fast=walk.keys.has('ShiftLeft')||walk.keys.has('ShiftRight');const speed=walk.swimming?(fast?4.8:3.6):(fast?11:6);
+  const fast=walk.keys.has('ShiftLeft')||walk.keys.has('ShiftRight');const speed=walk.swimming?(fast?4.8:3.6):(window.changanHorse?.mounted()?(fast||window.changanHorse.fast()?28:20):(fast?14:9));
   const elapsed=Math.min(.15,Math.max(0,Number.isFinite(dt)?dt:0));
   // Camera forward is (sin yaw, cos yaw); its screen-right is (-cos yaw, sin yaw).
   return stepWalk((Math.sin(walk.yaw)*forward-Math.cos(walk.yaw)*side)*elapsed*speed,(Math.cos(walk.yaw)*forward+Math.sin(walk.yaw)*side)*elapsed*speed)||jumped;
@@ -1639,7 +1639,7 @@ window.changanNightSetAutomatic=value=>{cityNight.automatic=!!value;cityNightNot
 window.changanNightState=()=>({phase:cityNightPhases[cityNight.index].id,name:cityNightPhases[cityNight.index].name,automatic:cityNight.automatic,paused:cityNightPaused(),elapsed:cityNight.elapsed,duration:120,blend:cityNight.blend,sky:scene.background.getHexString(),stars:cityStarPoints?.material.opacity,crowd:cityNightPhases[cityNight.index].crowd.length});
 applyCityNightAtmosphere();
 
-const cityStoryLocations={tea:{point:[-130,125],spawn:[-134,125],yaw:Math.PI/2},book:{point:[-169,126],spawn:[-173,126],yaw:Math.PI/2},inn:{point:[-245,18],spawn:[-249,18],yaw:Math.PI/2},vendor:{point:[74,15],spawn:[70,15],yaw:Math.PI/2},music:{point:[0,62],spawn:[0,66],yaw:Math.PI},boat:{point:[153,100],spawn:[153,96],yaw:0}};
+const cityStoryLocations={tea:{point:[-132,122],spawn:[-135.5,122],yaw:Math.PI/2},book:{point:[-168,121],spawn:[-171.5,121],yaw:Math.PI/2},inn:{point:[-245,14],spawn:[-248.5,14],yaw:Math.PI/2},vendor:{point:[73,27],spawn:[69.5,27],yaw:Math.PI/2},music:{point:[18,70],spawn:[18,74],yaw:Math.PI},boat:{point:[151,99],spawn:[151,95],yaw:0}};
 const cityStoryDefinitions=window.CHANGAN_CITY_STORIES,cityStoriesRoot=new THREE.Group();cityStoriesRoot.name='city-small-encounters';scene.add(cityStoriesRoot);
 const storyBoxes=new Map(),storyColors={wood:'#82674c',dark:'#293630',robe:'#8f7767',skin:'#c8ae8d',paper:'#d5ccb0',gold:'#ddb581',jade:'#94ab92'};
 function cityStoryBox(story,x,y,z,w,h,d,color,role=''){if(!storyBoxes.has(color))storyBoxes.set(color,[]);storyBoxes.get(color).push({id:story.id,x,y,z,w,h,d,role});}
@@ -2198,7 +2198,7 @@ function createChanganJumpPhysics(map,mask,catalog,bridge,walk,options={}){
   }
   function snapshot(){return{grounded:state.grounded,swimming:state.swimming,mode:state.swimming?'swimming':state.grounded?'walking':'airborne',waterY:catalog.waterY,physicalFootY:physicalFootY(),verticalVelocity:walk.jumpVelocity,height:walk.jumpHeight,velocity:walk.jumpVelocity,
     recoveryCount:state.recoveryCount,lastRecovery:state.lastRecovery?{...state.lastRecovery}:null,lastSafe:state.lastSafe?{...state.lastSafe}:null,catalog:{...catalog.stats}};}
-  reset();return{clear,standingClear:staticClear,start,update,move,sync,reset,snapshot,physicalFootY};
+  reset();return{clear,standingClear:staticClear,surface:(x,z)=>({ground:ground[cell(x,z)]||0,y:staticFloor(x,z)}),start,update,move,sync,reset,snapshot,physicalFootY};
 }
 // The static bridge predicate remains the route-cache predicate. Airborne
 // movement uses the separate physical body query compiled from final meshes.
@@ -2210,7 +2210,7 @@ function gateWalkingBody(x,z){return gatePassageCollision.body(x,z);}
 walk.footHeight=0;walk.footViewHeight=0;
 walkingJumpPhysics=createChanganJumpPhysics(walkMap,walkMask,gatePassageData.physics,gatePassageCollision,walk,{
   paused:()=>walkInputBlocked()||document.hasFocus?.()===false,
-  dynamicClear:(x,z,foot)=>(typeof changanBoatCollision==='undefined'||changanBoatCollision.clear(x,z,foot))&&(typeof changanLanternWorld==='undefined'||!changanLanternWorld||changanLanternWorld.clear(x,z,foot)),
+  dynamicClear:(x,z,foot)=>(!window.changanTownPhysicalClear||window.changanTownPhysicalClear(x,z,foot))&&(typeof changanBoatCollision==='undefined'||changanBoatCollision.clear(x,z,foot))&&(typeof changanLanternWorld==='undefined'||!changanLanternWorld||changanLanternWorld.clear(x,z,foot)),
   dynamicSweep:(x,z,from,to)=>{const boat=typeof changanBoatCollision==='undefined'?null:changanBoatCollision.sweepVertical(x,z,from,to),lantern=typeof changanLanternWorld==='undefined'||!changanLanternWorld?null:changanLanternWorld.sweepVertical(x,z,from,to);return !boat?lantern:!lantern?boat:Math.abs(boat.foot-from)<=Math.abs(lantern.foot-from)?boat:lantern;},
   recovery:detail=>{clearWalkInput();window.dispatchEvent(new CustomEvent('changan-position-recovery',{detail}));},
   waterState:detail=>window.dispatchEvent(new CustomEvent('changan-water-state',{detail}))
@@ -2293,10 +2293,10 @@ const streetRouteXY=index=>[index%walkMap.width+walkMap.minX,Math.floor(index/wa
 function streetRouteIndex(x,z){const ix=x-walkMap.minX,iz=z-walkMap.minZ;return ix>=0&&iz>=0&&ix<walkMap.width&&iz<walkMap.depth?iz*walkMap.width+ix:-1;}
 function streetRouteGrid(){if(streetRouteSafeCells)return;const cached=expansionRouteCache.grid(walkClear);if(cached){streetRouteSafeCells=cached.safe;streetRouteComponents=cached.components;return;}streetRouteSafeCells=new Uint8Array(walkMask.length);for(let index=0;index<walkMask.length;index++){if(walkMask[index])continue;const [x,z]=streetRouteXY(index);streetRouteSafeCells[index]=walkClear(x,z)?1:0;}
  streetRouteComponents=new Int32Array(walkMask.length);streetRouteComponents.fill(-1);const queue=new Int32Array(walkMask.length);let component=0;for(let seed=0;seed<walkMask.length;seed++){if(!streetRouteSafeCells[seed]||streetRouteComponents[seed]!==-1)continue;let head=0,tail=1;queue[0]=seed;streetRouteComponents[seed]=component;while(head<tail){const index=queue[head++],ix=index%walkMap.width,iz=Math.floor(index/walkMap.width);for(const next of [ix>0?index-1:-1,ix<walkMap.width-1?index+1:-1,iz>0?index-walkMap.width:-1,iz<walkMap.depth-1?index+walkMap.width:-1]){if(next>=0&&streetRouteSafeCells[next]&&streetRouteComponents[next]===-1){streetRouteComponents[next]=component;queue[tail++]=next;}}}component++;}}
-function streetRouteCellSafe(index){const cached=expansionRouteCache.cell(index,walkClear);if(cached!==null)return cached;if(index<0||!streetRouteSafeCells[index])return false;const [x,z]=streetRouteXY(index);return walkClear(x,z);}
-function streetRouteLineClear(a,b){const steps=Math.max(1,Math.ceil(Math.hypot(b[0]-a[0],b[1]-a[1])/.16));for(let i=0;i<=steps;i++){const t=i/steps;if(!walkClear(a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t))return false;}return true;}
+function streetRouteCellSafe(index){if(window.changanTownRouteClear){const p=streetRouteXY(index);if(!window.changanTownRouteClear(...p))return false;}const cached=expansionRouteCache.cell(index,walkClear);if(cached!==null)return cached;if(index<0||!streetRouteSafeCells[index])return false;const [x,z]=streetRouteXY(index);return walkClear(x,z);}
+function streetRouteLineClear(a,b){const steps=Math.max(1,Math.ceil(Math.hypot(b[0]-a[0],b[1]-a[1])/.16));for(let i=0;i<=steps;i++){const t=i/steps;if(!walkClear(a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t)||(window.changanTownRouteClear&&!window.changanTownRouteClear(a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t)))return false;}return true;}
 function streetRouteNearestCell(point){if(!walkClear(...point))return -1;const candidates=[],cx=Math.floor(point[0]+.5),cz=Math.floor(point[1]+.5);for(let dz=-2;dz<=2;dz++)for(let dx=-2;dx<=2;dx++){const x=cx+dx,z=cz+dz,index=streetRouteIndex(x,z);if(streetRouteCellSafe(index))candidates.push({index,point:[x,z],distance:Math.hypot(x-point[0],z-point[1])});}candidates.sort((a,b)=>a.distance-b.distance);return candidates.find(c=>streetRouteLineClear(point,c.point))?.index??-1;}
-function streetRouteGoal(place){const house=changanHousePlaces.find(h=>'house-'+h.id===place);if(house)return[house.point.x,house.point.z];const region=cityExpansion.regions.find(region=>region.id===place);if(region)return [region.spawn.x,region.spawn.z];const fixed={'lantern-keeper':[-5,156],gate:[0,160],avenue:[0,21],alley:[-139,124],inn:[-257,18],bridgehead:[0,228]};if(Object.hasOwn(fixed,place))return fixed[place];const story=cityStoryDefinitions.find(s=>'story-'+s.id===place);return story?cityStoryLocations[story.type]?.point||null:null;}
+function streetRouteGoal(place){const folk=window.CHANGAN_TOWN_CATALOG?.people.find(n=>'folk-'+n.id===place);if(folk)return folk.approach.slice();const house=changanHousePlaces.find(h=>'house-'+h.id===place);if(house)return[house.point.x,house.point.z];const region=cityExpansion.regions.find(region=>region.id===place);if(region)return [region.spawn.x,region.spawn.z];const fixed={'lantern-keeper':[-5,156],gate:[0,160],avenue:[0,21],alley:[-139,124],inn:[-257,18],bridgehead:[0,228]};if(Object.hasOwn(fixed,place))return fixed[place];const story=cityStoryDefinitions.find(s=>'story-'+s.id===place);return story?cityStoryLocations[story.type]?.point||null:null;}
 let streetRouteSearchScratch=null;
 function streetRouteSearch(start,goal){
  streetRouteGrid();const startCell=streetRouteNearestCell(start),goalCell=streetRouteNearestCell(goal);if(startCell<0||goalCell<0||streetRouteComponents[startCell]!==streetRouteComponents[goalCell])return {nodes:[],expanded:0};
@@ -2307,7 +2307,7 @@ function streetRouteSearch(start,goal){
  const [gx,gz]=streetRouteXY(goalCell),estimate=index=>{const [x,z]=streetRouteXY(index),dx=Math.abs(x-gx),dz=Math.abs(z-gz);return Math.max(dx,dz)+(Math.SQRT2-1)*Math.min(dx,dz);};
  scores[startCell]=0;push({index:startCell,g:0,f:estimate(startCell)});let expanded=0,found=false;
  while(heap.length){const entry=pop(),index=entry.index;if(closed[index]||entry.g!==scores[index])continue;closed[index]=1;expanded++;if(index===goalCell){found=true;break;}const [x,z]=streetRouteXY(index);
-  for(let dz=-1;dz<=1;dz++)for(let dx=-1;dx<=1;dx++){if(!dx&&!dz)continue;const next=streetRouteIndex(x+dx,z+dz);if(next<0||closed[next]||!streetRouteCellSafe(next))continue;if(dx&&dz&&(!streetRouteCellSafe(streetRouteIndex(x+dx,z))||!streetRouteCellSafe(streetRouteIndex(x,z+dz))))continue;const candidate=scores[index]+(dx&&dz?Math.SQRT2:1);if(candidate>=scores[next]||!(expansionRouteCache.active(walkClear)?expansionRouteCache.edge(index,dx,dz):streetRouteLineClear([x,z],[x+dx,z+dz])))continue;scores[next]=candidate;parents[next]=index;push({index:next,g:candidate,f:candidate+estimate(next)});}
+  for(let dz=-1;dz<=1;dz++)for(let dx=-1;dx<=1;dx++){if(!dx&&!dz)continue;const next=streetRouteIndex(x+dx,z+dz);if(next<0||closed[next]||!streetRouteCellSafe(next))continue;if(dx&&dz&&(!streetRouteCellSafe(streetRouteIndex(x+dx,z))||!streetRouteCellSafe(streetRouteIndex(x,z+dz))))continue;const candidate=scores[index]+(dx&&dz?Math.SQRT2:1);if(candidate>=scores[next]||!(expansionRouteCache.active(walkClear)?expansionRouteCache.edge(index,dx,dz):streetRouteLineClear([x,z],[x+dx,z+dz])))continue;if(window.changanTownRouteSegment&&!window.changanTownRouteSegment([x,z],[x+dx,z+dz]))continue;scores[next]=candidate;parents[next]=index;push({index:next,g:candidate,f:candidate+estimate(next)});}
  }
  if(!found)return {nodes:[],expanded};const nodes=[];for(let index=goalCell;index!==-1;index=parents[index])nodes.push(streetRouteXY(index));nodes.reverse();if(Math.hypot(start[0]-nodes[0][0],start[1]-nodes[0][1])>.00001)nodes.unshift(start.slice());if(Math.hypot(goal[0]-nodes.at(-1)[0],goal[1]-nodes.at(-1)[1])>.00001)nodes.push(goal.slice());return {nodes,expanded};
 }
@@ -2408,6 +2408,39 @@ window.addEventListener('changan-ready',()=>{const previous=window.changanSetQua
 const cityCraftSummary={...cityCraftPlan.stats,overviewBatches:3,walkingBatches:cityCraftRoot.children.length-3,materials:3,triangles:cityCraftIndices.length/3+cityCraftPlan.parts.length*12+cityCraftPlan.ribs.length*8,frameCallbacks:0,roofToggleSupported:true,finite:cityCraftPositions.every(Number.isFinite)};
 window.changanCityCraftState=()=>({...cityCraftSummary,visibleRoofs:cityCraftRoof.visible,visibleRibs:cityCraftRibs.visible});
 cityCraftPositions.length=cityCraftColors.length=cityCraftIndices.length=0;cityCraftPlan.patches.length=cityCraftPlan.ribs.length=cityCraftPlan.parts.length=cityCraftPlan.windows.length=0;
+
+// Reuse the existing walking frame, gravity, swept collision and route planner.
+const townPeople=window.CHANGAN_TOWN_CATALOG.people.filter(n=>n.world==='city');
+const townActors=window.ChanganTownModels.people(THREE,scene,townPeople,()=>walkMap.groundY,()=>window.ChanganTown.snapshot());
+const townHorseModel=window.ChanganTownModels.horse(THREE,scene);
+let townMounted=false,townFast=false,townCoat='chestnut',townMessage='',townMessageUntil=0;
+try{const pref=JSON.parse(localStorage.getItem('changan:mount:v1')||'{}');if(pref.coat==='frost'&&window.ChanganTown.snapshot().completed.includes('city-horse'))townCoat='frost';}catch{}
+const townDistance=n=>Math.hypot(walk.x-n.point[0],walk.z-n.point[1]);
+function townNear(id){const n=townPeople.find(n=>n.id===id);if(!n||!walk.active||activeDream||window.changanPalacePortalActive||townDistance(n)>4.4)return false;for(let i=1;i<5;i++){const t=i/5;if(!walkClear(walk.x+(n.point[0]-walk.x)*t,walk.z+(n.point[1]-walk.z)*t))return false;}return true;}
+function townIndoors(){return changanHousePlaces.some(h=>Math.hypot(walk.x-h.center.x,walk.z-h.center.z)<3.8);}
+function townDismount(){const was=townMounted;townMounted=false;townFast=false;townHorseModel.group.visible=false;return was;}
+function townNotice(text){townMessage=text;townMessageUntil=performance.now()+4200;}
+function townClear(x,z,foot,body=true){
+ if(townPeople.some(n=>Math.hypot(x-n.point[0],z-n.point[1])<1.05||(Math.abs(x-(n.point[0]-1.15))<1.09&&Math.abs(z-n.point[1])<.98)))return false;
+ if(!body||!townMounted)return true;
+ for(const dz of [-1.35,0,1.7])for(const dx of [-.43,.43]){
+  const px=x+Math.sin(walk.yaw)*dz+Math.cos(walk.yaw)*dx,pz=z+Math.cos(walk.yaw)*dz-Math.sin(walk.yaw)*dx;
+  const bridgeBody=gatePassageCollision.body(px,pz),surface=walkingJumpPhysics.surface(px,pz),sampleFoot=Math.max(foot,surface.y);
+  if(surface.ground===2&&!bridgeBody.local)return false;
+  if(!walkingJumpPhysics.clear(px,pz,sampleFoot,false)||!walkingJumpPhysics.standingClear(px,pz)||!townClear(px,pz,sampleFoot,false)||!changanBoatCollision.clear(px,pz,sampleFoot)||changanLanternWorld&&!changanLanternWorld.clear(px,pz,sampleFoot))return false;
+ }
+ return true;
+}
+window.changanTownPhysicalClear=townClear;
+window.changanTownRouteClear=(x,z)=>townClear(x,z,walkMap.groundY,false);
+window.changanTownRouteSegment=(a,b)=>{const steps=Math.max(1,Math.ceil(Math.hypot(b[0]-a[0],b[1]-a[1])/.16));for(let i=0;i<=steps;i++)if(!window.changanTownRouteClear(a[0]+(b[0]-a[0])*i/steps,a[1]+(b[1]-a[1])*i/steps))return false;return true;};
+function townMount(){if(townMounted){townDismount();render();return true;}if(walkInputBlocked()||walk.swimming||!walk.grounded||townIndoors()||window.changanPalacePortalActive){townNotice('请在平稳、宽敞的街边唤马；屋内与宫中步行。');return false;}townMounted=true;if(!townClear(walk.x,walk.z,gatePhysicalWalkingFootY())){townDismount();townNotice('这里容不下踏灯，向宽敞处走几步再唤马。');return false;}clearWalkInput();townNotice('踏灯已到身边 · 可点疾驰，或按住 Shift');render();return true;}
+function townCamera(){if(!townMounted||!walk.active)return false;gateSyncWalkingFoot();const eye=gateWalkingEyeY()+1.7,cp=Math.cos(walk.pitch),sx=Math.sin(walk.yaw),cz=Math.cos(walk.yaw);let distance=0;for(let d=.3;d<=6.6;d+=.3){if(!walkingJumpPhysics.clear(walk.x-sx*d-cz*d/6.6*1.6,walk.z-cz*d+sx*d/6.6*1.6,gatePhysicalWalkingFootY(),false))break;distance=d;}camera.position.set(walk.x-sx*distance-cz*distance/6.6*1.6,eye,walk.z-cz*distance+sx*distance/6.6*1.6);camera.lookAt(walk.x+sx*2*cp,gatePhysicalWalkingFootY()+2.2+Math.sin(walk.pitch)*6,walk.z+cz*2*cp);return true;}
+const townBaseUpdateWalk=updateWalk;
+updateWalk=function townUpdateWalk(dt){const x=walk.x,z=walk.z;if(townMounted&&(!walk.active||activeDream||window.changanPalacePortalActive||townIndoors()||walk.swimming))townDismount();if(townMounted&&!townClear(walk.x,walk.z,gatePhysicalWalkingFootY())){townDismount();townNotice('此处较窄，已牵马步行；到宽敞处可再次唤马。');}const moved=townBaseUpdateWalk(dt),distance=Math.hypot(walk.x-x,walk.z-z);townHorseModel.update({x:walk.x,y:gatePhysicalWalkingFootY(),z:walk.z,yaw:walk.yaw,moving:distance>.0001,distance,mounted:townMounted,coat:townCoat});window.ChanganTown.sample();return moved;};
+window.changanHorse={mount:townMount,dismount:townDismount,mounted:()=>townMounted,fast:()=>townFast,camera:townCamera,snapshot:()=>({mounted:townMounted,fast:townFast,coat:townCoat,name:'踏灯',model:townHorseModel.summary(),people:townActors.summary()})};
+window.ChanganTown.attach({world:'city',active:()=>walk.active&&!activeDream&&!window.changanPalacePortalActive&&!document.querySelector('dialog[open]'),near:townNear,distance:id=>townDistance(townPeople.find(n=>n.id===id)),go(id){const n=townPeople.find(n=>n.id===id);if(!n)return;townDismount();if(!walk.active)enterWalk('gate');window.changanStreetRouteStart('folk-'+id);},mount:townMount,dismount:townDismount,pace(){townFast=!townFast;},coat(value){if(value==='frost'&&!window.ChanganTown.snapshot().completed.includes('city-horse'))return;townCoat=value==='frost'?'frost':'chestnut';try{localStorage.setItem('changan:mount:v1',JSON.stringify({coat:townCoat}));}catch{}},rideState:()=>({mounted:townMounted,fast:townFast,message:performance.now()<townMessageUntil?townMessage:''})});
+window.addEventListener('changan-town-progress',()=>townActors.refresh());
 
 window.changanTeaGameTHREE=THREE;// Insert inside the retained engine closure immediately before changan-ready.
 // The normal city allocates no tale objects, textures, listeners or frame loops.

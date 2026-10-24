@@ -602,6 +602,85 @@ if(!window.CHANGAN_TALE_SCENE){let lanternStorage;try{lanternStorage=window.loca
 
 (function(root){
  'use strict';
+ const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),mix=(a,b,t)=>a+(b-a)*t,TAU=Math.PI*2;
+ // LF, RF, LH, RH. Trot uses diagonal pairs; canter uses three uneven beats.
+ const trotOffsets=[0,.5,.5,0],canterOffsets=[.72,.42,0,.72];
+ function foot(phase,offset,stance,stroke,height){
+  const p=(phase+offset)%1;if(p<stance)return {z:stroke*(1-2*p/stance),lift:0,contact:true};
+  const u=(p-stance)/(1-stance),u2=u*u,u3=u2*u,m=-2*stroke*(1-stance)/stance;
+  return {z:(2*u3-3*u2+1)*-stroke+(u3-2*u2+u)*m+(-2*u3+3*u2)*stroke+(u3-u2)*m,lift:height*Math.sin(Math.PI*u)**2,contact:false};
+ }
+ function joint(hipY,z,lift,front){
+  const a=.68,b=.68,dy=hipY-(.12+lift),r=clamp(Math.hypot(dy,z),.1,a+b-.002),line=Math.atan2(z,dy),alpha=Math.acos(clamp((a*a+r*r-b*b)/(2*a*r),-1,1)),beta=Math.acos(clamp((b*b+r*r-a*a)/(2*b*r),-1,1)),sign=front?1:-1;
+  const upper=-(line+sign*alpha),lower=sign*(alpha+beta);
+  return {upper,lower,hoof:-upper-lower};
+ }
+ function create(){
+  let phase=0,speed=0,amount=0,fast=0,last=null;
+  function step({dt=1/60,distance=0,moving=false,sprint=false,grounded=true,paused=false}={}){
+   dt=clamp(Number.isFinite(dt)?dt:0,0,.15);distance=Number.isFinite(distance)?Math.max(0,distance):0;
+   const travelling=moving&&!paused&&distance>.00001,actual=travelling&&dt>0?clamp(distance/dt,0,32):0,decay=1-Math.exp(-12*dt);
+   speed=mix(speed,actual,decay);amount=mix(amount,travelling?1:0,decay);fast=mix(fast,sprint?1:0,decay);
+   if(amount<.0005)amount=0;if(speed<.0005)speed=0;
+   // Cadence is bounded in time, never one 2.86m cycle at any travel speed.
+   const cadence=1.45+Math.min(speed/28,1)*.65;if(travelling&&grounded)phase=(phase+dt*cadence)%1;
+   const trotY=.0125*(1-Math.cos(phase*TAU*2)),canterY=.035*(1-Math.cos((phase-.12)*TAU)),bodyY=mix(trotY,canterY,fast)*amount,bodyPitch=mix(.012*Math.sin(phase*TAU*2),.04*Math.sin((phase-.1)*TAU),fast)*amount;
+   const legs=trotOffsets.map((offset,i)=>{const t=foot(phase,offset,.60,.40,.25),c=foot(phase,canterOffsets[i],.46,.48,.38),z=mix(t.z,c.z,fast)*amount,lift=grounded?mix(t.lift,c.lift,fast)*amount:.15,hipY=Math.min(1.43+bodyY+(i<2?-.82:.82)*Math.sin(bodyPitch),.12+lift+Math.sqrt(Math.max(.01,1.358**2-z*z))),angles=joint(hipY,z,lift,i<2);return {...angles,z,lift,hipY,contact:grounded&&lift<.002};});
+   last={phase,speed,cadence,amount,fast,bodyY,bodyPitch,neckPitch:-bodyPitch*.55,riderY:-bodyY*.35,riderPitch:.10*fast*amount-bodyPitch*.5,tail:Math.sin(phase*TAU)*.06*amount,legs,settling:!travelling&&amount>0};return last;
+  }
+  return {step,snapshot:()=>last,reset(){phase=speed=amount=fast=0;last=null;}};
+ }
+ root.ChanganHorseMotion={create};if(typeof module!=='undefined')module.exports=root.ChanganHorseMotion;
+})(typeof window!=='undefined'?window:globalThis);
+
+(function(root){
+ 'use strict';
+ function create(THREE,scene){
+  const group=new THREE.Group();group.name='tadeng-player-horse';scene.add(group);
+  const body=new THREE.Group(),head=new THREE.Group(),rider=new THREE.Group(),tail=new THREE.Group();body.name='horse-body';head.name='horse-head';rider.name='horse-rider';tail.name='horse-tail';group.add(body);body.add(head,rider,tail);
+  head.position.set(0,1.6,.6);rider.position.set(0,2.27,-.12);tail.position.set(0,1.7,-1.17);
+  const partsByGroup={body:{node:body,pivot:[0,0,0]},head:{node:head,pivot:[0,1.6,.6]},rider:{node:rider,pivot:[0,2.27,-.12]},tail:{node:tail,pivot:[0,1.7,-1.17]}};
+  const colors={coat:'#805133',mane:'#352c28',hoof:'#302e2b',leather:'#4c3528',cloth:'#47685f',skin:'#c8ae8d',gold:'#b69b68'},buckets=new Map(),materials=[],meshes=[],legs=[];
+  const geometry={box:new THREE.BoxGeometry(1,1,1),round:new THREE.SphereGeometry(1,10,7),neck:new THREE.CylinderGeometry(.66,1,1,7)};
+  let assembly='body';
+  const add=(x,y,z,w,h,d,color,shape='box',rx=0)=>{const key=assembly+':'+shape;if(!buckets.has(key))buckets.set(key,{assembly,shape,parts:[]});buckets.get(key).parts.push({x,y,z,w,h,d,color,rx});};
+  add(0,1.53,0,.67,.58,1.25,'coat','round');add(0,1.63,.76,.43,.43,.54,'coat','round');
+  assembly='head';add(0,2.06,1.0,.52,1.02,.48,'coat','neck',.48);add(0,2.59,1.37,.30,.32,.42,'coat','round');add(0,2.38,1.70,.24,.24,.39,'coat','round');
+  for(const x of [-.19,.19]){add(x,2.98,1.29,.105,.36,.14,'coat','box',-.20);add(x,2.99,1.35,.04,.19,.035,'mane');add(x*1.45,2.64,1.52,.033,.060,.075,'mane');add(x*.85,2.38,2.02,.055,.055,.045,'mane');}
+  for(let i=0;i<6;i++)add(0,1.88+i*.12,.57+i*.09,.17,.24,.21,'mane','box',.45);
+  assembly='tail';add(0,1.35,-1.35,.16,.70,.18,'mane','box',.28);add(0,.89,-1.47,.17,.37,.20,'mane','box',.05);
+  assembly='body';add(0,2.055,-.10,.94,.14,1.12,'cloth');add(0,2.17,-.12,.82,.16,.76,'leather');add(0,2.27,.22,.90,.16,.13,'leather');add(0,2.27,-.47,.90,.18,.13,'leather');
+  for(const x of [-.65,.65]){add(x,1.70,-.15,.045,.70,.06,'leather');add(x,1.37,-.15,.22,.065,.20,'gold');}
+  assembly='head';for(const x of [-.65,.65]){add(x*.42,2.37,1.53,.045,.045,.59,'leather');add(x*.46,2.25,.86,.035,.035,1.02,'leather','box',-.48);}
+  assembly='rider';add(0,2.81,-.12,.66,.78,.44,'cloth');add(0,3.37,-.12,.26,.30,.27,'skin','round');add(0,3.59,-.14,.54,.15,.52,'mane');
+  for(const side of [-1,1]){add(side*.43,2.28,-.1,.23,.62,.31,'cloth','box',.25);add(side*.55,1.98,.06,.22,.16,.39,'hoof');add(side*.35,2.83,.27,.20,.23,.66,'cloth','box',-.35);add(side*.35,2.69,.60,.16,.15,.18,'skin');}
+  const dummy=new THREE.Object3D(),color=new THREE.Color();
+  for(const {assembly,shape,parts}of buckets.values()){
+   const material=new THREE.MeshStandardMaterial({color:'#ffffff',roughness:.88}),mesh=new THREE.InstancedMesh(geometry[shape],material,parts.length),target=partsByGroup[assembly];materials.push(material);meshes.push(mesh);
+   for(let i=0;i<parts.length;i++){const p=parts[i];dummy.position.set(p.x-target.pivot[0],p.y-target.pivot[1],p.z-target.pivot[2]);dummy.rotation.set(p.rx,0,0);dummy.scale.set(p.w,p.h,p.d);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);mesh.setColorAt(i,color.set(colors[p.color]));}
+   mesh.instanceMatrix.needsUpdate=true;mesh.instanceColor.needsUpdate=true;mesh.computeBoundingSphere();mesh.userData.coatParts=parts.map((p,i)=>p.color==='coat'?i:-1).filter(i=>i>=0);target.node.add(mesh);
+  }
+  const legMaterial=new THREE.MeshStandardMaterial({color:colors.coat,roughness:.9}),hoofMaterial=new THREE.MeshStandardMaterial({color:colors.hoof,roughness:.9});materials.push(legMaterial,hoofMaterial);
+  for(const [i,x,z]of [[0,-.43,.82],[1,.43,.82],[2,-.43,-.82],[3,.43,-.82]]){
+   const hip=new THREE.Group(),knee=new THREE.Group(),ankle=new THREE.Group();hip.name=['front-left','front-right','hind-left','hind-right'][i];hip.position.set(x,1.35,z);knee.position.y=-.68;ankle.position.y=-.68;hip.add(knee);knee.add(ankle);group.add(hip);
+   for(const [parent,w,d]of [[hip,.22,.25],[knee,.14,.18]]){const mesh=new THREE.Mesh(geometry.box,legMaterial);mesh.position.y=-.34;mesh.scale.set(w,.70,d);parent.add(mesh);meshes.push(mesh);}
+   const hoof=new THREE.Mesh(geometry.box,hoofMaterial);hoof.scale.set(.23,.24,.32);hoof.position.z=.045;ankle.add(hoof);meshes.push(hoof);legs.push({hip,knee,ankle,z});
+  }
+  const motion=root.ChanganHorseMotion.create();let lastCoat='',lastPose=null;group.visible=false;
+  function update({x,y,z,yaw,moving,distance=0,mounted,coat='chestnut',dt=1/60,sprint=false,grounded=true,paused=false}){
+   group.visible=mounted;if(!mounted){motion.reset();lastPose=null;return false;}group.position.set(x,y,z);group.rotation.y=yaw;
+   const pose=motion.step({dt,distance,moving,sprint,grounded,paused});lastPose=pose;body.position.y=pose.bodyY;body.rotation.x=pose.bodyPitch;head.rotation.x=pose.neckPitch;rider.position.y=2.27+pose.riderY;rider.rotation.x=pose.riderPitch;tail.rotation.z=pose.tail;
+   for(let i=0;i<legs.length;i++){const l=legs[i],p=pose.legs[i];l.hip.position.y=p.hipY;l.hip.position.z=l.z+1.35*Math.sin(pose.bodyPitch);l.hip.rotation.x=p.upper;l.knee.rotation.x=p.lower;l.ankle.rotation.x=p.hoof;}
+   if(coat!==lastCoat){lastCoat=coat;const c=new THREE.Color(coat==='frost'?'#aaa797':colors.coat);legMaterial.color.copy(c);for(const mesh of meshes)if(mesh.userData.coatParts?.length){for(const index of mesh.userData.coatParts)mesh.setColorAt(index,c);mesh.instanceColor.needsUpdate=true;}}
+   return pose.settling;
+  }
+  return {group,update,summary:()=>({name:'踏灯',visible:group.visible,legs:legs.length,joints:12,meshes:meshes.length,pointLights:0,motion:lastPose?{phase:lastPose.phase,cadence:lastPose.cadence,speed:lastPose.speed,fast:lastPose.fast,bodyY:lastPose.bodyY,bodyPitch:lastPose.bodyPitch}:null}),dispose(){for(const mesh of meshes)if(mesh.isInstancedMesh)mesh.dispose();for(const g of Object.values(geometry))g.dispose();for(const m of materials)m.dispose();group.removeFromParent();}};
+ }
+ root.ChanganHorseModel={create};
+})(typeof window!=='undefined'?window:globalThis);
+
+(function(root){
+ 'use strict';
  // Body-only voxel figures. The caller supplies the existing story box collector,
 // world origin, groundY and seven shared storyColors material batches.
 // Animated arms keep their original world-X positions and world-Z hinge axis;
@@ -785,25 +864,7 @@ function focusedCityCharacter(story,box){
   function refresh(){const completed=new Set(snapshot().completed||[]);for(let i=0;i<records.length;i++){const b=records[i],visible=!b.echo||completed.has(b.id);dummy.position.set(b.x,b.y,b.z);dummy.rotation.set(0,b.ry,0);dummy.scale.set(visible?b.w:.001,visible?b.h:.001,visible?b.d:.001);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);mesh.setColorAt(i,color.set(b.color));}mesh.instanceMatrix.needsUpdate=true;mesh.instanceColor.needsUpdate=true;mesh.computeBoundingSphere();}
   refresh();return {group,refresh,summary:()=>({actors:list.length,instances:records.length,batches:1,pointLights:0,ids:list.map(n=>n.id)}),dispose(){mesh.dispose();geometry.dispose();material.dispose();group.removeFromParent();}};
  }
- function horse(THREE,scene){
-  const group=new THREE.Group();group.name='tadeng-player-horse';scene.add(group);const colors={coat:'#805133',mane:'#352c28',hoof:'#302e2b',leather:'#4c3528',cloth:'#47685f',skin:'#c8ae8d',gold:'#b69b68'},buckets=new Map(),materials=[],geometries=[],legs=[];
-  const boxGeometry=new THREE.BoxGeometry(1,1,1),roundGeometry=new THREE.SphereGeometry(1,10,7),neckGeometry=new THREE.CylinderGeometry(.66,1,1,7);geometries.push(boxGeometry,roundGeometry,neckGeometry);
-  const add=(x,y,z,w,h,d,color,shape='box',rx=0)=>{const key=shape;if(!buckets.has(key))buckets.set(key,[]);buckets.get(key).push({x,y,z,w,h,d,color,rx});};
-  add(0,1.53,0,.67,.58,1.25,'coat','round');add(0,1.63,.76,.43,.43,.54,'coat','round');add(0,2.06,1.0,.52,1.02,.48,'coat','neck',.48);add(0,2.59,1.37,.30,.32,.42,'coat','round');add(0,2.38,1.70,.24,.24,.39,'coat','round');
-  for(const x of [-.19,.19]){add(x,2.98,1.29,.105,.36,.14,'coat','box',-.20);add(x,2.99,1.35,.04,.19,.035,'mane');add(x*1.45,2.64,1.52,.033,.060,.075,'mane');add(x*.85,2.38,2.02,.055,.055,.045,'mane');}
-  for(let i=0;i<6;i++)add(0,1.88+i*.12,.57+i*.09,.17,.24,.21,'mane','box',.45);
-  add(0,1.54,-1.34,.13,.70,.15,'mane','box',-.40);add(0,1.16,-1.46,.16,.43,.17,'mane','box',-.25);
-  add(0,2.055,-.10,.94,.14,1.12,'cloth');add(0,2.17,-.12,.82,.16,.76,'leather');add(0,2.27,.22,.90,.16,.13,'leather');add(0,2.27,-.47,.90,.18,.13,'leather');
-  for(const x of [-.65,.65]){add(x,1.70,-.15,.045,.70,.06,'leather');add(x,1.37,-.15,.22,.065,.20,'gold');add(x*.42,2.37,1.53,.045,.045,.59,'leather');add(x*.46,2.25,.86,.035,.035,1.02,'leather','box',-.48);}
-  // The player is visibly seated, with bent legs and hands on the reins.
-  add(0,2.81,-.12,.66,.78,.44,'cloth');add(0,3.37,-.12,.26,.30,.27,'skin','round');add(0,3.59,-.14,.54,.15,.52,'mane');
-  for(const side of [-1,1]){add(side*.43,2.28,-.1,.23,.62,.31,'cloth','box',.25);add(side*.55,1.98,.06,.22,.16,.39,'hoof');add(side*.35,2.83,.27,.20,.23,.66,'cloth','box',-.35);add(side*.35,2.69,.60,.16,.15,.18,'skin');}
-  for(const [shape,parts]of buckets){const geometry=shape==='round'?roundGeometry:shape==='neck'?neckGeometry:boxGeometry,material=new THREE.MeshStandardMaterial({color:'#ffffff',roughness:.88}),mesh=new THREE.InstancedMesh(geometry,material,parts.length),dummy=new THREE.Object3D(),color=new THREE.Color();materials.push(material);for(let i=0;i<parts.length;i++){const b=parts[i];dummy.position.set(b.x,b.y,b.z);dummy.rotation.x=b.rx;dummy.scale.set(b.w,b.h,b.d);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);mesh.setColorAt(i,color.set(colors[b.color]));}mesh.instanceMatrix.needsUpdate=true;mesh.instanceColor.needsUpdate=true;mesh.computeBoundingSphere();group.add(mesh);mesh.userData.coatParts=parts.map((p,i)=>p.color==='coat'?i:-1).filter(i=>i>=0);}
-  for(const x of [-.43,.43])for(const z of [-.82,.82]){const pivot=new THREE.Group();pivot.position.set(x,1.31,z);const mat=new THREE.MeshStandardMaterial({color:colors.coat,roughness:.9}),leg=new THREE.Mesh(boxGeometry,mat);leg.position.y=-.53;leg.scale.set(.19,1.07,.22);const hoofMat=new THREE.MeshStandardMaterial({color:colors.hoof,roughness:.9}),hoof=new THREE.Mesh(boxGeometry,hoofMat);hoof.position.set(0,-1.14,.045);hoof.scale.set(.23,.20,.32);pivot.add(leg,hoof);group.add(pivot);materials.push(mat,hoofMat);legs.push(pivot);}
-  let phase=0,lastCoat='';group.visible=false;
-  function update({x,y,z,yaw,moving,distance=0,mounted,coat='chestnut'}){group.visible=mounted;if(!mounted)return;group.position.set(x,y,z);group.rotation.y=yaw;if(moving)phase+=distance*2.2;for(let i=0;i<legs.length;i++)legs[i].rotation.x=moving?Math.sin(phase+(i===0||i===3?0:Math.PI))*.46:0;if(coat!==lastCoat){lastCoat=coat;for(const leg of legs)leg.children[0].material.color.set(coat==='frost'?'#aaa797':colors.coat);for(const mesh of group.children)if(mesh.userData.coatParts){const c=new THREE.Color(coat==='frost'?'#aaa797':colors.coat);for(const index of mesh.userData.coatParts)mesh.setColorAt(index,c);mesh.instanceColor.needsUpdate=true;}}}
-  return {group,update,summary:()=>({name:'踏灯',visible:group.visible,legs:legs.length,meshes:group.children.length,pointLights:0}),dispose(){group.traverse(o=>{if(o.isInstancedMesh)o.dispose();});for(const g of geometries)g.dispose();for(const m of materials)m.dispose();group.removeFromParent();}};
- }
+ function horse(THREE,scene){return root.ChanganHorseModel.create(THREE,scene);}
  root.ChanganTownModels={people,horse};
 })(typeof window!=='undefined'?window:globalThis);
 
@@ -2727,7 +2788,7 @@ entries.forEach(b=>b.onclick=()=>{if(gallery.hidden)openGallery();else closeGall
           script('assets/changan-browser.js')
         ]);
         stage='build';window.setCityLoadProgress(.16,'准备点亮城景…');heartbeat(120000);
-        await frame();await script('assets/changan-engine.js?v=cb9cc5beecd5b74f');
+        await frame();await script('assets/changan-engine.js?v=d9dc8befef3daca8');
       }else{
         (0,eval)(document.getElementById('changanBundle').textContent);
         await frame();(0,eval)(document.getElementById('changanEngine').textContent);
@@ -3168,7 +3229,7 @@ function enter(event,visit=''){event?.preventDefault();if(opened)return;
  window.changanHorse?.dismount();opened=true;window.changanPalacePortalActive=true;window.changanClearWalkingInput?.();if(document.pointerLockElement)document.exitPointerLock?.();
  pausedByUs=!document.body.classList.contains('reading-notes');document.body.classList.add('reading-notes','palace-host-open');
  layer=document.createElement('section');layer.className='palace-host-layer';layer.setAttribute('aria-label','宫门内外');status=document.createElement('p');status.className='palace-host-status';status.textContent='正在穿过宫门…';back=document.createElement('button');back.className='palace-host-back';back.textContent='返回宫门外';back.addEventListener('click',close);
- frame=document.createElement('iframe');frame.title='长安大内 · 贞观夜话';const sky=window.changanPalaceStreetSky?.(),weather=window.changanWeatherState?.().mode;frame.src='palace.html?embedded=1'+(/^[a-f0-9]{6}$/i.test(sky)?'&sky='+sky:'')+(weather==='rain'?'&weather=rain':'')+visit+'&v=56fa6d04c870ec69';frame.setAttribute('allow','fullscreen');frame.addEventListener('error',()=>{status.textContent='宫门内暂未展开，可返回外城后再试。';});layer.append(status,back,frame);document.body.append(layer);frame.focus?.();
+ frame=document.createElement('iframe');frame.title='长安大内 · 贞观夜话';const sky=window.changanPalaceStreetSky?.(),weather=window.changanWeatherState?.().mode;frame.src='palace.html?embedded=1'+(/^[a-f0-9]{6}$/i.test(sky)?'&sky='+sky:'')+(weather==='rain'?'&weather=rain':'')+visit+'&v=97af696281621853';frame.setAttribute('allow','fullscreen');frame.addEventListener('error',()=>{status.textContent='宫门内暂未展开，可返回外城后再试。';});layer.append(status,back,frame);document.body.append(layer);frame.focus?.();
 }
 function sync(){const s=window.changanWalkState?.();entry.hidden=!(atGate(s)&&!opened&&!document.querySelector('dialog[open]')&&!document.body.classList.contains('reading-notes'));if(returnGate&&(!s?.active||s.z>-50))returnGate=false;}
 function sample(){sync();const s=window.changanWalkState?.();if(!opened&&!returnGate&&atGate(s)&&Math.abs(s.x)<4&&s.z< -60&&!document.querySelector('dialog[open]')&&!document.body.classList.contains('reading-notes'))enter();}
